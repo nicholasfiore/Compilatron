@@ -9,7 +9,7 @@ module TSC {
 		        // Trim the leading and trailing spaces.
 		        sourceCode = TSC.Utils.trim(sourceCode);
 		        // Removes all whitespace characters. Sourced from: https://stackoverflow.com/questions/6623231/remove-all-white-spaces-from-text
-				sourceCode = sourceCode.replace(/\s/g, '');
+				let rawCode:string = sourceCode.replace(/\s/g, '');
 		        return sourceCode;
 		    }
 		}
