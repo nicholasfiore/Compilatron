@@ -5,10 +5,13 @@ var TSC;
         static lex() {
             {
                 // Grab the "raw" source code.
-                var sourceCode = document.getElementById("taSourceCode").value;
+                let sourceCode = document.getElementById("taSourceCode").value;
                 // Trim the leading and trailing spaces.
                 sourceCode = TSC.Utils.trim(sourceCode);
-                // TODO: remove all spaces in the middle; remove line breaks too.
+                console.log(sourceCode);
+                // Removes all whitespace characters. Sourced from: https://stackoverflow.com/questions/6623231/remove-all-white-spaces-from-text
+                sourceCode = sourceCode.replace(/\s/g, '');
+                console.log(sourceCode);
                 return sourceCode;
             }
         }
