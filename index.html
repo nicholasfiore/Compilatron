@@ -38,7 +38,7 @@ O ::== + | -
     <!-- Client-side code down here, per the YSlow advice. -->
     <script type="text/javascript" src="dist/scripts/utils.js"></script>	
     <script type="text/javascript" src="dist/scripts/lexer.js"></script>	
-	 <script type="text/javascript" src="dist/scripts/globals.js"></script>	
+	<script type="text/javascript" src="dist/scripts/globals.js"></script>	
 	 
     <script type="text/javascript">
 		 function init() {
@@ -61,7 +61,7 @@ O ::== + | -
 	        tokens = _Lexer.lex();
 	        putMessage("Lex returned [" + tokens + "]");
 	        // . . . and parse!
-	        parse();
+	        //parse();
 	    }
     
 	    function putMessage(msg) {
