@@ -8,8 +8,7 @@ module TSC {
 		        let sourceCode: string = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
 		        // Trim the leading and trailing spaces.
 		        sourceCode = TSC.Utils.trim(sourceCode);
-		        // Removes all whitespace characters. Sourced from: https://stackoverflow.com/questions/6623231/remove-all-white-spaces-from-text
-				let rawCode:string = sourceCode.replace(/\s/g, '');
+		        
 		        return sourceCode;
 		    }
 		}
