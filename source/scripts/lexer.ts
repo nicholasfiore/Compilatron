@@ -25,10 +25,10 @@ export class Lexer extends Compiler {
 		sourceCode = TSC.Utils.trim(sourceCode);
 		
 		while(this.charStreamPos != null && sourceCode.charAt(this.charStreamPos)) {
-
+			
 		}
 
-		return this.tokens;
+		return "this.tokens";
 	}
 }
 
