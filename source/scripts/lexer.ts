@@ -1,8 +1,5 @@
 /* lexer.ts  */
-
-
-
-namespace TSC {
+import { Token } from "./token";
 	//lexer returns the token stream
 	export class Lexer {
 		public static lex() {
@@ -19,4 +16,4 @@ namespace TSC {
 		    }
 		}
 	}
-}
+
