@@ -13,4 +13,11 @@ module TSC {
 		    }
 		}
 	}
+
+	export interface Token {
+		kind: string;
+		value?: string;
+		line: number;
+		position: number;
+	}
 }
