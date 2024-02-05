@@ -1,5 +1,5 @@
 //general token interface to store data about each token being scanned
-module TSC {
+namespace TSC {
     export interface Token {
         kind: string;
         value?: string;
