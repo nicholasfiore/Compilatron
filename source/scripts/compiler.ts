@@ -2,7 +2,7 @@
 import { Lexer } from "./lexer";
 import { Token } from "./token";
 
-class Compiler {
+export class Compiler {
     /* Globals
     These variables can be used by any part of the compiler */
     tokens: Array<Token>;
