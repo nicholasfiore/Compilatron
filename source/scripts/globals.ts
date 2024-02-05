@@ -7,7 +7,7 @@ var onDocumentLoad = function() {
 var _Lexer = TSC.Lexer;
 
 // Global variables
-    var tokens = "";
+    //var tokens = "";
     var tokenIndex = 0;
     var currentToken = "";
     var errorCount = 0;
