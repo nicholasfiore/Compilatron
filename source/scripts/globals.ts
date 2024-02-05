@@ -4,10 +4,13 @@ var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };
 */
-var _Lexer = TSC.Lexer;
+import { Lexer } from "./lexer";
+import { Token } from "./token";
+
+var _Lexer = Lexer;
 
 // Global variables
-    //var tokens = "";
+    var tokens = Array<Token>;
     var tokenIndex = 0;
     var currentToken = "";
     var errorCount = 0;

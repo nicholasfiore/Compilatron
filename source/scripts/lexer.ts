@@ -1,10 +1,10 @@
 /* lexer.ts  */
-import { Token } from "./token";
+import { Compiler } from "./compiler";
 	//lexer returns the token stream
-	export class Lexer {
+	export class Lexer implements Compiler {
 		public static lex() {
 		    {
-				let tokens: Array<Token> = new Array<Token>; //token stream
+				tokens;
 		        // Grab the "raw" source code.
 		        let sourceCode: string = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
 		        // Trim the leading and trailing spaces.
