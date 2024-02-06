@@ -1,14 +1,14 @@
 /* lexer.ts  */
 namespace TSC {
 	//lexer returns the token stream
-	export class Lexer extends Compiler {
+	export class Lexer extends Component {
 		private lastValidToken: string;
 		private lastValidPos: number;
 		private charStreamPos: number; //position in the unformatted character stream (the string itself)
 		private isQuotes: boolean; //technically part of the parser, but makes lexing easier
 
 		constructor() {
-			super();
+			super("lexer");
 			this.lastValidToken = "";
 			this.lastValidPos = 0;
 			this.charStreamPos = 0;
@@ -17,7 +17,7 @@ namespace TSC {
 		}
 
 		
-		public lex() {	
+		public lex() {
 			// Grab the "raw" source code.
 			let sourceCode: string = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
 			// Trim the leading and trailing spaces.
