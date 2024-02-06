@@ -1,48 +1,4 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title>Compilatron</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
-    <link rel="stylesheet" href="dist/styles/bootstrap.min.css">
-	
-</head>
-<body onload="init();">
-    <h1>Project Zero Compiler</h1>
-    <hr>
-    <p>. . . <em>a simple parser for a simple grammar</em>:</p>
 
-	 <pre>
-G ::== E
-E ::== D O E | D
-D ::== 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
-O ::== + | -
-	 </pre>
-
-    <div style="text-align:center;">
-        <input type="button" id="btnCompile" value="Compile" onclick="btnCompile_click();"/>
-    </div>
-
-    <div>
-        <div class="source">
-            <textarea id="taSourceCode"></textarea>
-            <textarea id="taOutput" readonly></textarea>
-        </div>        
-    </div>
-
-    <div>
-        <img style="display:block; margin-left:auto; margin-right:auto;"
-		       src="dist/images/CompilerPhases.png" 
-				 alt="Compiler Phases" />
-    </div>   
-
-    <!-- Client-side code down here, per the YSlow advice. -->
-    <script src="dist/scripts/compiler.js"></script>
-	<script src="dist/scripts/lexer.js"></script>
-	<script src="dist/scripts/token.js"></script>
-	<script src="dist/scripts/globals.js"></script>
-	 
-    <script type="text/javascript">
 		 function init() {
 	        // Clear the message box.
 	        document.getElementById("taOutput").value = "";
@@ -151,6 +107,3 @@ O ::== + | -
 	        }
 	        return thisToken;
 	    }
-    </script>
-</body>
-</html>

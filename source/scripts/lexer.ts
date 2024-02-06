@@ -13,7 +13,7 @@ namespace TSC {
 			this.lastValidPos = 0;
 			this.charStreamPos = 0;
 			this.isQuotes = false;
-			this.tokens = new Array<Token>;
+			//this.tokens = new Array<Token>;
 		}
 
 		
