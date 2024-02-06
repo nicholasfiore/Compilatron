@@ -1,4 +1,4 @@
 function init() {
     console.log("Initializing Compiler");
-    var sourceCode = document.getElementById("taSourceCode");
+    var sourceCode = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
 }
