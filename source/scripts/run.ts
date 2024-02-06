@@ -1,4 +1,5 @@
-function init() {
+function initializeCompiler() {
     console.log("Initializing Compiler");
-    var sourceCode = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
+    var sourceCode: string = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
+
 }
