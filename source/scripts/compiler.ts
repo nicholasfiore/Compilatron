@@ -1,14 +1,13 @@
 //compiler super class
-import { Lexer } from "./lexer";
-import { Token } from "./token";
+namespace TSC {
+    export class Compiler {
+        /* Globals
+        These variables can be used by any part of the compiler */
+        public currentProgram: number;
+        public tokens: Array<Token>;
+        public currLine: number;
+        public currPos: number;
 
-export class Compiler {
-    /* Globals
-    These variables can be used by any part of the compiler */
-    currentProgram: number;
-    tokens: Array<Token>;
-    currLine: number;
-    currPos: number;
-
-    
+        
+    }
 }

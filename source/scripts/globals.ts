@@ -3,10 +3,6 @@
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
 };
-*/
-import { Compiler } from "./compiler";
-import { Lexer } from "./lexer";
-import { Token } from "./token";
 
 var _Lexer = new Lexer();
 var _Compiler = new Compiler();
@@ -16,4 +12,4 @@ var _Compiler = new Compiler();
     // var tokenIndex = 0;
     // var currentToken = "";
     // var errorCount = 0;
-    // var EOF = "$";
+    // var EOF = "$"; */

@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
     <link rel="stylesheet" href="dist/styles/bootstrap.min.css">
+	
 </head>
 <body onload="init();">
     <h1>Project Zero Compiler</h1>
@@ -36,20 +37,19 @@ O ::== + | -
     </div>   
 
     <!-- Client-side code down here, per the YSlow advice. -->
-    <script type="text/javascript" src="dist/scripts/utils.js"></script>	
-    <script type="text/javascript" src="dist/scripts/lexer.js"></script>	
-	<script type="text/javascript" src="dist/scripts/compiler.js"></script>
- 	<script type="text/javascript" src="dist/scripts/globals.js"></script>	
+    <script src="dist/scripts/compiler.js"></script>
+	<script src="dist/scripts/lexer.js"></script>
+	<script src="dist/scripts/token.js"></script>
 	 
     <script type="text/javascript">
 		 function init() {
 	        // Clear the message box.
 	        document.getElementById("taOutput").value = "";
 	        // Set the initial values for our globals.
-	        tokens = "";
-	        tokenIndex = 0;
-	        currentToken = ' ';
-	        errorCount = 0;        
+	        // tokens = "";
+	        // tokenIndex = 0;
+	        // currentToken = ' ';
+	        // errorCount = 0;        
 	    }
     
 	    function btnCompile_click() {        
