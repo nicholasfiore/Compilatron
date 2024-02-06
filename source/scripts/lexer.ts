@@ -7,13 +7,18 @@ namespace TSC {
 		private charStreamPos: number; //position in the unformatted character stream (the string itself)
 		private isQuotes: boolean; //technically part of the parser, but makes lexing easier
 
-		constructor() {
+		private _Compiler: Compiler;
+
+		constructor(comp: Compiler) {
 			super("lexer");
+
+			this._Compiler = comp;
+
 			this.lastValidToken = "";
 			this.lastValidPos = 0;
 			this.charStreamPos = 0;
 			this.isQuotes = false;
-			//this.tokens = new Array<Token>;
+			comp.tokens = new Array<Token>;
 		}
 
 		
@@ -27,7 +32,7 @@ namespace TSC {
 				
 			}
 
-			return "this.tokens";
+			return this._Compiler.tokens;
 		}
 	}
 }
