@@ -2,8 +2,8 @@
     All componenets of the compiler (including the whole compiler itself) 
     extends the base class component, which contains the logging function-
     ality*/
-namespace TSC {
-    export class Component {
+
+    class Component {
         //Components have a name
         name: string;
 
@@ -22,4 +22,3 @@ namespace TSC {
         
         public 
     }
-}

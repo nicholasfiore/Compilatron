@@ -4,9 +4,9 @@
    Utility functions.
    -------- */
 
-module TSC {
 
-    export class Utils {
+
+    class Utils {
 
     public static trim(str)      // Use a regular expression to remove leading and trailing spaces.
         {
@@ -47,4 +47,4 @@ module TSC {
             return retVal;
         }
     }
-}
+
