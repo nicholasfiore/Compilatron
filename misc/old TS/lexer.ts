@@ -12,6 +12,8 @@ namespace TSC {
 		constructor(comp: Compiler) {
 			super("lexer");
 
+			console.log("lexer starting");
+
 			this._Compiler = comp;
 
 			this.lastValidToken = "";
