@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="dist/styles/bootstrap.min.css">
 	
 	<!-- Classes -->
+    <script src="dist/scripts/component.js"></script>
     <script src="dist/scripts/compiler.js"></script>
 	<script src="dist/scripts/lexer.js"></script>
 	<script src="dist/scripts/token.js"></script>
@@ -45,7 +46,7 @@ O ::== + | -
 
     <script>
 		document.getElementById("btnCompile").addEventListener("click", function() {
-			TSC.initializeCompiler();
+			initializeCompiler();
 		})
 	</script>
 </body>

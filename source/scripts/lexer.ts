@@ -1,40 +1,50 @@
 /* lexer.ts  */
 
-	//lexer returns the token stream
-	class Lexer extends Component {
-		private lastValidToken: string;
-		private lastValidPos: number;
-		private charStreamPos: number; //position in the unformatted character stream (the string itself)
-		private isQuotes: boolean; //technically part of the parser, but makes lexing easier
+//lexer returns the token stream
+class Lexer extends Component {
+	private lastValidToken: string;
+	private lastValidPos: number;
 
-		private _Compiler: Compiler;
+	private currentStr: string;
 
-		constructor(comp: Compiler) {
-			super("lexer");
+	private charStreamPos: number; //position in the unformatted character stream (the string itself)
+	private isQuotes: boolean; //technically part of the parser, but makes lexing easier
 
-			console.log("lexer starting");
+	private tokens: Array<Token>;
 
-			this._Compiler = comp;
+	private _Compiler: Compiler;
 
-			this.lastValidToken = "";
-			this.lastValidPos = 0;
-			this.charStreamPos = 0;
-			this.isQuotes = false;
-			comp.tokens = new Array<Token>;
-		}
+	//RegEx objects for string comparisons
 
-		
-		public lex() {
-			// Grab the "raw" source code.
-			let sourceCode: string = (<HTMLInputElement>document.getElementById("taSourceCode")).value;
-			// Trim the leading and trailing spaces.
-			sourceCode = Utils.trim(sourceCode);
-			
-			while(this.charStreamPos != null && sourceCode.charAt(this.charStreamPos)) {
-				
-			}
 
-			return this._Compiler.tokens;
-		}
+	constructor(comp: Compiler) {
+		super("lexer");
+
+		this._Compiler = comp;
+
+		this.lastValidToken = "";
+		this.lastValidPos = 0;
+
+		this.currentStr = "";
+
+		this.charStreamPos = 0;
+		this.isQuotes = false;
+		this.tokens = new Array<Token>;
 	}
+
+	
+	public lex() {
+		// Grab the "raw" source code.
+		var sourceCode = this._Compiler.sourceCode;
+		// Trim the leading and trailing spaces.
+		sourceCode = Utils.trim(sourceCode);
+		
+		//main lexing loop
+		while(this.charStreamPos != null && sourceCode.charAt(this.charStreamPos)) {
+			
+		}
+
+		return this.tokens;
+	}
+}
 
