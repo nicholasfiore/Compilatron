@@ -12,6 +12,7 @@ class Lexer extends Component {
 
 	private currLine: number;
     private currPos: number;
+	private lastPost: number;
 
 	private warnings: number;
 	private errors: number;
@@ -57,6 +58,7 @@ class Lexer extends Component {
 		//unfortunately, debugging coordinates should start at one, unlike arrays
 		this.currLine = 1;
 		this.currPos = 1;
+		this.lastPos = 1;
 
 		this.errors = 0;
 		this.warnings = 0;
@@ -79,12 +81,14 @@ class Lexer extends Component {
 		sourceCode = Utils.trim(sourceCode);
 
 		//main lexing loop
-		while(this.charStreamPos !== null && sourceCode.charAt(this.charStreamPos)) {
+		while(!this.reachedEOP && sourceCode.charAt(this.charStreamPos)) {
 			this.currChar = sourceCode.charAt(this.charStreamPos);
 			/* 
-				This initial if statement is for deciding whether or not to consume the current input and create a token
+				This initial if statement is for deciding whether or not to consume 
+					the current input and create a token
 				The rules, in order, are as follows:
 				- Check if the character is a (or part of a) symbol. If it is, consume input.
+					- note that invalid ASCII characters are considered "unrecognized symbols"
 				- Check if the character is whitespace. If it is, consume input.
 				-
 				- Check for comment. If currently within a comment, the lexer ignores the char
@@ -93,10 +97,12 @@ class Lexer extends Component {
 					on
 			*/
 			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) || this.whitespaceRegEx.test(this.currChar) && (!this.inComment || this.currentStr != "")) {
-			//only checks this char if the character actively being buffered actually exists
-			//in any part of the grammer, otherwise the lexer throws an error
+				this.tokenize();
+			} else {
+				
 				if (this.fullGrammarCharRegEx.test(this.currChar)) {
 					//only concatenate if the character isn't whitespace, or is in a string
+					//also ignore it if we are in a comment TODO
 					if (!this.whitespaceRegEx.test(this.currChar) || this.isQuotes) {
 						this.currentStr.concat(this.currChar);
 					}
@@ -107,13 +113,7 @@ class Lexer extends Component {
 
 
 				} else {
-					this.err("(" + this.currLine + ":" + this.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
-					var token: Token = {
-						kind: "error",
-						line: this.currLine,
-						position: this.currPos
-					}
-					this.tokens.push(token);
+					
 				}
 				this.charStreamPos++;
 				if (this.currChar === '\n') {
@@ -188,6 +188,30 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-
+		var token: Token;
+		if (this.lastValidToken === "") {
+			//if there was no valid token found, consume the full scanned input and
+			//throw an error
+			token = {
+				kind: "ERROR",
+				value: this.currentStr,
+				line: this.currLine,
+				position: (this.currPos - this.currentStr.length)
+			}
+			this.tokens.push(token);
+			this.err("invalid token (" + token.line + ":" + token.position + "): " + token.value);
+			this.errors++;
+		} else {
+			//else, a valid token was found
+			token = {
+				kind: this.lastValidKind,
+				value: this.lastValidToken,
+				line: this.currLine,
+				position: this.lastValidStart
+			}
+			this.tokens.push(token);
+			this.info(token.kind + "[ " + token.value + "] found at (" + token.line + ":" + token.position + ")");
+		}
+		
 	}
 }
