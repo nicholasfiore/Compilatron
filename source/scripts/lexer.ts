@@ -85,13 +85,14 @@ class Lexer extends Component {
 				This initial if statement is for deciding whether or not to consume the current input and create a token
 				The rules, in order, are as follows:
 				- Check if the character is a (or part of a) symbol. If it is, consume input.
-
 				- Check if the character is whitespace. If it is, consume input.
+				-
+				- Check for comment. If currently within a comment, the lexer ignores the char
 				- The final check is to ensure there has actually been any input scanned. 
 					If currStr is empty, there hasn't been any new input scanned, so move
 					on
 			*/
-			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) || this.whitespaceRegEx.test(this.currChar) && this.currentStr != "") {
+			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) || this.whitespaceRegEx.test(this.currChar) && (!this.inComment || this.currentStr != "")) {
 			//only checks this char if the character actively being buffered actually exists
 			//in any part of the grammer, otherwise the lexer throws an error
 				if (this.fullGrammarCharRegEx.test(this.currChar)) {
