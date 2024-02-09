@@ -6,9 +6,13 @@ class Lexer extends Component {
 	private lastValidStart: number;
 	private lastValidEnd: number;
 
+	private currLine: number;
+    private currPos: number;
+
 	private warnings: number;
 	private errors: number;
 
+	private currChar: string;
 	private currentStr: string;
 
 	private charStreamPos: number; //position in the unformatted character stream (the string itself)
@@ -23,7 +27,7 @@ class Lexer extends Component {
 	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"]|==|!=');
 
 	constructor(comp: Compiler) {
-		super("lexer");
+		super("Lexer");
 
 		this._Compiler = comp;
 
@@ -31,9 +35,14 @@ class Lexer extends Component {
 		this.lastValidStart = 0;
 		this.lastValidEnd = 0;
 
+		//unfortunately, debugging coordinates should start at one, unlike arrays
+		this.currLine = 1;
+		this.currPos = 1;
+
 		this.errors = 0;
 		this.warnings = 0;
 
+		this.currChar = "";
 		this.currentStr = "";
 
 		this.charStreamPos = 0;
@@ -47,23 +56,27 @@ class Lexer extends Component {
 		var sourceCode = this._Compiler.sourceCode;
 		// Trim the leading and trailing spaces.
 		sourceCode = Utils.trim(sourceCode);
-		
+
 		//main lexing loop
-		while(this.charStreamPos != null && sourceCode.charAt(this.charStreamPos)) {
-			//only continues lexing if the character actively being buffered actual exists in
-			//any part of the grammer, otherwise the lexer throws an error
-			if (this.fullGrammarCharRegEx.test(sourceCode.charAt(this.charStreamPos))) {
-				this.currentStr.concat(sourceCode.charAt(this.charStreamPos));
+		while(this.charStreamPos !== null && sourceCode.charAt(this.charStreamPos)) {
+			this.currChar = sourceCode.charAt(this.charStreamPos);
+			//only checks this char if the character actively being buffered actually exists
+			//in any part of the grammer, otherwise the lexer throws an error
+			if (this.fullGrammarCharRegEx.test(this.currChar)) {
+				this.currentStr.concat(this.currChar);
+				this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
+
 			} else {
-				this.err("(" + this._Compiler.currLine + ":" + this._Compiler.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
+				this.err("(" + this.currLine + ":" + this.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
 				var token: Token = {
 					kind: "error",
-					line: this._Compiler.currLine,
-					position: this._Compiler.currPos
+					line: this.currLine,
+					position: this.currPos
 				}
 				this.tokens.push(token);
 			}
-			
+			this.charStreamPos++;
+			this.currPos++;
 
 		}
 
