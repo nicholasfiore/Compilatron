@@ -12,7 +12,7 @@ class Lexer extends Component {
 
 	private currLine: number;
     private currPos: number;
-	private lastPost: number;
+	
 
 	private warnings: number;
 	private errors: number;
@@ -22,9 +22,12 @@ class Lexer extends Component {
 
 	private symbolCharsLexed: number; //keeps track of how many characters have been parsed since a symbol or part of a symbol was found (symbols can only have 2 chars)
 
-	private charStreamPos: number; //position in the unformatted character stream (the string itself)
+	private currStreamPos: number; //position in the unformatted character stream (the string itself)
+	private lastStreamPos: number;
+
 	private isQuotes: boolean; //technically part of the parser, but makes lexing easier
 	private isComment: boolean;
+	private isCharOrDigit: boolean;
 
 	private reachedEOP;
 
@@ -58,7 +61,7 @@ class Lexer extends Component {
 		//unfortunately, debugging coordinates should start at one, unlike arrays
 		this.currLine = 1;
 		this.currPos = 1;
-		this.lastPos = 1;
+		
 
 		this.errors = 0;
 		this.warnings = 0;
@@ -66,9 +69,12 @@ class Lexer extends Component {
 		this.currChar = "";
 		this.currentStr = "";
 
-		this.charStreamPos = 0;
+		this.currStreamPos = 0;
+		this.lastStreamPos = 0;
+		
 		this.isQuotes = false;
 		this.isComment = false;
+		this.isCharOrDigit = false;
 
 		this.tokens = new Array<Token>;
 	}
@@ -81,8 +87,9 @@ class Lexer extends Component {
 		sourceCode = Utils.trim(sourceCode);
 
 		//main lexing loop
-		while(!this.reachedEOP && sourceCode.charAt(this.charStreamPos)) {
-			this.currChar = sourceCode.charAt(this.charStreamPos);
+		var infiniteProtection: number = 0;
+		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
+			this.currChar = sourceCode.charAt(this.currStreamPos);
 			/* 
 				This initial if statement is for deciding whether or not to consume 
 					the current input and create a token
@@ -96,26 +103,14 @@ class Lexer extends Component {
 					If currStr is empty, there hasn't been any new input scanned, so move
 					on
 			*/
-			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) || this.whitespaceRegEx.test(this.currChar) && (!this.inComment || this.currentStr != "")) {
+			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) 
+			|| this.whitespaceRegEx.test(this.currChar)
+			&& (!this.inComment || this.currentStr != "")) {
 				this.tokenize();
 			} else {
+				this.checkTokenValidity();
 				
-				if (this.fullGrammarCharRegEx.test(this.currChar)) {
-					//only concatenate if the character isn't whitespace, or is in a string
-					//also ignore it if we are in a comment TODO
-					if (!this.whitespaceRegEx.test(this.currChar) || this.isQuotes) {
-						this.currentStr.concat(this.currChar);
-					}
-					
-					//this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
-
-					this.checkTokenValidity();
-
-
-				} else {
-					
-				}
-				this.charStreamPos++;
+				this.currStreamPos++;
 				if (this.currChar === '\n') {
 					this.currLine++;
 					this.currPos = 1;
@@ -123,6 +118,7 @@ class Lexer extends Component {
 					this.currPos++;
 				}
 			}
+			infiniteProtection++;
 		}
 
 		return this.tokens;
@@ -132,57 +128,54 @@ class Lexer extends Component {
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_L_BRACE";
 					break;
 				}
 				case '}': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_R_BRACE";
 					break;
 				}
 				case '(': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_L_PAREN";
 					break;
 				}
 				case ')': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_R_PAREN";
 					break;
 				}
 				case '+': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_ADD";
 					break;
 				}
 				case '=': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos - 1;
+					this.lastValidKind = "SYM_ASSIGN";
 					break;
 				}
 				case '"': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos;
+					this.lastValidKind = "SYM_QUOTE";
 					break;
 				}
 				case '==': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos;
+					this.lastValidKind = "SYM_IS_EQUAL";
 					break;
 				}
 				case '!=': {
-					this.lastValidToken = this.currentStr;
-					this.lastValidEnd = this.currPos;
+					this.lastValidKind = "SYM_IS_NOT_EQUAL";
 					break;
 				}
+				case '$': { //special symbol
+					this.lastValidKind = "EOP";
+				}
 			}
+			this.lastValidToken = this.currentStr;
+			this.lastValidStart = this.lastStreamPos;
+			this.lastValidEnd = this.currStreamPos;
 		}
 		else {
 			//do nothing
 			//if a string isn't a valid token, 
 			//it's possible that it hasn't 
-			//gotten all its characters 
+			//gotten all its characters yet
 			//(like a keyword)
 		}
 	}
@@ -212,6 +205,6 @@ class Lexer extends Component {
 			this.tokens.push(token);
 			this.info(token.kind + "[ " + token.value + "] found at (" + token.line + ":" + token.position + ")");
 		}
-		
+		this.lastStreamPos = this.currStreamPos;
 	}
 }
