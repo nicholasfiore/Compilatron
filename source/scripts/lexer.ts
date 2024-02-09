@@ -29,8 +29,14 @@ class Lexer extends Component {
 
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
+	//private notInGrammerRegEx = new RegExp();
 	private whitespaceRegEx = new RegExp(/\s/);
+
+	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
+	private idOrCharRegEx = new RegExp('[a-z]');
 	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"]|==|!=');
+	private digitRegEx = new RegExp('[0-9]');
+	//char goes here, but it's already accounted for
 
 	constructor(comp: Compiler) {
 		super("Lexer");
