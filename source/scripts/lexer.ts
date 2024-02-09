@@ -82,7 +82,7 @@ class Lexer extends Component {
 				this.tokens.push(token);
 			}
 			this.charStreamPos++;
-			if (this.currChar === "\\n") {
+			if (this.currChar === '\n') {
 				this.currLine++;
 				this.currPos = 1;
 			} else {
