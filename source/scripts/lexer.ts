@@ -42,7 +42,7 @@ class Lexer extends Component {
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"|!|$]|==|!=');
+	private symbolsRegEx = new RegExp('==|!=|[{|}|(|)|+|=|"|!|$]');
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -90,7 +90,6 @@ class Lexer extends Component {
 		var infiniteProtection: number = 0;
 		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
 			this.currChar = sourceCode.charAt(this.currStreamPos);
-			console.log(this.currChar);
 			/* 
 				This initial if statement is for deciding whether or not to consume 
 					the current input and create a token
@@ -104,7 +103,7 @@ class Lexer extends Component {
 					If currStr is empty, there hasn't been any new input scanned, so move
 					on
 			*/
-			console.log(this.currentStr);
+			console.log(this.symbolsRegEx.test(this.currChar));
 			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
 			|| this.whitespaceRegEx.test(this.currChar))
 			&& (this.currentStr !== "")) {
@@ -127,7 +126,10 @@ class Lexer extends Component {
 	}
 
 	private checkTokenValidity() {
-		console.log("checking validity")
+		this.currentStr += this.currChar;
+		console.log(this.currentStr)
+		console.log(this.symbolsRegEx.test(this.currentStr));
+		
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
