@@ -3,6 +3,7 @@
 //lexer returns the token stream
 class Lexer extends Component {
 	private lastValidToken: string;
+	private lastValidKind: string;
 	private lastValidStart: number;
 	private lastValidEnd: number;
 
@@ -34,7 +35,7 @@ class Lexer extends Component {
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"]|==|!=');
+	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"|!]|==|!=');
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -44,6 +45,7 @@ class Lexer extends Component {
 		this._Compiler = comp;
 
 		this.lastValidToken = "";
+		this.lastValidKind = "";
 		this.lastValidStart = 0;
 		this.lastValidEnd = 0;
 
