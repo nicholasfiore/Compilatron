@@ -90,6 +90,7 @@ class Lexer extends Component {
 		var infiniteProtection: number = 0;
 		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
 			this.currChar = sourceCode.charAt(this.currStreamPos);
+			console.log(this.currChar);
 			/* 
 				This initial if statement is for deciding whether or not to consume 
 					the current input and create a token
@@ -103,9 +104,10 @@ class Lexer extends Component {
 					If currStr is empty, there hasn't been any new input scanned, so move
 					on
 			*/
-			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar)) 
-			|| this.whitespaceRegEx.test(this.currChar)
-			&& (!this.inComment || this.currentStr != "")) {
+			console.log(this.currentStr);
+			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
+			|| this.whitespaceRegEx.test(this.currChar))
+			&& (this.currentStr !== "")) {
 				this.tokenize();
 			} else {
 				this.checkTokenValidity();
@@ -125,6 +127,7 @@ class Lexer extends Component {
 	}
 
 	private checkTokenValidity() {
+		console.log("checking validity")
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
@@ -206,5 +209,6 @@ class Lexer extends Component {
 			this.info(token.kind + "[ " + token.value + "] found at (" + token.line + ":" + token.position + ")");
 		}
 		this.lastStreamPos = this.currStreamPos;
+		this.currentStr = "";
 	}
 }
