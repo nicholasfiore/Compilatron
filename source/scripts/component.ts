@@ -15,10 +15,19 @@ class Component {
     //this method of logging was more directly taken from Arnell's compiler
     //I couldn't think of a more succinct implementation that would prevent
     //redundant code throughout the project
-    public log(args: String) {
+    public log(args: string) {
         document.getElementById("taOutput")![0].value += args + "\n"; //includes non-null assertion
     }
-
     
-    //public 
+    public info(args: string) {
+        this.log("INFO " + this.name + ": " + args);
+    }
+
+    public warn(args: string) {
+        this.log("WARN " + this.name + ": " + args);
+    }
+
+    public err(args: string) {
+        this.log("ERROR " + this.name + ": " + args);
+    }
 }

@@ -3,7 +3,11 @@
 //lexer returns the token stream
 class Lexer extends Component {
 	private lastValidToken: string;
-	private lastValidPos: number;
+	private lastValidStart: number;
+	private lastValidEnd: number;
+
+	private warnings: number;
+	private errors: number;
 
 	private currentStr: string;
 
@@ -15,7 +19,8 @@ class Lexer extends Component {
 	private _Compiler: Compiler;
 
 	//RegEx objects for string comparisons
-
+	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!]'); //for checking if a character to be added actually exists in any part of the grammer
+	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"]|==|!=');
 
 	constructor(comp: Compiler) {
 		super("lexer");
@@ -23,7 +28,11 @@ class Lexer extends Component {
 		this._Compiler = comp;
 
 		this.lastValidToken = "";
-		this.lastValidPos = 0;
+		this.lastValidStart = 0;
+		this.lastValidEnd = 0;
+
+		this.errors = 0;
+		this.warnings = 0;
 
 		this.currentStr = "";
 
@@ -41,7 +50,21 @@ class Lexer extends Component {
 		
 		//main lexing loop
 		while(this.charStreamPos != null && sourceCode.charAt(this.charStreamPos)) {
+			//only continues lexing if the character actively being buffered actual exists in
+			//any part of the grammer, otherwise the lexer throws an error
+			if (this.fullGrammarCharRegEx.test(sourceCode.charAt(this.charStreamPos))) {
+				this.currentStr.concat(sourceCode.charAt(this.charStreamPos));
+			} else {
+				this.err("(" + this._Compiler.currLine + ":" + this._Compiler.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
+				var token: Token = {
+					kind: "error",
+					line: this._Compiler.currLine,
+					position: this._Compiler.currPos
+				}
+				this.tokens.push(token);
+			}
 			
+
 		}
 
 		return this.tokens;
