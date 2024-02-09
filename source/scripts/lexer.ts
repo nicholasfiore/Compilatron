@@ -21,12 +21,14 @@ class Lexer extends Component {
 	private charStreamPos: number; //position in the unformatted character stream (the string itself)
 	private isQuotes: boolean; //technically part of the parser, but makes lexing easier
 
+	private reachedEOP;
+
 	private tokens: Array<Token>;
 
 	private _Compiler: Compiler;
 
 	//RegEx objects for string comparisons
-	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]'); //for checking if a character to be added actually exists in any part of the grammer
+	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	private whitespaceRegEx = new RegExp(/\s/);
 	private symbolsRegEx = new RegExp('[{|}|(|)|+|=|"]|==|!=');
 
@@ -68,10 +70,15 @@ class Lexer extends Component {
 			this.currChar = sourceCode.charAt(this.charStreamPos);
 			//only checks this char if the character actively being buffered actually exists
 			//in any part of the grammer, otherwise the lexer throws an error
-			if (this.fullGrammarCharRegEx.test(this.currChar) || this.whitespaceRegEx.test(this.currChar)) {
-				this.currentStr.concat(this.currChar);
+			if (this.fullGrammarCharRegEx.test(this.currChar)) {
+				//only concatenate if the character isn't whitespace, or is in a string
+				if (!this.whitespaceRegEx.test(this.currChar) || this.isQuotes) {
+					this.currentStr.concat(this.currChar);
+				}
+				
 				//this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
 
+				this.checkTokenValidity();
 
 
 			} else {
@@ -152,5 +159,9 @@ class Lexer extends Component {
 			//gotten all its characters 
 			//(like a keyword)
 		}
+	}
+
+	private tokenize() {
+
 	}
 }
