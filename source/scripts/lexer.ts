@@ -70,7 +70,7 @@ class Lexer extends Component {
 			//in any part of the grammer, otherwise the lexer throws an error
 			if (this.fullGrammarCharRegEx.test(this.currChar) || this.whitespaceRegEx.test(this.currChar)) {
 				this.currentStr.concat(this.currChar);
-				this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
+				//this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
 
 			} else {
 				this.err("(" + this.currLine + ":" + this.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
