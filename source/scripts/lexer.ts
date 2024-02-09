@@ -72,6 +72,8 @@ class Lexer extends Component {
 				this.currentStr.concat(this.currChar);
 				//this.info("char [ " + this.currChar + " ] found at (" + this.currLine + ":" + this.currPos + ")");
 
+
+
 			} else {
 				this.err("(" + this.currLine + ":" + this.currPos + ") Unrecognized token: " + sourceCode.charAt(this.charStreamPos));
 				var token: Token = {
@@ -92,5 +94,63 @@ class Lexer extends Component {
 
 		return this.tokens;
 	}
-}
 
+	private checkTokenValidity() {
+		if (this.symbolsRegEx.test(this.currentStr)) {
+			switch (this.currentStr) {
+				case '{': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '}': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '(': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case ')': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '+': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '=': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '"': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '==': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+				case '!=': {
+					this.lastValidToken = this.currentStr;
+					this.lastValidEnd = this.currPos;
+					break;
+				}
+			}
+		}
+		else {
+			//do nothing
+			//if a string isn't a valid token, 
+			//it's possible that it hasn't 
+			//gotten all its characters 
+			//(like a keyword)
+		}
+	}
+}
