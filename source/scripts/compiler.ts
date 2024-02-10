@@ -8,6 +8,7 @@ class Compiler extends Component {
     public sourceCode: string;
 
     private reachedEOF: boolean = false;
+    private caughtError: boolean = false;
 
     private _Lexer : Lexer;
 
@@ -23,7 +24,16 @@ class Compiler extends Component {
 
     public compile() {
         this.currentProgram++;
-        var lexOut: Array<Token> = this._Lexer.lex();
-        console.log(lexOut);
+        var lexOut = this._Lexer.lex();
+        var tokens = lexOut.tokens;
+        this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings");
+        if (lexOut.errors > 0) {
+            this.caughtError = true;
+        }
+    }
+
+    private reset() {
+        this._Lexer.reset();
+        this.caughtError = false;
     }
 }

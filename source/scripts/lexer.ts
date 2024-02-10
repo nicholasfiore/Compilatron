@@ -93,6 +93,14 @@ class Lexer extends Component {
 		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
 
 			this.currChar = sourceCode.charAt(this.currStreamPos);
+
+			/* initial check for entering a comment */
+			if (this.currChar === "/") {
+				if (sourceCode.charAt(this.currStreamPos + 1) === "*") {
+					this.inComment = true;
+				}
+			}
+
 			/* 
 				This initial if statement is for deciding whether or not to consume 
 					the current input and create a token
@@ -109,36 +117,61 @@ class Lexer extends Component {
 			// if ((this.partialSymRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
 			// || this.whitespaceRegEx.test(this.currChar))
 			// && (this.currentStr !== "")) 
-			
-			if (this.currentStr !== "") {
-				if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
-					if (this.currentStr === "!" && this.currChar !== "=") {
+			if (!this.inComment) { //everything inside a comment is ignored
+				if (this.currentStr !== "") {
+					if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
+						if (this.currentStr === "!" && this.currChar !== "=") {
+							this.tokenize();
+						} else if (this.currentStr === "=" && this.currChar !== "=") {
+							this.tokenize();
+						} else {
+							this.checkTokenValidity();
+						}
+					} else if (this.partialSymRegEx.test(this.currChar)) {
 						this.tokenize();
-					} else if (this.currentStr === "=" && this.currChar !== "=") {
+					} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 						this.tokenize();
-					} else {
-						this.checkTokenValidity();
+					} else if (this.whitespaceRegEx.test(this.currChar)) {
+						if (this.inQuotes) {
+							this.tokenize();
+						} else {
+							this.checkTokenValidity();
+						}
 					}
-				} else if (this.partialSymRegEx.test(this.currChar)) {
-					this.tokenize();
-				} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
-					this.tokenize();
-				} else if (this.whitespaceRegEx.test(this.currChar)) {
-					if (this.inQuotes) {
-						this.tokenize();
-					} else {
-						this.checkTokenValidity();
-					}
+				} else {
+					this.checkTokenValidity();
 				}
 			} else {
-				this.checkTokenValidity();
+				//logic if inside a comment
+				if (this.currChar === "*") {
+					if (sourceCode.charAt(this.currStreamPos + 1) === "/") {
+						this.inComment = false;
+
+						//increment everything since we're "cheating" by looking a character ahead
+						this.currStreamPos++;
+						this.currPos++;
+					}
+				}
+				//increment display values for debugging
+				//since we never enter checkTokenValidity()
+				//to increment them. Comments can also contain
+				//newlines, so keeping track is important
+				this.currStreamPos++;
+				if (this.currChar === '\n') {
+					this.currLine++;
+					this.currPos = 1;
+					this.lastPos
+				} else {
+					this.currPos++;
+				}
 			}
+
 			infiniteProtection++;
 		}
 		//One final tokenization must occur when the EOP/EOF is reached
 		this.tokenize();
 
-		return this.tokens;
+		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings};
 	}
 
 	private checkTokenValidity() {
@@ -259,5 +292,9 @@ class Lexer extends Component {
 
 			this.reachedEOP = true;
 		}
+	}
+
+	public reset() {
+
 	}
 }
