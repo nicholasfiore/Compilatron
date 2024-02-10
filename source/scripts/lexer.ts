@@ -42,7 +42,7 @@ class Lexer extends Component {
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	//private symbolsRegEx = new RegExp('==|!=|{|}|\(|\)|\+|=|\$|"');
+	private symbolsRegEx = new RegExp('^==$|^!=$|^{$|^}$|^\\($|^\\)$|^\\+$|^=$|^\\$$|^"$');
 	private partialSymRegEx = new RegExp('[{}()+"$!=]');
 	private equalityRegEx = new RegExp('!=|==|[=!]')
 	private digitRegEx = new RegExp('[0-9]');
@@ -214,8 +214,8 @@ class Lexer extends Component {
 			this.lastValidToken = this.currentStr;
 			this.lastValidStart = this.lastStreamPos;
 			this.lastValidEnd = this.currStreamPos;
-		//} else if (this.symbolsRegEx.test(this.currentStr)) {
-		} else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
+		} else if (this.symbolsRegEx.test(this.currentStr)) {
+		// } else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
 			console.log("here2");
 			switch (this.currentStr) {
 				case '{': {
