@@ -44,6 +44,7 @@ class Lexer extends Component {
 	private idOrCharRegEx = new RegExp('[a-z]');
 	private symbolsRegEx = new RegExp('==|!=|[{}()+="$]');
 	private partialSymRegEx = new RegExp('[{}()+="$!]');
+	private equalityRegEx = new RegExp('!=|==')
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -112,10 +113,8 @@ class Lexer extends Component {
 				if (this.partialSymRegEx.test(this.currChar)) {
 					if (this.partialSymRegEx.test(sourceCode.charAt(this.currStreamPos - 1)) || sourceCode.charAt(this.currStreamPos - 1) === null) {
 						if (this.symbolCharsLexed < 2) {
-							if (sourceCode.charAt(this.currStreamPos - 1) === "=" && this.currChar === "=") {
-								this.checkTokenValidity();
-							} else if (sourceCode.charAt(this.currStreamPos - 1) === "!" && this.currChar === "=") {
-								this.checkTokenValidity();
+							if (this.equalityRegEx.test(sourceCode.charAt(this.currStreamPos - 1) + this.currChar)) {
+								
 							} else {
 								this.tokenize();
 							}
