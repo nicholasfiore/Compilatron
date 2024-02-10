@@ -29,7 +29,7 @@ class Lexer extends Component {
 	private isComment: boolean;
 	private isCharOrDigit: boolean;
 
-	private reachedEOP;
+	private reachedEOP: boolean;
 
 	private tokens: Array<Token>;
 
@@ -43,8 +43,8 @@ class Lexer extends Component {
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
 	private symbolsRegEx = new RegExp('==|!=|[{}()+="$]');
-	private partialSymRegEx = new RegExp('[{}()+="$!]');
-	private equalityRegEx = new RegExp('!=|==')
+	private partialSymRegEx = new RegExp('[{}()+"$!=]');
+	private equalityRegEx = new RegExp('!=|==|[=!]')
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -91,6 +91,7 @@ class Lexer extends Component {
 		//main lexing loop
 		var infiniteProtection: number = 0;
 		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
+
 			this.currChar = sourceCode.charAt(this.currStreamPos);
 			/* 
 				This initial if statement is for deciding whether or not to consume 
@@ -110,20 +111,16 @@ class Lexer extends Component {
 			// && (this.currentStr !== "")) 
 			
 			if (this.currentStr !== "") {
-				if (this.partialSymRegEx.test(this.currChar)) {
-					if (this.partialSymRegEx.test(sourceCode.charAt(this.currStreamPos - 1)) || sourceCode.charAt(this.currStreamPos - 1) === null) {
-						if (this.symbolCharsLexed < 2) {
-							if (this.equalityRegEx.test(sourceCode.charAt(this.currStreamPos - 1) + this.currChar)) {
-								
-							} else {
-								this.tokenize();
-							}
-						} else {
-							this.tokenize();
-						}
-					} else {
+				if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
+					if (this.currentStr === "!" && this.currChar == "!") {
 						this.tokenize();
+					} else if (this.currentStr === "=" && this.currChar == "!") {
+						this.tokenize();
+					} else {
+						this.checkTokenValidity();
 					}
+				} else if (this.partialSymRegEx.test(this.currChar)) {
+					this.tokenize();
 				} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 					this.tokenize();
 				} else if (this.whitespaceRegEx.test(this.currChar)) {
@@ -146,7 +143,7 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		console.log(this.currentStr)
+
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
@@ -189,7 +186,7 @@ class Lexer extends Component {
 					this.lastValidKind = "EOP";
 					break;
 				}
-				default: {}
+				
 			}
 			this.lastValidToken = this.currentStr;
 			this.lastValidStart = this.lastStreamPos;
@@ -254,9 +251,12 @@ class Lexer extends Component {
 		this.lastStreamPos = this.currStreamPos;
 		this.currentStr = "";
 
+		this.lastValidToken = "";
+
 		this.symbolCharsLexed = 0;
 
 		if (token.kind === "EOP") {
+
 			this.reachedEOP = true;
 		}
 	}
