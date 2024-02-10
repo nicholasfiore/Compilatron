@@ -43,7 +43,7 @@ class Lexer extends Component {
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
 	private symbolsRegEx = new RegExp('==|!=|[{}()+="$]');
-	private partialSymRegEx = new RegExp('[{}()+="$!]')
+	private partialSymRegEx = new RegExp('[{}()+="$!]');
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -109,12 +109,30 @@ class Lexer extends Component {
 			// && (this.currentStr !== "")) 
 			
 			if (this.currentStr !== "") {
-				if (this.symbolsRegEx.test(this.currChar)) {
-
+				if (this.partialSymRegEx.test(this.currChar)) {
+					if (this.partialSymRegEx.test(sourceCode.charAt(this.currStreamPos - 1)) || sourceCode.charAt(this.currStreamPos - 1) === null) {
+						if (this.symbolCharsLexed < 2) {
+							if (sourceCode.charAt(this.currStreamPos - 1) === "=" && this.currChar === "=") {
+								this.checkTokenValidity();
+							} else if (sourceCode.charAt(this.currStreamPos - 1) === "!" && this.currChar === "=") {
+								this.checkTokenValidity();
+							} else {
+								this.tokenize();
+							}
+						} else {
+							this.tokenize();
+						}
+					} else {
+						this.tokenize();
+					}
 				} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
-
+					this.tokenize();
 				} else if (this.whitespaceRegEx.test(this.currChar)) {
-
+					if (this.inQuotes) {
+						this.tokenize();
+					} else {
+						this.checkTokenValidity();
+					}
 				}
 			} else {
 				this.checkTokenValidity();
@@ -152,10 +170,6 @@ class Lexer extends Component {
 					this.lastValidKind = "SYM_ADD";
 					break;
 				}
-				case '=': {
-					this.lastValidKind = "SYM_ASSIGN";
-					break;
-				}
 				case '"': {
 					this.lastValidKind = "SYM_QUOTE";
 					break;
@@ -166,6 +180,10 @@ class Lexer extends Component {
 				}
 				case '!=': {
 					this.lastValidKind = "SYM_IS_NOT_EQUAL";
+					break;
+				}
+				case '=': {
+					this.lastValidKind = "SYM_ASSIGN";
 					break;
 				}
 				case '$': { //special symbol
@@ -179,6 +197,8 @@ class Lexer extends Component {
 			this.lastValidEnd = this.currStreamPos;
 
 			this.symbolCharsLexed++;
+		} else if (this.currentStr === "!") {
+
 		} else if (this.whitespaceRegEx.test(this.currentStr)) {
 			if (this.isQuotes && this.currentStr == " ") {
 				this.lastValidKind = "CHAR";
