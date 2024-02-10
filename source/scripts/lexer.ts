@@ -38,7 +38,7 @@ class Lexer extends Component {
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
-	private whitespaceRegEx = new RegExp('\s');
+	private whitespaceRegEx = new RegExp(/\s/);
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
@@ -176,7 +176,6 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		console.log(this.currentStr);
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
@@ -235,7 +234,7 @@ class Lexer extends Component {
 				this.lastValidStart = this.lastStreamPos;
 				this.lastValidEnd = this.currStreamPos;
 			}
-			//if not in quotes, 
+			//if not in quotes, ignore
 		}
 		else {
 			//do nothing
@@ -258,7 +257,9 @@ class Lexer extends Component {
 
 	private tokenize() {
 		var token: Token;
-		if (this.lastValidToken === "") {
+		if (this.whitespaceRegEx.test(this.currentStr)) {
+			//if the string is just a whitespace character, toss it
+		} else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
 			//throw an error
 			token = {
@@ -288,8 +289,7 @@ class Lexer extends Component {
 
 		this.symbolCharsLexed = 0;
 
-		if (token.kind === "EOP") {
-
+		if (token !== undefined && token.kind === "EOP") {
 			this.reachedEOP = true;
 		}
 	}
