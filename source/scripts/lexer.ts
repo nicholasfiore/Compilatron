@@ -38,11 +38,11 @@ class Lexer extends Component {
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
-	private whitespaceRegEx = new RegExp(/\s/);
+	private whitespaceRegEx = new RegExp('\s');
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	private symbolsRegEx = new RegExp('==|!=|[{}()+="$]');
+	//private symbolsRegEx = new RegExp('==|!=|{|}|\(|\)|\+|=|\$|"');
 	private partialSymRegEx = new RegExp('[{}()+"$!=]');
 	private equalityRegEx = new RegExp('!=|==|[=!]')
 	private digitRegEx = new RegExp('[0-9]');
@@ -90,8 +90,8 @@ class Lexer extends Component {
 
 		//main lexing loop
 		var infiniteProtection: number = 0;
-		while(!this.reachedEOP && sourceCode.charAt(this.currStreamPos) && !(infiniteProtection >= 1000)) {
-
+		while(!this.reachedEOP && this.currStreamPos < sourceCode.length && !(infiniteProtection >= 1000)) {
+			
 			this.currChar = sourceCode.charAt(this.currStreamPos);
 
 			/* initial check for entering a comment */
@@ -119,25 +119,24 @@ class Lexer extends Component {
 			// && (this.currentStr !== "")) 
 			if (!this.inComment) { //everything inside a comment is ignored
 				if (this.currentStr !== "") {
-					if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
+					if (this.whitespaceRegEx.test(this.currChar)) {
+						console.log("here1");
+						this.tokenize();
+					}
+					else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
 						if (this.currentStr === "!" && this.currChar !== "=") {
 							this.tokenize();
 						} else if (this.currentStr === "=" && this.currChar !== "=") {
 							this.tokenize();
 						} else {
 							this.checkTokenValidity();
+							//this.tokenize();
 						}
 					} else if (this.partialSymRegEx.test(this.currChar)) {
 						this.tokenize();
 					} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 						this.tokenize();
-					} else if (this.whitespaceRegEx.test(this.currChar)) {
-						if (this.inQuotes) {
-							this.tokenize();
-						} else {
-							this.checkTokenValidity();
-						}
-					}
+					} 
 				} else {
 					this.checkTokenValidity();
 				}
@@ -176,7 +175,48 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		if (this.symbolsRegEx.test(this.currentStr)) {
+		console.log(this.currentStr);
+		if (this.keywordRegEx.test(this.currentStr)) {
+			switch (this.currentStr) {
+				case 'print': {
+					this.lastValidKind = "PRINT"
+					break;
+				}
+				case 'while': {
+					this.lastValidKind = "WHILE"
+					break;
+				}
+				case 'if': {
+					this.lastValidKind = "IF"
+					break;
+				}
+				case 'int': {
+					this.lastValidKind = "I_TYPE"
+					break;
+				}
+				case 'string': {
+					this.lastValidKind = "S_TYPE"
+					break;
+				}
+				case 'boolean': {
+					this.lastValidKind = "B_TYPE"
+					break;
+				}
+				case 'false': {
+					this.lastValidKind = "FALSE"
+					break;
+				}
+				case 'true': {
+					this.lastValidKind = "TRUE"
+					break;
+				}
+			}
+			this.lastValidToken = this.currentStr;
+			this.lastValidStart = this.lastStreamPos;
+			this.lastValidEnd = this.currStreamPos;
+		//} else if (this.symbolsRegEx.test(this.currentStr)) {
+		} else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
+			console.log("here2");
 			switch (this.currentStr) {
 				case '{': {
 					this.lastValidKind = "SYM_L_BRACE";
@@ -225,8 +265,6 @@ class Lexer extends Component {
 			this.lastValidEnd = this.currStreamPos;
 
 			this.symbolCharsLexed++;
-		} else if (this.currentStr === "!") {
-
 		} else if (this.whitespaceRegEx.test(this.currentStr)) {
 			if (this.isQuotes && this.currentStr == " ") {
 				this.lastValidKind = "CHAR";
@@ -244,6 +282,8 @@ class Lexer extends Component {
 			//(like a keyword)
 		}
 
+		console.log(this.lastValidToken);
+
 		//increment display values for debugging
 		this.currStreamPos++;
 		if (this.currChar === '\n') {
@@ -258,6 +298,7 @@ class Lexer extends Component {
 	private tokenize() {
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr)) {
+			console.log("reached");
 			//if the string is just a whitespace character, toss it
 		} else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
