@@ -24,5 +24,6 @@ class Compiler extends Component {
     public compile() {
         this.currentProgram++;
         var lexOut: Array<Token> = this._Lexer.lex();
+        console.log(lexOut);
     }
 }

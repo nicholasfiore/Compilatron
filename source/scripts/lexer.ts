@@ -12,7 +12,7 @@ class Lexer extends Component {
 
 	private currLine: number;
     private currPos: number;
-	
+	private lastPos: number;
 
 	private warnings: number;
 	private errors: number;
@@ -38,11 +38,12 @@ class Lexer extends Component {
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
-	private whitespaceRegEx = new RegExp(/\s/);
+	private whitespaceRegEx = new RegExp('\s');
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	private symbolsRegEx = new RegExp('==|!=|[{|}|(|)|+|=|"|!|$]');
+	private symbolsRegEx = new RegExp('==|!=|[{|}|(|)|+|=|"|$]');
+	private partialSymRegEx = new RegExp('[{|}|(|)|+|=|"|$|!]')
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -61,7 +62,7 @@ class Lexer extends Component {
 		//unfortunately, debugging coordinates should start at one, unlike arrays
 		this.currLine = 1;
 		this.currPos = 1;
-		
+		this.lastPos = 1;
 
 		this.errors = 0;
 		this.warnings = 0;
@@ -103,24 +104,30 @@ class Lexer extends Component {
 					If currStr is empty, there hasn't been any new input scanned, so move
 					on
 			*/
-			console.log(this.symbolsRegEx.test(this.currChar));
-			if ((this.symbolsRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
+			if ((this.partialSymRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
 			|| this.whitespaceRegEx.test(this.currChar))
 			&& (this.currentStr !== "")) {
+				//Special check case
+				//these are the only two symbols that take 2 characters outside of
+				//comment delimiters
+				// if (((this.currChar === "=" && sourceCode.charAt(this.currStreamPos - 1) === "!") 
+				// || (this.currChar === "=" && sourceCode.charAt(this.currStreamPos - 1) === "="))
+				// && this.symbolCharsLexed < 2) {
+				// 	this.checkTokenValidity()
+				// } else {
+				// 	this.tokenize();
+				// }
 				this.tokenize();
+				
 			} else {
+				
 				this.checkTokenValidity();
 				
-				this.currStreamPos++;
-				if (this.currChar === '\n') {
-					this.currLine++;
-					this.currPos = 1;
-				} else {
-					this.currPos++;
-				}
 			}
 			infiniteProtection++;
 		}
+		//One final tokenization must occur when the EOP/EOF is reached
+		this.tokenize();
 
 		return this.tokens;
 	}
@@ -128,8 +135,8 @@ class Lexer extends Component {
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
 		console.log(this.currentStr)
-		console.log(this.symbolsRegEx.test(this.currentStr));
-		
+		console.log(this.symbolsRegEx.test(this.currentStr))
+		console.log(this.whitespaceRegEx.test(this.currentStr))
 		if (this.symbolsRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case '{': {
@@ -175,6 +182,16 @@ class Lexer extends Component {
 			this.lastValidToken = this.currentStr;
 			this.lastValidStart = this.lastStreamPos;
 			this.lastValidEnd = this.currStreamPos;
+
+			this.symbolCharsLexed++;
+		} else if (this.whitespaceRegEx.test(this.currentStr)) {
+			if (this.isQuotes && this.currentStr == " ") {
+				this.lastValidKind = "CHAR";
+				this.lastValidToken = this.currentStr;
+				this.lastValidStart = this.lastStreamPos;
+				this.lastValidEnd = this.currStreamPos;
+			}
+			//if not in quotes, 
 		}
 		else {
 			//do nothing
@@ -182,6 +199,16 @@ class Lexer extends Component {
 			//it's possible that it hasn't 
 			//gotten all its characters yet
 			//(like a keyword)
+		}
+
+		//increment display values for debugging
+		this.currStreamPos++;
+		if (this.currChar === '\n') {
+			this.currLine++;
+			this.currPos = 1;
+			this.lastPos
+		} else {
+			this.currPos++;
 		}
 	}
 
@@ -208,9 +235,15 @@ class Lexer extends Component {
 				position: this.lastValidStart
 			}
 			this.tokens.push(token);
-			this.info(token.kind + "[ " + token.value + "] found at (" + token.line + ":" + token.position + ")");
+			this.info(token.kind + " [ " + token.value + " ] found at (" + token.line + ":" + token.position + ")");
 		}
 		this.lastStreamPos = this.currStreamPos;
 		this.currentStr = "";
+
+		this.symbolCharsLexed = 0;
+
+		if (token.kind === "EOP") {
+			this.reachedEOP = true;
+		}
 	}
 }
