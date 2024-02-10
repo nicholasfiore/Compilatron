@@ -112,9 +112,9 @@ class Lexer extends Component {
 			
 			if (this.currentStr !== "") {
 				if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
-					if (this.currentStr === "!" && this.currChar == "!") {
+					if (this.currentStr === "!" && this.currChar !== "=") {
 						this.tokenize();
-					} else if (this.currentStr === "=" && this.currChar == "!") {
+					} else if (this.currentStr === "=" && this.currChar !== "=") {
 						this.tokenize();
 					} else {
 						this.checkTokenValidity();
