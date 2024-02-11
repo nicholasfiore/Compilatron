@@ -90,11 +90,11 @@ class Lexer extends Component {
 		var sourceCode = this._Compiler.sourceCode;
 		// Trim the leading and trailing spaces.
 		sourceCode = Utils.trim(sourceCode);
-
+		
 		//main lexing loop
 		var infiniteProtection: number = 0;
 		while(!this.reachedEOP && this.currStreamPos < sourceCode.length && !(infiniteProtection >= 1000)) {
-			
+			//console.log ("Curr stream pos: " + this.currStreamPos);
 			this.currChar = sourceCode.charAt(this.currStreamPos);
 			//console.log(this.whitespaceRegEx.test(this.currChar));
 			/* initial check for entering a comment */
@@ -206,7 +206,7 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		console.log(this.currentStr);
+		//console.log(this.currentStr);
 		if (this.keywordRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
 				case 'print': {
@@ -326,7 +326,7 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		console.log("tokenizing");
+		//console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr)) {
 			//console.log("reached");
@@ -343,7 +343,7 @@ class Lexer extends Component {
 			this.tokens.push(token);
 			this.err("invalid token (" + token.line + ":" + token.position + "): " + token.value);
 			this.errors++;
-			this.lastValidEnd = this.currStreamPos;
+			this.lastValidEnd = this.currStreamPos - 1;
 		} else {
 			//else, a valid token was found
 			token = {
