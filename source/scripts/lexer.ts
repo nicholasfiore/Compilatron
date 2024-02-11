@@ -226,7 +226,6 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		console.log(this.currentStr)
 		//console.log(this.currentStr);
 		if (this.keywordRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
@@ -348,7 +347,6 @@ class Lexer extends Component {
 
 	private tokenize() {
 		console.log("tokenizing");
-		console.log(this.currentStr);
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) /*&& !this.inQuotes*/) {
 			console.log("reached");
