@@ -51,7 +51,8 @@ O ::== + | -
         }
 
 		document.getElementById("btnCompile").addEventListener("click", function() {
-			initializeCompiler();
+			document.getElementById('taOutput').value = "";
+            initializeCompiler();
 		})
 	</script>
 </body>
