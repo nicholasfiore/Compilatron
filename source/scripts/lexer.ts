@@ -41,7 +41,9 @@ class Lexer extends Component {
 	private whitespaceRegEx = new RegExp(/\s/g);
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
+	
 	private idOrCharRegEx = new RegExp('[a-z]');
+	
 	private symbolsRegEx = new RegExp('^==$|^!=$|^[{}()+="$]$');
 	private partialSymRegEx = new RegExp('^[{}()+"$!=]$');
 	private notAnEqualitySymRegEx = new RegExp('^[^!=]$')
@@ -84,7 +86,6 @@ class Lexer extends Component {
 
 	
 	public lex() {
-		console.log(this.whitespaceRegEx.test(" "));
 		// Grab the "raw" source code.
 		var sourceCode = this._Compiler.sourceCode;
 		// Trim the leading and trailing spaces.
@@ -95,7 +96,7 @@ class Lexer extends Component {
 		while(!this.reachedEOP && this.currStreamPos < sourceCode.length && !(infiniteProtection >= 1000)) {
 			
 			this.currChar = sourceCode.charAt(this.currStreamPos);
-			console.log(this.whitespaceRegEx.test(this.currChar));
+			//console.log(this.whitespaceRegEx.test(this.currChar));
 			/* initial check for entering a comment */
 			if (this.currChar === "/") {
 				if (sourceCode.charAt(this.currStreamPos + 1) === "*") {
@@ -313,10 +314,10 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		console.log("tokenizing");
+		//console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr)) {
-			console.log("reached");
+			//console.log("reached");
 			//if the string is just a whitespace character, toss it
 		} else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
