@@ -20,7 +20,7 @@ class Lexer extends Component {
 	private currChar: string;
 	private currentStr: string;
 
-	private symbolCharsLexed: number; //keeps track of how many characters have been parsed since a symbol or part of a symbol was found (symbols can only have 2 chars)
+	private charsLexed: number; //keeps track of how many characters have been parsed since a symbol or part of a symbol was found (symbols can only have 2 chars)
 
 	private currStreamPos: number; //position in the unformatted character stream (the string itself)
 	private lastStreamPos: number;
@@ -48,7 +48,7 @@ class Lexer extends Component {
 	private partialSymRegEx = new RegExp('^[{}()+"$!=]$');
 	private notAnEqualitySymRegEx = new RegExp('^[^!=]$')
 
-	private digitRegEx = new RegExp('[0-9]');
+	private digitRegEx = new RegExp('^[0-9]$');
 	//char goes here, but it's already accounted for
 
 	constructor(comp: Compiler) {
@@ -61,7 +61,7 @@ class Lexer extends Component {
 		this.lastValidStart = 0;
 		this.lastValidEnd = 0;
 
-		this.symbolCharsLexed = 0;
+		this.charsLexed = 0;
 
 		//unfortunately, debugging coordinates should start at one, unlike arrays
 		this.currLine = 1;
@@ -122,37 +122,49 @@ class Lexer extends Component {
 			if (!this.inComment) { //everything inside a comment is ignored
 				if (this.currentStr !== "") {
 					if (this.whitespaceRegEx.test(this.currChar)) {
-						console.log("here1");
+						//console.log("here1");
 						this.tokenize();
-					// } else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
-					// 	if (this.currentStr === "!" && this.currChar !== "=") {
+					} else if (this.partialSymRegEx.test(this.currentStr)) {
+						//symbols should always be checked for 2 characters, just in case
+						this.checkTokenValidity();
+					} else if (this.digitRegEx.test(this.currentStr)) {
+						//digits are ONLY ever one character
+						this.tokenize();
+					} else if (this.partialSymRegEx.test(this.currChar)) {
+						//if the currently lexed string isn't a symbol, 
+						//we can just tokenize when hitting a symbol
+						this.tokenize();
+
+					// // } else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
+					// // 	if (this.currentStr === "!" && this.currChar !== "=") {
+					// // 		this.tokenize();
+					// // 	} else if (this.currentStr === "=" && this.currChar !== "=") {
+					// // 		this.tokenize();
+					// // 	} else {
+					// // 		this.checkTokenValidity();
+					// // 		//this.tokenize();
+					// // 	}
+					// } else if(this.partialSymRegEx.test(this.currChar)) {
+					// 	if (this.notAnEqualitySymRegEx.test(this.currentStr)) {
+					// 		//non-equality symbols are single characters
+					// 		console.log('test');
 					// 		this.tokenize();
-					// 	} else if (this.currentStr === "=" && this.currChar !== "=") {
-					// 		this.tokenize();
-					// 	} else {
-					// 		this.checkTokenValidity();
-					// 		//this.tokenize();
 					// 	}
-					} else if(this.partialSymRegEx.test(this.currChar)) {
-						if (this.notAnEqualitySymRegEx.test(this.currentStr)) {
-							//non-equality symbols are single characters
-							this.tokenize();
-						}
-						else if (this.currChar === '!' || this.currChar === "=") {
-							if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
-								if (this.symbolCharsLexed < 2) {
-									this.checkTokenValidity();
-								} else {
-									this.tokenize();
-								}
-							} else {
-								this.tokenize();
-							}
-						} else {
-							this.tokenize();
-						}
-					// } else if (this.partialSymRegEx.test(this.currChar)) {
-					// 	this.tokenize();
+					// 	else if (this.currChar === '!' || this.currChar === "=") {
+					// 		if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
+					// 			if (this.symbolCharsLexed < 2) {
+					// 				this.checkTokenValidity();
+					// 			} else {
+					// 				this.tokenize();
+					// 			}
+					// 		} else {
+					// 			this.tokenize();
+					// 		}
+					// 	} else {
+					// 		this.tokenize();
+					// 	}
+					// // } else if (this.partialSymRegEx.test(this.currChar)) {
+					// // 	this.tokenize();
 					} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 						this.tokenize();
 					} 
@@ -282,7 +294,6 @@ class Lexer extends Component {
 			this.lastValidStart = this.lastStreamPos;
 			this.lastValidEnd = this.currStreamPos;
 
-			this.symbolCharsLexed++;
 		} else if (this.whitespaceRegEx.test(this.currentStr)) {
 			if (this.isQuotes && this.currentStr == " ") {
 				this.lastValidKind = "CHAR";
@@ -301,6 +312,7 @@ class Lexer extends Component {
 		}
 
 		//console.log(this.lastValidToken);
+		this.charsLexed = this.currentStr.length;
 
 		//increment display values for debugging
 		this.currStreamPos++;
@@ -314,7 +326,7 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		//console.log("tokenizing");
+		console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr)) {
 			//console.log("reached");
@@ -331,6 +343,7 @@ class Lexer extends Component {
 			this.tokens.push(token);
 			this.err("invalid token (" + token.line + ":" + token.position + "): " + token.value);
 			this.errors++;
+			this.lastValidEnd = this.currStreamPos;
 		} else {
 			//else, a valid token was found
 			token = {
@@ -342,12 +355,15 @@ class Lexer extends Component {
 			this.tokens.push(token);
 			this.info(token.kind + " [ " + token.value + " ] found at (" + token.line + ":" + token.position + ")");
 		}
+
+		this.currStreamPos = this.lastValidEnd + 1;
 		this.lastStreamPos = this.currStreamPos;
+		
 		this.currentStr = "";
 
 		this.lastValidToken = "";
 
-		this.symbolCharsLexed = 0;
+		this.charsLexed = this.currentStr.length;
 
 		if (token !== undefined && token.kind === "EOP") {
 			this.reachedEOP = true;
