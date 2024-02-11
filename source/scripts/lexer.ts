@@ -133,14 +133,23 @@ class Lexer extends Component {
 					// 	}
 					} else if(this.partialSymRegEx.test(this.currChar)) {
 						if (this.currChar === '!' || this.currChar === "=") {
+							console.log("if 1")
 							if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
+								console.log("if 2")
 								if (this.symbolCharsLexed < 2) {
+									console.log("if 3")
 									this.checkTokenValidity();
+								} else {
+									this.tokenize();
 								}
+							} else {
+								this.tokenize();
 							}
+						} else {
+							this.tokenize();
 						}
-					} else if (this.partialSymRegEx.test(this.currChar)) {
-						this.tokenize();
+					// } else if (this.partialSymRegEx.test(this.currChar)) {
+					// 	this.tokenize();
 					} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 						this.tokenize();
 					} 
@@ -223,7 +232,6 @@ class Lexer extends Component {
 			this.lastValidEnd = this.currStreamPos;
 		} else if (this.symbolsRegEx.test(this.currentStr)) {
 		// } else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
-			console.log("here2");
 			switch (this.currentStr) {
 				case '{': {
 					this.lastValidKind = "SYM_L_BRACE";
@@ -289,7 +297,7 @@ class Lexer extends Component {
 			//(like a keyword)
 		}
 
-		console.log(this.lastValidToken);
+		//console.log(this.lastValidToken);
 
 		//increment display values for debugging
 		this.currStreamPos++;
@@ -303,6 +311,7 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
+		console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr)) {
 			console.log("reached");
