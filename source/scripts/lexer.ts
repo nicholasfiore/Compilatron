@@ -265,8 +265,7 @@ class Lexer extends Component {
 			this.lastValidToken = this.currentStr;
 			this.lastValidStart = this.lastStreamPos;
 			this.lastValidEnd = this.currStreamPos;
-		} else if (this.idOrCharRegEx) {
-			console.log("here")
+		} else if (this.idOrCharRegEx.test(this.currentStr)) {
 			if (!this.inQuotes) {
 				this.lastValidKind = "ID";
 				this.lastValidToken = this.currentStr;
@@ -327,7 +326,7 @@ class Lexer extends Component {
 			this.lastValidStart = this.lastStreamPos;
 			this.lastValidEnd = this.currStreamPos;
 
-		} else if (this.digitRegEx) {
+		} else if (this.digitRegEx.test(this.currentStr)) {
 				this.lastValidKind = "DIGIT";
 				this.lastValidToken = this.currentStr;
 				this.lastValidStart = this.lastStreamPos;
@@ -366,7 +365,6 @@ class Lexer extends Component {
 
 	private tokenize() {
 		console.log("tokenizing");
-		console.log(this.idOrCharRegEx.test(this.lastValidKind));
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) /*&& !this.inQuotes*/) {
 			//console.log("reached");
