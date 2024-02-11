@@ -38,7 +38,7 @@ class Lexer extends Component {
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
-	private whitespaceRegEx = new RegExp('\s');
+	private whitespaceRegEx = new RegExp(/\s/g);
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
@@ -84,6 +84,7 @@ class Lexer extends Component {
 
 	
 	public lex() {
+		console.log(this.whitespaceRegEx.test(" "));
 		// Grab the "raw" source code.
 		var sourceCode = this._Compiler.sourceCode;
 		// Trim the leading and trailing spaces.
@@ -94,7 +95,7 @@ class Lexer extends Component {
 		while(!this.reachedEOP && this.currStreamPos < sourceCode.length && !(infiniteProtection >= 1000)) {
 			
 			this.currChar = sourceCode.charAt(this.currStreamPos);
-
+			console.log(this.whitespaceRegEx.test(this.currChar));
 			/* initial check for entering a comment */
 			if (this.currChar === "/") {
 				if (sourceCode.charAt(this.currStreamPos + 1) === "*") {

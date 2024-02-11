@@ -17,7 +17,7 @@ class Compiler extends Component {
         super("Compiler");
         this.currentProgram = 0;
         
-        this.sourceCode = Utils.trim(source);
+        this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
         this._Lexer = new Lexer(this);
     }
