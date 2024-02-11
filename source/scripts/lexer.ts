@@ -43,7 +43,7 @@ class Lexer extends Component {
 	//private notInGrammerRegEx = new RegExp();
 	private whitespaceRegEx = new RegExp(/\s/g);
 
-	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
+	private keywordRegEx = new RegExp('^print$|^while$|^if$|^int$|^string$|^boolean$|^false$|^true$');
 	
 	private idOrCharRegEx = new RegExp('[a-z]');
 	
@@ -126,6 +126,9 @@ class Lexer extends Component {
 				if (this.currentStr !== "") {
 					if (this.whitespaceRegEx.test(this.currChar)) {
 						//console.log("here1");
+						this.tokenize();
+					} else if (this.whitespaceRegEx.test(this.currentStr)) {
+						//ensure that whitespace at the start of a string is thrown away
 						this.tokenize();
 					} else if (this.partialSymRegEx.test(this.currentStr)) {
 						//symbols should always be checked for 2 characters, just in case
@@ -223,6 +226,7 @@ class Lexer extends Component {
 
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
+		console.log(this.currentStr)
 		//console.log(this.currentStr);
 		if (this.keywordRegEx.test(this.currentStr)) {
 			switch (this.currentStr) {
@@ -343,11 +347,11 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		//console.log("tokenizing");
+		console.log("tokenizing");
 		var token: Token;
-		if (this.whitespaceRegEx.test(this.currentStr)) {
-			//console.log("reached");
-			//if the string is just a whitespace character, toss it
+		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
+			console.log("reached");
+			//if the string is just a whitespace character NOT IN A STRING, toss it
 		} else if (this.currStreamPos >= this.sourceCode.length && this.currentStr === "") {
 			//an empty string at the end of file means that everything up to the EOF has been tokenized
 			this.reachedEOF = true;

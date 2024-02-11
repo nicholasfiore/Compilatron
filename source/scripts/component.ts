@@ -16,7 +16,8 @@ class Component {
     //I couldn't think of a more succinct implementation that would prevent
     //redundant code throughout the project
     public log(args: string) {
-        console.log(args + "\n"); //includes non-null assertion
+        console.log(args + "\n");
+        (<HTMLInputElement>document.getElementById('taOutput')).value += args + "\n";
     }
     
     public info(args: string) {
