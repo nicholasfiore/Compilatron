@@ -2,6 +2,8 @@
 
 //lexer returns the token stream
 class Lexer extends Component {
+	private sourceCode: string;
+
 	private lastValidToken: string;
 	private lastValidKind: string;
 	private lastValidStart: number;
@@ -30,6 +32,7 @@ class Lexer extends Component {
 	private isCharOrDigit: boolean;
 
 	private reachedEOP: boolean;
+	private reachedEOF: boolean;
 
 	private tokens: Array<Token>;
 
@@ -51,10 +54,10 @@ class Lexer extends Component {
 	private digitRegEx = new RegExp('^[0-9]$');
 	//char goes here, but it's already accounted for
 
-	constructor(comp: Compiler) {
+	constructor(source: string) {
 		super("Lexer");
 
-		this._Compiler = comp;
+		this.sourceCode = Utils.trim(source);
 
 		this.lastValidToken = "";
 		this.lastValidKind = "";
@@ -87,19 +90,19 @@ class Lexer extends Component {
 	
 	public lex() {
 		// Grab the "raw" source code.
-		var sourceCode = this._Compiler.sourceCode;
+		console.log(this.sourceCode)
 		// Trim the leading and trailing spaces.
-		sourceCode = Utils.trim(sourceCode);
+		//this.sourceCode = Utils.trim(this.sourceCode);
 		
 		//main lexing loop
 		var infiniteProtection: number = 0;
-		while(!this.reachedEOP && this.currStreamPos < sourceCode.length && !(infiniteProtection >= 1000)) {
+		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 1000)) {
 			//console.log ("Curr stream pos: " + this.currStreamPos);
-			this.currChar = sourceCode.charAt(this.currStreamPos);
+			this.currChar = this.sourceCode.charAt(this.currStreamPos);
 			//console.log(this.whitespaceRegEx.test(this.currChar));
 			/* initial check for entering a comment */
 			if (this.currChar === "/") {
-				if (sourceCode.charAt(this.currStreamPos + 1) === "*") {
+				if (this.sourceCode.charAt(this.currStreamPos + 1) === "*") {
 					this.inComment = true;
 				}
 			}
@@ -151,7 +154,7 @@ class Lexer extends Component {
 					// 		this.tokenize();
 					// 	}
 					// 	else if (this.currChar === '!' || this.currChar === "=") {
-					// 		if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
+					// 		if (this.sourceCode.charAt(this.currStreamPos + 1) === "=") {
 					// 			if (this.symbolCharsLexed < 2) {
 					// 				this.checkTokenValidity();
 					// 			} else {
@@ -167,14 +170,18 @@ class Lexer extends Component {
 					// // 	this.tokenize();
 					} else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
 						this.tokenize();
-					} 
+					} else {
+						this.checkTokenValidity();
+					}
+				} else if (this.currStreamPos >= this.sourceCode.length) {
+					this.tokenize();
 				} else {
 					this.checkTokenValidity();
 				}
 			} else {
 				//logic if inside a comment
 				if (this.currChar === "*") {
-					if (sourceCode.charAt(this.currStreamPos + 1) === "/") {
+					if (this.sourceCode.charAt(this.currStreamPos + 1) === "/") {
 						this.inComment = false;
 
 						//increment everything since we're "cheating" by looking a character ahead
@@ -195,9 +202,19 @@ class Lexer extends Component {
 					this.currPos++;
 				}
 			}
+			
 
 			infiniteProtection++;
 		}
+		if (infiniteProtection >= 1000) {
+			console.log("WARNING: Infinite loop detected");
+		}
+
+		if (this.reachedEOF && !this.reachedEOP) {
+			this.warn("EOF reached before EOP ($)");
+			this.warnings++;
+		}
+
 		//One final tokenization must occur when the EOP/EOF is reached
 		this.tokenize();
 
@@ -331,6 +348,9 @@ class Lexer extends Component {
 		if (this.whitespaceRegEx.test(this.currentStr)) {
 			//console.log("reached");
 			//if the string is just a whitespace character, toss it
+		} else if (this.currStreamPos >= this.sourceCode.length && this.currentStr === "") {
+			//an empty string at the end of file means that everything up to the EOF has been tokenized
+			this.reachedEOF = true;
 		} else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
 			//throw an error

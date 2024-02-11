@@ -19,7 +19,7 @@ class Compiler extends Component {
         
         this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
-        this._Lexer = new Lexer(this);
+        this._Lexer = new Lexer(this.sourceCode);
     }
 
     public compile() {
