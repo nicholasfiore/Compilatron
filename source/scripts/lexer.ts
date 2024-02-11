@@ -427,8 +427,13 @@ class Lexer extends Component {
 
 		this.charsLexed = this.currentStr.length;
 
-		if (token !== undefined && token.kind === "EOP") {
-			this.reachedEOP = true;
+		if (token !== undefined) {
+			if (token.kind === "EOP") {
+				this.reachedEOP = true;
+			}
+			if (token.kind === "QUOTE") {
+				this.inQuotes = !this.inQuotes;
+			}
 		}
 	}
 
