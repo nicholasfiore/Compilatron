@@ -44,7 +44,8 @@ class Lexer extends Component {
 	private idOrCharRegEx = new RegExp('[a-z]');
 	private symbolsRegEx = new RegExp('^==$|^!=$|^[{}()+="$]$');
 	private partialSymRegEx = new RegExp('^[{}()+"$!=]$');
-	private equalityRegEx = new RegExp('!=|==|[=!]')
+	private notAnEqualitySymRegEx = new RegExp('^[^!=]$')
+
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
 
@@ -100,7 +101,6 @@ class Lexer extends Component {
 					this.inComment = true;
 				}
 			}
-
 			/* 
 				This initial if statement is for deciding whether or not to consume 
 					the current input and create a token
@@ -132,12 +132,13 @@ class Lexer extends Component {
 					// 		//this.tokenize();
 					// 	}
 					} else if(this.partialSymRegEx.test(this.currChar)) {
-						if (this.currChar === '!' || this.currChar === "=") {
-							console.log("if 1")
+						if (this.notAnEqualitySymRegEx.test(this.currentStr)) {
+							//non-equality symbols are single characters
+							this.tokenize();
+						}
+						else if (this.currChar === '!' || this.currChar === "=") {
 							if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
-								console.log("if 2")
 								if (this.symbolCharsLexed < 2) {
-									console.log("if 3")
 									this.checkTokenValidity();
 								} else {
 									this.tokenize();
