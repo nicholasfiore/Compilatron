@@ -41,7 +41,7 @@ class Lexer extends Component {
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
-	private whitespaceRegEx = new RegExp(/\s/g);
+	private whitespaceRegEx = new RegExp(/\s/);
 
 	private keywordRegEx = new RegExp('^print$|^while$|^if$|^int$|^string$|^boolean$|^false$|^true$');
 	
@@ -348,11 +348,12 @@ class Lexer extends Component {
 
 	private tokenize() {
 		console.log("tokenizing");
-		//console.log(this.whitespaceRegEx.test(this.currentStr));
+		console.log(this.currentStr);
 		var token: Token;
-		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
+		if (this.whitespaceRegEx.test(this.currentStr) /*&& !this.inQuotes*/) {
 			console.log("reached");
 			//if the string is just a whitespace character NOT IN A STRING, toss it
+			this.lastValidEnd = this.currStreamPos - 1;
 		} else if (this.currStreamPos >= this.sourceCode.length && this.currentStr === "") {
 			//an empty string at the end of file means that everything up to the EOF has been tokenized
 			this.reachedEOF = true;
