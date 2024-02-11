@@ -46,6 +46,10 @@ O ::== + | -
     </div>   
 
     <script>
+        window.onload = function () {
+            document.getElementById('taOutput').value = "";
+        }
+
 		document.getElementById("btnCompile").addEventListener("click", function() {
 			initializeCompiler();
 		})

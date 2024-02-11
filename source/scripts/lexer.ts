@@ -348,6 +348,7 @@ class Lexer extends Component {
 
 	private tokenize() {
 		console.log("tokenizing");
+		//console.log(this.whitespaceRegEx.test(this.currentStr));
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
 			console.log("reached");
