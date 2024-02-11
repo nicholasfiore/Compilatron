@@ -42,8 +42,8 @@ class Lexer extends Component {
 
 	private keywordRegEx = new RegExp('print|while|if|int|string|boolean|false|true');
 	private idOrCharRegEx = new RegExp('[a-z]');
-	private symbolsRegEx = new RegExp('^==$|^!=$|^{$|^}$|^\\($|^\\)$|^\\+$|^=$|^\\$$|^"$');
-	private partialSymRegEx = new RegExp('[{}()+"$!=]');
+	private symbolsRegEx = new RegExp('^==$|^!=$|^[{}()+="$]$');
+	private partialSymRegEx = new RegExp('^[{}()+"$!=]$');
 	private equalityRegEx = new RegExp('!=|==|[=!]')
 	private digitRegEx = new RegExp('[0-9]');
 	//char goes here, but it's already accounted for
@@ -122,15 +122,22 @@ class Lexer extends Component {
 					if (this.whitespaceRegEx.test(this.currChar)) {
 						console.log("here1");
 						this.tokenize();
-					}
-					else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
-						if (this.currentStr === "!" && this.currChar !== "=") {
-							this.tokenize();
-						} else if (this.currentStr === "=" && this.currChar !== "=") {
-							this.tokenize();
-						} else {
-							this.checkTokenValidity();
-							//this.tokenize();
+					// } else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
+					// 	if (this.currentStr === "!" && this.currChar !== "=") {
+					// 		this.tokenize();
+					// 	} else if (this.currentStr === "=" && this.currChar !== "=") {
+					// 		this.tokenize();
+					// 	} else {
+					// 		this.checkTokenValidity();
+					// 		//this.tokenize();
+					// 	}
+					} else if(this.partialSymRegEx.test(this.currChar)) {
+						if (this.currChar === '!' || this.currChar === "=") {
+							if (sourceCode.charAt(this.currStreamPos + 1) === "=") {
+								if (this.symbolCharsLexed < 2) {
+									this.checkTokenValidity();
+								}
+							}
 						}
 					} else if (this.partialSymRegEx.test(this.currChar)) {
 						this.tokenize();
