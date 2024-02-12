@@ -122,7 +122,7 @@ class Lexer extends Component {
 			// if ((this.partialSymRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
 			// || this.whitespaceRegEx.test(this.currChar))
 			// && (this.currentStr !== "")) 
-			console.log(this.currentStr)
+			//console.log(this.currentStr)
 			if (!this.inComment) { //everything inside a comment is ignored
 				if (this.currentStr !== "") {
 					if (this.inQuotes) {
@@ -240,9 +240,9 @@ class Lexer extends Component {
 		}
 
 		//One final tokenization must occur when the EOP/EOF is reached
-		this.tokenize();
+		//this.tokenize();
 
-		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings};
+		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings, EOF: this.reachedEOF};
 	}
 
 	private checkTokenValidity() {
@@ -387,7 +387,7 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		console.log("tokenizing");
+		//console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
 			
@@ -438,6 +438,9 @@ class Lexer extends Component {
 		if (token !== undefined) {
 			if (token.kind === "EOP") {
 				this.reachedEOP = true;
+				if (!this.sourceCode.charAt(this.currStreamPos + 1)) {
+					this.reachedEOF = true;
+				}
 			}
 			if (token.kind === "SYM_QUOTE") {
 				this.inQuotes = !this.inQuotes;
@@ -447,6 +450,9 @@ class Lexer extends Component {
 	}
 
 	public reset() {
-
+		this.errors = 0;
+		this.warnings = 0;
+		this.tokens = new Array<Token>;
+		this.reachedEOP = false;
 	}
 }
