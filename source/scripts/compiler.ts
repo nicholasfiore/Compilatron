@@ -28,7 +28,7 @@ class Compiler extends Component {
             this.info("Lexing program " + this.currentProgram);
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
-            this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings");
+            this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
             if (lexOut.errors > 0) {
                 this.caughtError = true;
             }
