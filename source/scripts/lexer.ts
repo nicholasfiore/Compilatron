@@ -386,6 +386,13 @@ class Lexer extends Component {
 				this.lastValidStart = this.lastStreamPos;
 				this.lastValidEnd = this.currStreamPos;
 			}
+			else if (this.currentStr === "\"") {
+				//necessary to exit quotes
+				this.lastValidKind = "SYM_QUOTE";
+				this.lastValidToken = this.currentStr;
+				this.lastValidStart = this.lastStreamPos;
+				this.lastValidEnd = this.currStreamPos;
+			}
 			else {
 				//any other character passed is considered an invalid token
 
@@ -432,12 +439,17 @@ class Lexer extends Component {
 			// }
 			//this.tokens.push(token);
 			if (!this.inQuotes) {
-				this.err("invalid token at (" + (this.currPos - (this.currentStr.length + 1)) + ":" + this.currLine + "): " + this.currentStr);
+				this.err("invalid token at ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + this.currentStr);
 				this.errors++;
 				this.lastValidEnd = this.currStreamPos - 1;
 			} else {
 				//if the lexer is currently in quotes, every lack of valid token is an invalid character
-				this.err("invalid character found (" + (this.currPos - (this.currentStr.length + 1)) + ":" + this.currLine + "): " + this.currentStr);
+				//newline should have a special check case so that formatting is not screwed up
+				if (this.currentStr === "\n") {
+					this.err("invalid character found ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + "\\n");
+				} else {
+					this.err("invalid character found ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + this.currentStr);
+				}
 				this.errors++;
 				this.lastValidEnd = this.currStreamPos - 1;
 			}
