@@ -248,127 +248,148 @@ class Lexer extends Component {
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
 		//console.log(this.currentStr);
-		if (this.keywordRegEx.test(this.currentStr)) {
-			switch (this.currentStr) {
-				case 'print': {
-					this.lastValidKind = "PRINT"
-					break;
+		if (!this.inQuotes) {
+			if (this.keywordRegEx.test(this.currentStr)) {
+				switch (this.currentStr) {
+					case 'print': {
+						this.lastValidKind = "PRINT"
+						break;
+					}
+					case 'while': {
+						this.lastValidKind = "WHILE"
+						break;
+					}
+					case 'if': {
+						this.lastValidKind = "IF"
+						break;
+					}
+					case 'int': {
+						this.lastValidKind = "I_TYPE"
+						break;
+					}
+					case 'string': {
+						this.lastValidKind = "S_TYPE"
+						break;
+					}
+					case 'boolean': {
+						this.lastValidKind = "B_TYPE"
+						break;
+					}
+					case 'false': {
+						this.lastValidKind = "FALSE"
+						break;
+					}
+					case 'true': {
+						this.lastValidKind = "TRUE"
+						break;
+					}
 				}
-				case 'while': {
-					this.lastValidKind = "WHILE"
-					break;
-				}
-				case 'if': {
-					this.lastValidKind = "IF"
-					break;
-				}
-				case 'int': {
-					this.lastValidKind = "I_TYPE"
-					break;
-				}
-				case 'string': {
-					this.lastValidKind = "S_TYPE"
-					break;
-				}
-				case 'boolean': {
-					this.lastValidKind = "B_TYPE"
-					break;
-				}
-				case 'false': {
-					this.lastValidKind = "FALSE"
-					break;
-				}
-				case 'true': {
-					this.lastValidKind = "TRUE"
-					break;
-				}
-			}
-			this.lastValidToken = this.currentStr;
-			this.lastValidStart = this.lastStreamPos;
-			this.lastValidEnd = this.currStreamPos;
-		} else if (this.idOrCharRegEx.test(this.currentStr)) {
-			if (!this.inQuotes) {
-				this.lastValidKind = "ID";
 				this.lastValidToken = this.currentStr;
 				this.lastValidStart = this.lastStreamPos;
 				this.lastValidEnd = this.currStreamPos;
-			} else {
-				this.lastValidKind = "CHAR";
+			} else if (this.idOrCharRegEx.test(this.currentStr)) {
+				//if (!this.inQuotes) {
+					this.lastValidKind = "ID";
+					this.lastValidToken = this.currentStr;
+					this.lastValidStart = this.lastStreamPos;
+					this.lastValidEnd = this.currStreamPos;
+				//} else {
+					// this.lastValidKind = "CHAR";
+					// this.lastValidToken = this.currentStr;
+					// this.lastValidStart = this.lastStreamPos;
+					// this.lastValidEnd = this.currStreamPos;
+				//}
+			} else if (this.symbolsRegEx.test(this.currentStr)) {
+			// } else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
+				switch (this.currentStr) {
+					case '{': {
+						this.lastValidKind = "SYM_L_BRACE";
+						break;
+					}
+					case '}': {
+						this.lastValidKind = "SYM_R_BRACE";
+						break;
+					}
+					case '(': {
+						this.lastValidKind = "SYM_L_PAREN";
+						break;
+					}
+					case ')': {
+						this.lastValidKind = "SYM_R_PAREN";
+						break;
+					}
+					case '+': {
+						this.lastValidKind = "SYM_ADD";
+						break;
+					}
+					case '"': {
+						this.lastValidKind = "SYM_QUOTE";
+						break;
+					}
+					case '==': {
+						this.lastValidKind = "SYM_IS_EQUAL";
+						break;
+					}
+					case '!=': {
+						this.lastValidKind = "SYM_IS_NOT_EQUAL";
+						break;
+					}
+					case '=': {
+						this.lastValidKind = "SYM_ASSIGN";
+						break;
+					}
+					case '$': { //special symbol
+						this.lastValidKind = "EOP";
+						break;
+					}
+					
+				}
 				this.lastValidToken = this.currentStr;
 				this.lastValidStart = this.lastStreamPos;
 				this.lastValidEnd = this.currStreamPos;
-			}
-		} else if (this.symbolsRegEx.test(this.currentStr)) {
-		// } else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
-			switch (this.currentStr) {
-				case '{': {
-					this.lastValidKind = "SYM_L_BRACE";
-					break;
-				}
-				case '}': {
-					this.lastValidKind = "SYM_R_BRACE";
-					break;
-				}
-				case '(': {
-					this.lastValidKind = "SYM_L_PAREN";
-					break;
-				}
-				case ')': {
-					this.lastValidKind = "SYM_R_PAREN";
-					break;
-				}
-				case '+': {
-					this.lastValidKind = "SYM_ADD";
-					break;
-				}
-				case '"': {
-					this.lastValidKind = "SYM_QUOTE";
-					break;
-				}
-				case '==': {
-					this.lastValidKind = "SYM_IS_EQUAL";
-					break;
-				}
-				case '!=': {
-					this.lastValidKind = "SYM_IS_NOT_EQUAL";
-					break;
-				}
-				case '=': {
-					this.lastValidKind = "SYM_ASSIGN";
-					break;
-				}
-				case '$': { //special symbol
-					this.lastValidKind = "EOP";
-					break;
-				}
-				
-			}
-			this.lastValidToken = this.currentStr;
-			this.lastValidStart = this.lastStreamPos;
-			this.lastValidEnd = this.currStreamPos;
 
-		} 
-		else if (this.digitRegEx.test(this.currentStr)) {
-				this.lastValidKind = "DIGIT";
-				this.lastValidToken = this.currentStr;
-				this.lastValidStart = this.lastStreamPos;
-				this.lastValidEnd = this.currStreamPos;
-		} 
-		else if (this.whitespaceRegEx.test(this.currentStr)) {
-			if (this.inQuotes && this.currentStr == " ") {
-				this.lastValidKind = "CHAR";
-				this.lastValidToken = this.currentStr;
-				this.lastValidStart = this.lastStreamPos;
-				this.lastValidEnd = this.currStreamPos;
+			} 
+			else if (this.digitRegEx.test(this.currentStr)) {
+					this.lastValidKind = "DIGIT";
+					this.lastValidToken = this.currentStr;
+					this.lastValidStart = this.lastStreamPos;
+					this.lastValidEnd = this.currStreamPos;
+			} 
+			// else if (this.whitespaceRegEx.test(this.currentStr)) {
+			// 	if (this.inQuotes && this.currentStr == " ") {
+			// 		this.lastValidKind = "CHAR";
+			// 		this.lastValidToken = this.currentStr;
+			// 		this.lastValidStart = this.lastStreamPos;
+			// 		this.lastValidEnd = this.currStreamPos;
+			// 	}
+			// 	//if not in quotes, ignore
+			// }
+			else {
+				//do nothing
+				//if a string isn't a valid token, 
+				//it's possible that it hasn't 
+				//gotten all its characters yet
+				//(like a keyword)
 			}
-			//if not in quotes, ignore
 		}
 		else {
-			//do nothing
-			//if a string isn't a valid token, 
-			//it's possible that it hasn't 
-			//gotten all its characters yet
-			//(like a keyword)
+			if (this.idOrCharRegEx.test(this.currentStr) || this.currentStr == " ") {
+				this.lastValidKind = "CHAR";
+				this.lastValidToken = this.currentStr;
+				this.lastValidStart = this.lastStreamPos;
+				this.lastValidEnd = this.currStreamPos;
+			}
+			else if (this.currentStr === "$") {
+				//EOP has precedence over characters/charlists
+				this.lastValidKind = "EOP";
+				this.lastValidToken = this.currentStr;
+				this.lastValidStart = this.lastStreamPos;
+				this.lastValidEnd = this.currStreamPos;
+			}
+			else {
+				//any other character passed is considered an invalid token
+
+			}
 		}
 
 
@@ -403,16 +424,23 @@ class Lexer extends Component {
 		else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
 			//throw an error
-			token = {
-				kind: "ERROR",
-				value: this.currentStr,
-				line: this.currLine,
-				position: (this.currPos - (this.currentStr.length + 1))
+			// token = {
+			// 	kind: "ERROR",
+			// 	value: this.currentStr,
+			// 	line: this.currLine,
+			// 	position: (this.currPos - (this.currentStr.length + 1))
+			// }
+			//this.tokens.push(token);
+			if (!this.inQuotes) {
+				this.err("invalid token at (" + (this.currPos - (this.currentStr.length + 1)) + ":" + this.currLine + "): " + this.currentStr);
+				this.errors++;
+				this.lastValidEnd = this.currStreamPos - 1;
+			} else {
+				//if the lexer is currently in quotes, every lack of valid token is an invalid character
+				this.err("invalid character found (" + (this.currPos - (this.currentStr.length + 1)) + ":" + this.currLine + "): " + this.currentStr);
+				this.errors++;
+				this.lastValidEnd = this.currStreamPos - 1;
 			}
-			this.tokens.push(token);
-			this.err("invalid token (" + token.line + ":" + token.position + "): " + token.value);
-			this.errors++;
-			this.lastValidEnd = this.currStreamPos - 1;
 		} 
 		else {
 			//else, a valid token was found
@@ -441,6 +469,10 @@ class Lexer extends Component {
 				if (!this.sourceCode.charAt(this.currStreamPos + 1)) {
 					this.reachedEOF = true;
 				}
+				if (this.inQuotes) {
+					this.warn("EOP reached before a char list was closed with [ \" ]")
+					this.warnings++;
+				}
 			}
 			if (token.kind === "SYM_QUOTE") {
 				this.inQuotes = !this.inQuotes;
@@ -454,5 +486,6 @@ class Lexer extends Component {
 		this.warnings = 0;
 		this.tokens = new Array<Token>;
 		this.reachedEOP = false;
+		this.inQuotes = false; //in case a program was ended while quotes were still open
 	}
 }
