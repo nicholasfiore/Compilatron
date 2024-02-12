@@ -220,7 +220,7 @@ class Lexer extends Component {
 				if (this.currChar === '\n') {
 					this.currLine++;
 					this.currPos = 1;
-					this.lastPos
+					this.lastPos = 1;
 				} 
 				else {
 					this.currPos++;
@@ -407,7 +407,7 @@ class Lexer extends Component {
 		if (this.currChar === '\n') {
 			this.currLine++;
 			this.currPos = 1;
-			this.lastPos
+			this.lastPos = 1;
 		} 
 		else {
 			this.currPos++;
@@ -446,9 +446,9 @@ class Lexer extends Component {
 				//if the lexer is currently in quotes, every lack of valid token is an invalid character
 				//newline should have a special check case so that formatting is not screwed up
 				if (this.currentStr === "\n") {
-					this.err("invalid character found ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + "\\n");
+					this.err("invalid character found ("  + this.currLine + ":" + (this.lastPos) + "): " + "\\n");
 				} else {
-					this.err("invalid character found ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + this.currentStr);
+					this.err("invalid character found ("  + this.currLine + ":" + (this.lastPos) + "): " + this.currentStr);
 				}
 				this.errors++;
 				this.lastValidEnd = this.currStreamPos - 1;
@@ -460,7 +460,7 @@ class Lexer extends Component {
 				kind: this.lastValidKind,
 				value: this.lastValidToken,
 				line: this.currLine,
-				position: this.lastValidStart
+				position: this.lastPos
 			}
 			this.tokens.push(token);
 			this.info(token.kind + " [ " + token.value + " ] found at (" + token.line + ":" + token.position + ")");
@@ -468,6 +468,9 @@ class Lexer extends Component {
 
 		this.currStreamPos = this.lastValidEnd + 1;
 		this.lastStreamPos = this.currStreamPos;
+
+		this.currPos = this.currPos - this.currentStr.length + 1;
+		this.lastPos = this.currPos;
 		
 		this.currentStr = "";
 
