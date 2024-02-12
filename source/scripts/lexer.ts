@@ -122,6 +122,7 @@ class Lexer extends Component {
 			// if ((this.partialSymRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
 			// || this.whitespaceRegEx.test(this.currChar))
 			// && (this.currentStr !== "")) 
+			console.log(this.currentStr)
 			if (!this.inComment) { //everything inside a comment is ignored
 				if (this.currentStr !== "") {
 					if (this.inQuotes) {
@@ -132,8 +133,13 @@ class Lexer extends Component {
 						this.tokenize();
 					} 
 					else if (this.whitespaceRegEx.test(this.currentStr)) {
-						//ensure that whitespace at the start of a string is thrown away
-						this.tokenize();
+						//ensure that whitespace at the start of a string is thrown away,
+						//or that spaces inside a string are properly tokenized
+						if (this.inQuotes) {
+							this.checkTokenValidity();
+						} else {
+							this.tokenize();
+						}
 					} 
 					else if (this.partialSymRegEx.test(this.currentStr) && this.currentStr !== "$") {
 						//symbols should always be checked for 2 characters, just in case
@@ -381,12 +387,14 @@ class Lexer extends Component {
 	}
 
 	private tokenize() {
-		//console.log("tokenizing");
+		console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
+			
 			//console.log("reached");
 			//if the string is just a whitespace character NOT IN A STRING, toss it
 			this.lastValidEnd = this.currStreamPos - 1;
+			
 		} 
 		else if (this.currStreamPos >= this.sourceCode.length && this.currentStr === "") {
 			//an empty string at the end of file means that everything up to the EOF has been tokenized
@@ -431,10 +439,11 @@ class Lexer extends Component {
 			if (token.kind === "EOP") {
 				this.reachedEOP = true;
 			}
-			if (token.kind === "QUOTE") {
+			if (token.kind === "SYM_QUOTE") {
 				this.inQuotes = !this.inQuotes;
 			}
 		}
+		
 	}
 
 	public reset() {
