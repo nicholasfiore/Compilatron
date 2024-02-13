@@ -1,0 +1,29 @@
+===!==!===!!!===
+
+{}()==!===+"$
+
+/* 💩 */
+"💩"
+💩
+$
+
+printwhileiftruefalseinstringboolean$
+
+/* test for \n character in a quote */
+"
+
+"
+
+asdf$
+
+mandL*@H(oHY!(7@7909O&@()))
+
+"abc123"
+
+"aaaaa"
+
+"123&@$
+
+The rest of the test cases were taken from class examples (lex without parse, project 1 examples)
+Most of these were specifically for checking specific parts as they were added (such as symbols,
+then keywords, then ids, digits, chars)
