@@ -90,46 +90,31 @@ class Lexer extends Component {
 	
 	public lex() {
 		// Grab the "raw" source code.
-		console.log(this.sourceCode)
-		// Trim the leading and trailing spaces.
-		//this.sourceCode = Utils.trim(this.sourceCode);
+		console.log(this.sourceCode);
 		
 		//main lexing loop
 		var infiniteProtection: number = 0;
 		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 10000)) {
-			//console.log ("Curr stream pos: " + this.currStreamPos);
 			this.currChar = this.sourceCode.charAt(this.currStreamPos);
-			//console.log(this.whitespaceRegEx.test(this.currChar));
+
 			/* initial check for entering a comment */
 			if (this.currChar === "/") {
 				if (this.sourceCode.charAt(this.currStreamPos + 1) === "*") {
 					this.inComment = true;
 				}
 			}
-			/* 
-				This initial if statement is for deciding whether or not to consume 
-					the current input and create a token
-				The rules, in order, are as follows:
-				- Check if the character is a (or part of a) symbol. If it is, consume input.
-					- note that invalid ASCII characters are considered "unrecognized symbols"
-				- Check if the character is whitespace. If it is, consume input.
-				-
-				- Check for comment. If currently within a comment, the lexer ignores the char
-				- The final check is to ensure there has actually been any input scanned. 
-					If currStr is empty, there hasn't been any new input scanned, so move
-					on
-			*/
-			// if ((this.partialSymRegEx.test(this.currChar) || !this.fullGrammarCharRegEx.test(this.currChar) 
-			// || this.whitespaceRegEx.test(this.currChar))
-			// && (this.currentStr !== "")) 
-			//console.log(this.currentStr)
+
 			if (!this.inComment) { //everything inside a comment is ignored
-				if (this.currentStr !== "") {
+				//an empty string means that no characters have been lexed
+				//so at least one character should be checked before 
+				//trying to tokenize
+				if (this.currentStr !== "") { 
 					if (this.inQuotes) {
+						//every character is tokenized one at a time in quotes
 						this.tokenize();
 					}
 					else if (this.whitespaceRegEx.test(this.currChar)) {
-						//console.log("here1");
+						//if the current character is whitespace, it is safe to tokenize the current str
 						this.tokenize();
 					} 
 					else if (this.whitespaceRegEx.test(this.currentStr)) {
@@ -155,39 +140,9 @@ class Lexer extends Component {
 						//if the currently lexed string isn't a symbol, 
 						//we can just tokenize when hitting a symbol
 						this.tokenize();
-
-					// // } else if (this.currentStr.length === 1 && this.partialSymRegEx.test(this.currentStr)) {
-					// // 	if (this.currentStr === "!" && this.currChar !== "=") {
-					// // 		this.tokenize();
-					// // 	} else if (this.currentStr === "=" && this.currChar !== "=") {
-					// // 		this.tokenize();
-					// // 	} else {
-					// // 		this.checkTokenValidity();
-					// // 		//this.tokenize();
-					// // 	}
-					// } else if(this.partialSymRegEx.test(this.currChar)) {
-					// 	if (this.notAnEqualitySymRegEx.test(this.currentStr)) {
-					// 		//non-equality symbols are single characters
-					// 		console.log('test');
-					// 		this.tokenize();
-					// 	}
-					// 	else if (this.currChar === '!' || this.currChar === "=") {
-					// 		if (this.sourceCode.charAt(this.currStreamPos + 1) === "=") {
-					// 			if (this.symbolCharsLexed < 2) {
-					// 				this.checkTokenValidity();
-					// 			} else {
-					// 				this.tokenize();
-					// 			}
-					// 		} else {
-					// 			this.tokenize();
-					// 		}
-					// 	} else {
-					// 		this.tokenize();
-					// 	}
-					// // } else if (this.partialSymRegEx.test(this.currChar)) {
-					// // 	this.tokenize();
 					} 
 					else if (!this.fullGrammarCharRegEx.test(this.currChar)) {
+						//any non-grammer character counts as an (unrecognized) symbol, so tokenize
 						this.tokenize();
 					} 
 					else {
@@ -195,6 +150,7 @@ class Lexer extends Component {
 					}
 				} 
 				else if (this.currStreamPos >= this.sourceCode.length) {
+					//EOF reached, tokenize
 					this.tokenize();
 				} 
 				else {
@@ -239,15 +195,12 @@ class Lexer extends Component {
 			this.warnings++;
 		}
 
-		//One final tokenization must occur when the EOP/EOF is reached
-		//this.tokenize();
-
 		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings, EOF: this.reachedEOF};
 	}
 
+	//checks the current string to see if a valid token can be matched with it
 	private checkTokenValidity() {
 		this.currentStr += this.currChar;
-		//console.log(this.currentStr);
 		if (!this.inQuotes) {
 			if (this.keywordRegEx.test(this.currentStr)) {
 				switch (this.currentStr) {
@@ -288,19 +241,11 @@ class Lexer extends Component {
 				this.lastValidStart = this.lastStreamPos;
 				this.lastValidEnd = this.currStreamPos;
 			} else if (this.idOrCharRegEx.test(this.currentStr)) {
-				//if (!this.inQuotes) {
-					this.lastValidKind = "ID";
-					this.lastValidToken = this.currentStr;
-					this.lastValidStart = this.lastStreamPos;
-					this.lastValidEnd = this.currStreamPos;
-				//} else {
-					// this.lastValidKind = "CHAR";
-					// this.lastValidToken = this.currentStr;
-					// this.lastValidStart = this.lastStreamPos;
-					// this.lastValidEnd = this.currStreamPos;
-				//}
+				this.lastValidKind = "ID";
+				this.lastValidToken = this.currentStr;
+				this.lastValidStart = this.lastStreamPos;
+				this.lastValidEnd = this.currStreamPos;
 			} else if (this.symbolsRegEx.test(this.currentStr)) {
-			// } else if (this.currentStr === "!=" || this.currentStr === "==" || this.currentStr === "=" || this.currentStr === "{" || this.currentStr === "}" || this.currentStr === "(" || this.currentStr === ")" || this.currentStr === "+" || this.currentStr === "\"" || this.currentStr === "$") {
 				switch (this.currentStr) {
 					case '{': {
 						this.lastValidKind = "SYM_L_BRACE";
@@ -354,16 +299,7 @@ class Lexer extends Component {
 					this.lastValidToken = this.currentStr;
 					this.lastValidStart = this.lastStreamPos;
 					this.lastValidEnd = this.currStreamPos;
-			} 
-			// else if (this.whitespaceRegEx.test(this.currentStr)) {
-			// 	if (this.inQuotes && this.currentStr == " ") {
-			// 		this.lastValidKind = "CHAR";
-			// 		this.lastValidToken = this.currentStr;
-			// 		this.lastValidStart = this.lastStreamPos;
-			// 		this.lastValidEnd = this.currStreamPos;
-			// 	}
-			// 	//if not in quotes, ignore
-			// }
+			}
 			else {
 				//do nothing
 				//if a string isn't a valid token, 
@@ -414,12 +350,13 @@ class Lexer extends Component {
 		}
 	}
 
+	//Tokenizes the last matched valid token
+	//if none were found, returns the entire string that has been lexed as an error
+	//otherwise, the token is pushed to the token stream
 	private tokenize() {
-		//console.log("tokenizing");
 		var token: Token;
 		if (this.whitespaceRegEx.test(this.currentStr) && !this.inQuotes) {
 			
-			//console.log("reached");
 			//if the string is just a whitespace character NOT IN A STRING, toss it
 			this.lastValidEnd = this.currStreamPos - 1;
 			
@@ -431,15 +368,8 @@ class Lexer extends Component {
 		else if (this.lastValidToken === "") {
 			//if there was no valid token found, consume the full scanned input and
 			//throw an error
-			// token = {
-			// 	kind: "ERROR",
-			// 	value: this.currentStr,
-			// 	line: this.currLine,
-			// 	position: (this.currPos - (this.currentStr.length + 1))
-			// }
-			//this.tokens.push(token);
 			if (!this.inQuotes) {
-				this.err("invalid token at ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length + 1)) + "): " + this.currentStr);
+				this.err("invalid token at ("  + this.currLine + ":" + (this.currPos - (this.currentStr.length)) + "): " + this.currentStr);
 				this.errors++;
 				this.lastValidEnd = this.currStreamPos - 1;
 			} else {
@@ -496,6 +426,7 @@ class Lexer extends Component {
 		
 	}
 
+	//resets the necessary members to their initial values
 	public reset() {
 		this.errors = 0;
 		this.warnings = 0;
