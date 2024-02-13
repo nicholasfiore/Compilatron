@@ -36,8 +36,6 @@ class Lexer extends Component {
 
 	private tokens: Array<Token>;
 
-	private _Compiler: Compiler;
-
 	//RegEx objects for string comparisons
 	private fullGrammarCharRegEx = new RegExp('[a-z0-9{}()+="!$]|\s'); //for checking if a character to be added actually exists in any part of the grammer
 	//private notInGrammerRegEx = new RegExp();
@@ -342,8 +340,10 @@ class Lexer extends Component {
 		this.currStreamPos++;
 		if (this.currChar === '\n') {
 			this.currLine++;
+
 			this.currPos = 1;
 			this.lastPos = 1;
+
 		} 
 		else {
 			this.currPos++;
