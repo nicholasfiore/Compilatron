@@ -15,6 +15,7 @@ class Lexer extends Component {
 	private currLine: number;
     private currPos: number;
 	private lastPos: number;
+	private lastLineLength: number;
 
 	private warnings: number;
 	private errors: number;
@@ -342,6 +343,7 @@ class Lexer extends Component {
 			this.currLine++;
 
 			this.currPos = 1;
+			this.lastLineLength = this.lastPos;
 			this.lastPos = 1;
 
 		} 
@@ -376,7 +378,7 @@ class Lexer extends Component {
 				//if the lexer is currently in quotes, every lack of valid token is an invalid character
 				//newline should have a special check case so that formatting is not screwed up
 				if (this.currentStr === "\n") {
-					this.err("invalid character found ("  + this.currLine + ":" + (this.lastPos) + "): " + "\\n");
+					this.err("invalid character found ("  + (this.currLine -1) + ":" + (this.lastLineLength) + "): " + "\\n");
 				} else {
 					this.err("invalid character found ("  + this.currLine + ":" + (this.lastPos) + "): " + this.currentStr);
 				}
