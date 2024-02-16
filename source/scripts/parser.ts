@@ -23,20 +23,22 @@ class Parser extends Component {
     public parse() {
         this.currToken = this.tokens[this.currPos];
         this.parseStart();
-        console.log("finished")
+        console.log(this.errors)
     }
 
     private match(desiredTokenKind: string, tokenToMatch: Token) {
-        if (desiredTokenKind === tokenToMatch.kind) {
-            this.info("Found " + tokenToMatch.kind + " terminal");
+        if (tokenToMatch) { //only checks if the tokenToMatch exists
+            if (desiredTokenKind === tokenToMatch.kind) {
+                this.info("Found " + tokenToMatch.kind + " terminal");
+            }
+            else {
+                //There is an error
+                this.err("Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+                this.errors++;
+            }
+            this.currPos++;
+            this.currToken = this.tokens[this.currPos];
         }
-        else {
-            //There is an error
-            this.err("Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
-            this.errors++;
-        }
-        this.currPos++;
-        this.currToken = this.tokens[this.currPos];
     }
 
     private parseStart() {
