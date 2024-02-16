@@ -6,10 +6,11 @@ ality*/
 class Component {
     //Components have a name
     name: string;
+    debugMode: boolean;
 
-
-    constructor(name) {
+    constructor(name, isDebug) {
         this.name = name;
+        this.debugMode = isDebug;
     }
 
     //this method of logging was more directly taken from Arnell's compiler
@@ -22,6 +23,12 @@ class Component {
     
     public info(args: string) {
         this.log("INFO " + this.name + ": " + args);
+    }
+
+    public debug(args: string) {
+        if (this.debugMode) {
+            this.log("DEBUG " + this.name + ": " + args);
+        }
     }
 
     public warn(args: string) {

@@ -10,6 +10,8 @@ class Compiler extends Component {
     private reachedEOF: boolean = false;
     private caughtError: boolean = false;
 
+    private inDebugMode: boolean = false;
+
     private _Lexer : Lexer;
     private _Parser : Parser;
 
