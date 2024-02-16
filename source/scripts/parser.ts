@@ -47,12 +47,14 @@ class Parser extends Component {
     }
 
     private parseBlock() {
+        this.info("Parsing Block.");
         this.match("SYM_L_BRACE", this.currToken);
         this.parseStatementList();
         this.match("SYM_R_BRACE", this.currToken);
     }
 
     private parseStatementList() {
+        this.info("Parsing StatementList.");
         if (["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
             this.parseStatement();
             this.parseStatementList();
@@ -64,6 +66,7 @@ class Parser extends Component {
     }
 
     private parseStatement() {
+        this.info("Parsing Statement.");
         //Block
         if (this.currToken.kind === "SYM_L_BRACE") {
             this.parseBlock();
@@ -91,6 +94,7 @@ class Parser extends Component {
     }
 
     private parsePrintStatement() {
+        this.info("Parsing PrintStatement.");
         this.match("PRINT", this.currToken);
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
@@ -98,23 +102,27 @@ class Parser extends Component {
     }
 
     private parseAssignmentStatement() {
+        this.info("Parsing AssignmentStatement.");
         this.match("ID", this.currToken);
         this.match("SYM_ASSIGN", this.currToken);
         this.parseExpression();
     }
 
     private parseVariableDeclaration() {
+        this.info("Parsing AssignmentStatement.");
         this.parseType();
         this.match("ID", this.currToken);
     }
 
     private parseWhileStatement() {
+        this.info("Parsing WhileStatement.");
         this.match("WHILE", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
     }
 
     private parseIfStatement() {
+        this.info("Parsing IfStatement.");
         this.match("IF", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
