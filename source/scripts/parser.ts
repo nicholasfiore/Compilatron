@@ -70,7 +70,11 @@ class Parser extends Component {
         }
         //VarDecl
         else if (["I_TYPE", "S_TYPE", "B_TYPE"].indexOf(this.currToken.kind) !== -1) {
-            this.parseType();
+            this.parseVariableDeclaration();
+        }
+        //Assignment
+        else if (this.currToken.kind === "ID") {
+            this.parseAssignmentStatement();
         }
         //Print statement
         else if (this.currToken.kind === "PRINT") {
@@ -87,23 +91,33 @@ class Parser extends Component {
     }
 
     private parsePrintStatement() {
-
+        this.match("PRINT", this.currToken);
+        this.match("SYM_L_PAREN", this.currToken);
+        this.parseExpression();
+        this.match("SYM_R_PAREN", this.currToken);
     }
 
     private parseAssignmentStatement() {
-
+        this.match("ID", this.currToken);
+        this.match("SYM_ASSIGN", this.currToken);
+        this.parseExpression();
     }
 
-    private parseVarDeclaration() {
-
+    private parseVariableDeclaration() {
+        this.parseType();
+        this.match("ID", this.currToken);
     }
 
     private parseWhileStatement() {
-
+        this.match("WHILE", this.currToken);
+        this.parseBooleanExpression();
+        this.parseBlock();
     }
 
     private parseIfStatement() {
-
+        this.match("IF", this.currToken);
+        this.parseBooleanExpression();
+        this.parseBlock();
     }
 
     private parseExpression() {
