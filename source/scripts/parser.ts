@@ -9,6 +9,9 @@ class Parser extends Component {
     private errors: number;
     private warnings: number;
 
+    private alphabet = new RegExp('^[a-z]$');
+    private digits = new RegExp('^[0-9]$');
+
     public constructor(tokenStream: Array<Token>, enableDebug: boolean) {
         super("Parser", enableDebug);
 
@@ -129,19 +132,47 @@ class Parser extends Component {
     }
 
     private parseExpression() {
-
+        this.debug("Parsing Expression.");
+        switch (this.currToken.kind) {
+            case "DIGIT": {
+                this.parseIntegerExpression();
+                break;
+            }
+            case "\"": {
+                this.parseStringExpression();
+                break;
+            }
+            case "(": {
+                this.parseBooleanExpression();
+                break;
+            }
+        }
     }
 
-    private parseIntExpression() {
-
+    private parseIntegerExpression() {
+        this.match("DIGIT", this.currToken);
+        if (this.currToken.kind === "SYM_ADD") {
+            this.match("SYM_ADD", this.currToken);
+            this.parseIntegerExpression();
+        }
+        else {
+            //Do nothing
+            //A single digit is a valid IntegerExpression
+        }
     }
 
     private parseStringExpression() {
-
+        this.match("\"", this.currToken);
+        this.parseCharList();
+        this.match("\"", this.currToken);
     }
 
     private parseBooleanExpression() {
-
+        this.match("(", this.currToken);
+        this.parseExpression();
+        this.parseBooleanOperation();
+        this.parseBooleanExpression();
+        this.match(")", this.currToken);
     }
 
     private parseID() {
@@ -149,11 +180,37 @@ class Parser extends Component {
     }
 
     private parseCharList() {
-
+        if (this.currToken.kind === "CHAR") {
+            this.match("CHAR", this.currToken);
+            if (this.currToken.kind === "CHAR") {
+                this.parseCharList();
+            }
+            else {
+                //do nothing
+                //a single char is a valid charlist production
+            }
+        } 
+        //ε production
+        else {
+            //Do nothing
+        }
     }
 
     private parseType() {
-
+        switch (this.currToken.kind) {
+            case "I_TYPE": {
+                this.match("I_TYPE", this.currToken);
+                break;
+            }
+            case "S_TYPE": {
+                this.match("S_TYPE", this.currToken);
+                break;
+            }
+            case "B_TYPE": {
+                this.match("B_TYPE", this.currToken);
+                break;
+            }
+        }
     }
 
     private parseChar() {
@@ -169,7 +226,23 @@ class Parser extends Component {
     }
 
     private parseBooleanOperation() {
-
+        //a slightly modified version of match()
+        //since a bool op only has two forms,
+        //in order to allow for a more specific
+        //error message
+        if ("SYM_IS_EQUAL" === this.currToken.kind) {
+            this.info("Found " + this.currToken.kind + " terminal");
+        }
+        else if ("SYM_IS_NOT_EQUAL" === this.currToken.kind) {
+            this.info("Found " + this.currToken.kind + " terminal");
+        }
+        else {
+            //There is an error
+            this.err("Expected one of {SYM_IS_EQUAL, SYM_IS_NOT_EQUAL}, found " + this.currToken.kind + " [" + this.currToken.value + "]");
+            this.errors++;
+        }
+        this.currPos++;
+        this.currToken = this.tokens[this.currPos];
     }
 
     private parseBooleanValue() {
