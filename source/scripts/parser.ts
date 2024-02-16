@@ -138,11 +138,11 @@ class Parser extends Component {
                 this.parseIntegerExpression();
                 break;
             }
-            case "\"": {
+            case "QUOTE": {
                 this.parseStringExpression();
                 break;
             }
-            case "(": {
+            case "SYM_L_PAREN": {
                 this.parseBooleanExpression();
                 break;
             }
@@ -162,17 +162,17 @@ class Parser extends Component {
     }
 
     private parseStringExpression() {
-        this.match("\"", this.currToken);
+        this.match("QUOTE" this.currToken);
         this.parseCharList();
-        this.match("\"", this.currToken);
+        this.match("QUOTE", this.currToken);
     }
 
     private parseBooleanExpression() {
-        this.match("(", this.currToken);
+        this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
         this.parseBooleanOperation();
         this.parseBooleanExpression();
-        this.match(")", this.currToken);
+        this.match("SYM_R_PAREN", this.currToken);
     }
 
     private parseID() {
