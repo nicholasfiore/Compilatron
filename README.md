@@ -4,6 +4,11 @@ TS-Compiler
 This is the Compielrs class initial project written in TypeScript.
 See http://www.labouseur.com/courses/compilers/ for details.
 
+
+For Alan:
+Finished, to-be-graded work is on the main branch. Concurrent dev work in between grading is kept isolated on the development branch.
+
+
 Setup TypeScript
 ================
 1. Install [npm](https://www.npmjs.org/), if you don't already have it
