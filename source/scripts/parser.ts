@@ -9,8 +9,8 @@ class Parser extends Component {
     private errors: number;
     private warnings: number;
 
-    public constructor(tokenStream: Array<Token>) {
-        super('Parser');
+    public constructor(tokenStream: Array<Token>, enableDebug: boolean) {
+        super("Parser", enableDebug);
 
         this.tokens = tokenStream;
 

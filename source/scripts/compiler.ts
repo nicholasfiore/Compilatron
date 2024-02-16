@@ -16,13 +16,15 @@ class Compiler extends Component {
     private _Parser : Parser;
 
 
-    constructor(source: string) {
-        super("Compiler");
+    constructor(source: string, enableDebug: boolean) {
+        super("Compiler", enableDebug);
+        this.inDebugMode = enableDebug;
+
         this.currentProgram = 0;
         
         this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
-        this._Lexer = new Lexer(this.sourceCode);
+        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode);
     }
 
     public compile() {
@@ -44,7 +46,7 @@ class Compiler extends Component {
             //Parser
             if (!this.caughtError) {
                 console.log("here");
-                this._Parser = new Parser(tokens);
+                this._Parser = new Parser(tokens, this.inDebugMode);
                 
                 this.info("Parsing program " + this.currentProgram);
                 
