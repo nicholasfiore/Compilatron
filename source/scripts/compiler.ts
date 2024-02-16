@@ -11,6 +11,7 @@ class Compiler extends Component {
     private caughtError: boolean = false;
 
     private _Lexer : Lexer;
+    private _Parser : Parser;
 
 
     constructor(source: string) {
@@ -25,6 +26,8 @@ class Compiler extends Component {
     public compile() {
         while (!this.reachedEOF) {
             this.currentProgram++;
+
+            //Lexer
             this.info("Lexing program " + this.currentProgram);
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
@@ -34,6 +37,16 @@ class Compiler extends Component {
             }
             if (lexOut.EOF) {
                 this.reachedEOF = true;
+            }
+
+            //Parser
+            if (!this.caughtError) {
+                console.log("here");
+                this._Parser = new Parser(tokens);
+                
+                this.info("Parsing program " + this.currentProgram);
+                
+                var parseOut = this._Parser.parse();
             }
             this.reset();
         }

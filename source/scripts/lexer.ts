@@ -53,7 +53,7 @@ class Lexer extends Component {
 	private digitRegEx = new RegExp('^[0-9]$');
 	//char goes here, but it's already accounted for
 
-	constructor(source: string) {
+	public constructor(source: string) {
 		super("Lexer");
 
 		this.sourceCode = Utils.trim(source);

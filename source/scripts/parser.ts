@@ -6,14 +6,37 @@ class Parser extends Component {
     private currToken: Token;
     private currPos: number;
 
-    constructor(tokenStream: Array<Token>) {
+    private errors: number;
+    private warnings: number;
+
+    public constructor(tokenStream: Array<Token>) {
         super('Parser');
 
         this.tokens = tokenStream;
+
+        this.currPos = 0;
+
+        this.errors = 0;
+        this.warnings = 0;
+    }
+
+    public parse() {
+        this.currToken = this.tokens[this.currPos];
+        this.parseStart();
+        console.log("finished")
     }
 
     private match(desiredTokenKind: string, tokenToMatch: Token) {
-
+        if (desiredTokenKind === tokenToMatch.kind) {
+            this.info("Found " + tokenToMatch.kind + " terminal");
+        }
+        else {
+            //There is an error
+            this.err("Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+            this.errors++;
+        }
+        this.currPos++;
+        this.currToken = this.tokens[this.currPos];
     }
 
     private parseStart() {
@@ -31,6 +54,10 @@ class Parser extends Component {
         if (["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
             this.parseStatement();
             this.parseStatementList();
+        }
+        //ε production
+        else {
+            //Do nothing
         }
     }
 
@@ -54,10 +81,6 @@ class Parser extends Component {
         //If statement
         else if (this.currToken.kind === "IF") {
             this.parseIfStatement();
-        }
-        //ε production
-        else {
-            //Do nothing
         }
     }
 
