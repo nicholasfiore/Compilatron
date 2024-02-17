@@ -93,7 +93,7 @@ class Lexer extends Component {
 		
 		//main lexing loop
 		var infiniteProtection: number = 0;
-		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 10000)) {
+		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 50)) {
 			this.currChar = this.sourceCode.charAt(this.currStreamPos);
 
 			/* initial check for entering a comment */
@@ -107,7 +107,11 @@ class Lexer extends Component {
 				//an empty string means that no characters have been lexed
 				//so at least one character should be checked before 
 				//trying to tokenize
-				if (this.currentStr !== "") { 
+				if (this.currStreamPos >= this.sourceCode.length) {
+					//EOF reached, tokenize
+					console.log("here")
+					this.tokenize();
+				} else if (this.currentStr !== "") { 
 					if (this.inQuotes) {
 						//every character is tokenized one at a time in quotes
 						this.tokenize();
@@ -148,10 +152,6 @@ class Lexer extends Component {
 						this.checkTokenValidity();
 					}
 				} 
-				else if (this.currStreamPos >= this.sourceCode.length) {
-					//EOF reached, tokenize
-					this.tokenize();
-				} 
 				else {
 					this.checkTokenValidity();
 				}
@@ -182,7 +182,9 @@ class Lexer extends Component {
 				}
 			}
 			
-
+			//console.log(this.currentStr)
+			console.log(this.currStreamPos);
+			console.log("length: " + this.sourceCode.length)
 			infiniteProtection++;
 		}
 		if (infiniteProtection >= 1000) {

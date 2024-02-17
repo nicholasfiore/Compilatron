@@ -28,7 +28,8 @@ class Compiler extends Component {
     }
 
     public compile() {
-        while (!this.reachedEOF) {
+        var infiniteProtection = 0;
+        while (!this.reachedEOF && infiniteProtection < 10) {
             this.currentProgram++;
 
             //Lexer
@@ -44,8 +45,8 @@ class Compiler extends Component {
             }
 
             //Parser
-            if (!this.caughtError) {
-                console.log("here");
+            if (!this.caughtError && false) {
+                //console.log("here");
                 this._Parser = new Parser(tokens, this.inDebugMode);
                 
                 this.info("Parsing program " + this.currentProgram);
@@ -53,6 +54,7 @@ class Compiler extends Component {
                 var parseOut = this._Parser.parse();
             }
             this.reset();
+            infiniteProtection++;
         }
     }
 

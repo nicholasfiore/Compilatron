@@ -58,7 +58,7 @@ class Parser extends Component {
 
     private parseStatementList() {
         this.debug("Parsing StatementList.");
-        if (["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
+        if (this.currToken !== undefined && ["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
             this.parseStatement();
             this.parseStatementList();
         }
@@ -75,7 +75,7 @@ class Parser extends Component {
             this.parseBlock();
         }
         //VarDecl
-        else if (["I_TYPE", "S_TYPE", "B_TYPE"].indexOf(this.currToken.kind) !== -1) {
+        else if (this.currToken !== undefined && ["I_TYPE", "S_TYPE", "B_TYPE"].indexOf(this.currToken.kind) !== -1) {
             this.parseVariableDeclaration();
         }
         //Assignment
