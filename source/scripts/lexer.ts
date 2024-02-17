@@ -53,7 +53,7 @@ class Lexer extends Component {
 	private digitRegEx = new RegExp('^[0-9]$');
 	//char goes here, but it's already accounted for
 
-	constructor(source: string) {
+	public constructor(source: string) {
 		super("Lexer");
 
 		this.sourceCode = Utils.trim(source);
@@ -103,7 +103,13 @@ class Lexer extends Component {
 				}
 			}
 
-			if (!this.inComment) { //everything inside a comment is ignored
+			//Lexing should always stop immediately if the EOF is reached, so
+			//it should be the first thing to check
+			if (this.currStreamPos >= this.sourceCode.length) {
+				//EOF reached, tokenize
+				console.log("here")
+				this.tokenize();
+			} else if (!this.inComment) { //everything inside a comment is ignored
 				//an empty string means that no characters have been lexed
 				//so at least one character should be checked before 
 				//trying to tokenize
@@ -148,10 +154,6 @@ class Lexer extends Component {
 						this.checkTokenValidity();
 					}
 				} 
-				else if (this.currStreamPos >= this.sourceCode.length) {
-					//EOF reached, tokenize
-					this.tokenize();
-				} 
 				else {
 					this.checkTokenValidity();
 				}
@@ -182,7 +184,6 @@ class Lexer extends Component {
 				}
 			}
 			
-
 			infiniteProtection++;
 		}
 		if (infiniteProtection >= 1000) {
