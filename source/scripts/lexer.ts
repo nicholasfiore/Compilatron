@@ -103,7 +103,13 @@ class Lexer extends Component {
 				}
 			}
 
-			if (!this.inComment) { //everything inside a comment is ignored
+			//Lexing should always stop immediately if the EOF is reached, so
+			//it should be the first thing to check
+			if (this.currStreamPos >= this.sourceCode.length) {
+				//EOF reached, tokenize
+				console.log("here")
+				this.tokenize();
+			} else if (!this.inComment) { //everything inside a comment is ignored
 				//an empty string means that no characters have been lexed
 				//so at least one character should be checked before 
 				//trying to tokenize
@@ -158,7 +164,12 @@ class Lexer extends Component {
 			} 
 			else {
 				//logic if inside a comment
-				if (this.currChar === "*") {
+				if (this.currChar === "") {
+					//EOF reached, tokenize
+					console.log("here")
+					this.tokenize();
+				} else if (this.currChar === "*") {
+					
 					if (this.sourceCode.charAt(this.currStreamPos + 1) === "/") {
 						this.inComment = false;
 
@@ -182,9 +193,6 @@ class Lexer extends Component {
 				}
 			}
 			
-			//console.log(this.currentStr)
-			console.log(this.currStreamPos);
-			console.log("length: " + this.sourceCode.length)
 			infiniteProtection++;
 		}
 		if (infiniteProtection >= 1000) {
@@ -192,7 +200,11 @@ class Lexer extends Component {
 		}
 
 		if (this.reachedEOF && !this.reachedEOP) {
-			this.warn("EOF reached before EOP ($)");
+			if (this.inComment) {
+				this.warn("EOF reached while inside a comment");
+			} else {
+				this.warn("EOF reached before EOP ($)");
+			}
 			this.warnings++;
 		}
 
