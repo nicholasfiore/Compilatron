@@ -138,7 +138,7 @@ class Parser extends Component {
                 this.parseIntegerExpression();
                 break;
             }
-            case "QUOTE": {
+            case "SYM_QUOTE": {
                 this.parseStringExpression();
                 break;
             }
@@ -146,14 +146,18 @@ class Parser extends Component {
                 this.parseBooleanExpression();
                 break;
             }
+            case "ID": {
+                this.match("ID", this.currToken);
+            }
         }
     }
 
     private parseIntegerExpression() {
+        this.debug("Parsing IntegerExpression.");
         this.match("DIGIT", this.currToken);
         if (this.currToken.kind === "SYM_ADD") {
             this.match("SYM_ADD", this.currToken);
-            this.parseIntegerExpression();
+            this.parseExpression();
         }
         else {
             //Do nothing
@@ -162,16 +166,18 @@ class Parser extends Component {
     }
 
     private parseStringExpression() {
-        this.match("QUOTE" this.currToken);
+        this.debug("Parsing StringExpression.");
+        this.match("SYM_QUOTE", this.currToken);
         this.parseCharList();
-        this.match("QUOTE", this.currToken);
+        this.match("SYM_QUOTE", this.currToken);
     }
 
     private parseBooleanExpression() {
+        this.debug("Parsing BooleanExpression.");
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
         this.parseBooleanOperation();
-        this.parseBooleanExpression();
+        this.parseExpression();
         this.match("SYM_R_PAREN", this.currToken);
     }
 
@@ -180,6 +186,7 @@ class Parser extends Component {
     }
 
     private parseCharList() {
+        this.debug("Parsing CharList.");
         if (this.currToken.kind === "CHAR") {
             this.match("CHAR", this.currToken);
             if (this.currToken.kind === "CHAR") {
@@ -197,6 +204,7 @@ class Parser extends Component {
     }
 
     private parseType() {
+        this.debug("Parsing Type.");
         switch (this.currToken.kind) {
             case "I_TYPE": {
                 this.match("I_TYPE", this.currToken);
@@ -226,6 +234,7 @@ class Parser extends Component {
     }
 
     private parseBooleanOperation() {
+        this.debug("Parsing BooleanOperation.");
         //a slightly modified version of match()
         //since a bool op only has two forms,
         //in order to allow for a more specific
@@ -238,7 +247,7 @@ class Parser extends Component {
         }
         else {
             //There is an error
-            this.err("Expected one of {SYM_IS_EQUAL, SYM_IS_NOT_EQUAL}, found " + this.currToken.kind + " [" + this.currToken.value + "]");
+            this.err("Expected one of {SYM_IS_EQUAL, SYM_IS_NOT_EQUAL}, found " + this.currToken.kind + " [" + this.currToken.value + "] (" + this.currToken.line + ":" + this.currToken.position + ")");
             this.errors++;
         }
         this.currPos++;
