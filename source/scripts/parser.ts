@@ -3,6 +3,8 @@
 class Parser extends Component {
     private tokens: Array<Token>;
 
+    private CST: Tree;
+
     private currToken: Token;
     private currPos: number;
 
@@ -16,6 +18,8 @@ class Parser extends Component {
         super("Parser", enableDebug);
 
         this.tokens = tokenStream;
+
+        this.CST = new Tree();
 
         this.currPos = 0;
 
@@ -45,11 +49,13 @@ class Parser extends Component {
     }
 
     private parseStart() {
+        this.CST.addNode("start");
         this.parseBlock();
         this.match("EOP", this.currToken);
     }
 
     private parseBlock() {
+        this.CST.addNode("block");
         this.debug("Parsing Block.");
         this.match("SYM_L_BRACE", this.currToken);
         this.parseStatementList();
@@ -58,6 +64,7 @@ class Parser extends Component {
 
     private parseStatementList() {
         this.debug("Parsing StatementList.");
+        this.CST.addNode("statementList");
         if (this.currToken !== undefined && ["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
             this.parseStatement();
             this.parseStatementList();
@@ -70,6 +77,7 @@ class Parser extends Component {
 
     private parseStatement() {
         this.debug("Parsing Statement.");
+        this.CST.addNode("statement");
         //Block
         if (this.currToken.kind === "SYM_L_BRACE") {
             this.parseBlock();
@@ -205,6 +213,9 @@ class Parser extends Component {
 
     private parseType() {
         this.debug("Parsing Type.");
+
+
+
         switch (this.currToken.kind) {
             case "I_TYPE": {
                 this.match("I_TYPE", this.currToken);

@@ -7,15 +7,33 @@ class Tree {
         this.currNode = null;
     }
 
-    private addNode(label: string) {
+    public addNode(label: string) {
         var node = new TreeNode(label);
         if (this.root === null) {
             this.root = node;
             node.setParent(null);
         }
         else {
-            
+            node.setParent(this.currNode);
+            node.getParent().addChild(node);
         }
+        this.currNode = node;
+    }
+
+    //Since terminals are ALWAYS leaf nodes, we can
+    //make a specialized function
+    public addLeafNode(label: string) {
+        var node = new TreeNode(label);
+        node.setParent(this.currNode);
+        node.getParent().addChild(node);
+    }
+
+    public moveUp() {
+        this.currNode = this.currNode.getParent();
+    }
+
+    public printTree() {
+        
     }
 
 }
@@ -27,6 +45,10 @@ class TreeNode {
 
     constructor(newName: string) {
         this.name = newName;
+    }
+
+    public getParent() {
+        return this.parent;
     }
 
     public setParent(node: TreeNode) {
