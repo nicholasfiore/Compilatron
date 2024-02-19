@@ -45,13 +45,15 @@ class Compiler extends Component {
             }
 
             //Parser
-            if (!this.caughtError && false) {
+            if (!this.caughtError) {
                 //console.log("here");
                 this._Parser = new Parser(tokens, this.inDebugMode);
                 
                 this.info("Parsing program " + this.currentProgram);
                 
                 var parseOut = this._Parser.parse();
+
+                
             }
             this.reset();
             infiniteProtection++;
