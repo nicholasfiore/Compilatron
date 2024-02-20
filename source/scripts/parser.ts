@@ -38,7 +38,7 @@ class Parser extends Component {
         if (tokenToMatch) { //only checks if the tokenToMatch exists and is not undefined/null
             if (desiredTokenKind === tokenToMatch.kind) {
                 this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
-
+                this.CST.addLeafNode(tokenToMatch.kind);
             }
             else {
                 //There is an error
@@ -54,7 +54,7 @@ class Parser extends Component {
         this.CST.addNode("Program");
         this.parseBlock();
         this.match("EOP", this.currToken);
-        this.CST.moveUp();//necessary to break the loop when printing the tree
+        //this.CST.moveUp();//necessary to break the loop when printing the tree
     }
 
     private parseBlock() {

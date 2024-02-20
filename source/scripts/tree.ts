@@ -14,10 +14,12 @@ class Tree extends Component {
         if (this.root === null) {
             this.root = node;
             node.setParent(null);
+            this.debug("Added root " + node.getName());
         }
         else {
             node.setParent(this.currNode);
             node.getParent().addChild(node);
+            this.debug("Added branch " + node.getName());
         }
         this.currNode = node;
     }
@@ -26,11 +28,13 @@ class Tree extends Component {
     //make a specialized function
     public addLeafNode(label: string) {
         var node = new TreeNode(label);
+        this.debug("Added leaf " + node.getName());
         node.setParent(this.currNode);
         node.getParent().addChild(node);
     }
 
     public moveUp() {
+        this.debug("Moved up.");
         this.currNode = this.currNode.getParent();
     }
 
