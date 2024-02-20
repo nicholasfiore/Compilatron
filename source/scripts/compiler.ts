@@ -53,7 +53,9 @@ class Compiler extends Component {
                 
                 var parseOut = this._Parser.parse();
 
-                
+                this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
+            } else {
+                this.err("")
             }
             this.reset();
             infiniteProtection++;

@@ -30,7 +30,8 @@ class Parser extends Component {
     public parse() {
         this.currToken = this.tokens[this.currPos];
         this.parseStart();
-        console.log(this.errors)
+        
+        return {concreteSyntaxTree: this.CST, errors: this.errors, warnings: this.warnings};
     }
 
     private match(desiredTokenKind: string, tokenToMatch: Token) {
