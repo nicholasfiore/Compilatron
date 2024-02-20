@@ -60,6 +60,7 @@ class Parser extends Component {
         this.match("SYM_L_BRACE", this.currToken);
         this.parseStatementList();
         this.match("SYM_R_BRACE", this.currToken);
+        this.CST.moveUp();
     }
 
     private parseStatementList() {
@@ -73,6 +74,7 @@ class Parser extends Component {
         else {
             //Do nothing
         }
+        this.CST.moveUp();
     }
 
     private parseStatement() {
@@ -102,31 +104,37 @@ class Parser extends Component {
         else if (this.currToken.kind === "IF") {
             this.parseIfStatement();
         }
+        this.CST.moveUp();
     }
 
     private parsePrintStatement() {
         this.debug("Parsing PrintStatement.");
+        this.CST.addNode("printStatement");
         this.match("PRINT", this.currToken);
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
         this.match("SYM_R_PAREN", this.currToken);
+        this.CST.moveUp();
     }
 
     private parseAssignmentStatement() {
         this.debug("Parsing AssignmentStatement.");
+        this.CST.addNode("assignmentStatement");
         this.match("ID", this.currToken);
         this.match("SYM_ASSIGN", this.currToken);
         this.parseExpression();
     }
 
     private parseVariableDeclaration() {
-        this.debug("Parsing AssignmentStatement.");
+        this.debug("Parsing VariableDeclaration.");
+        this.CST.addNode("varDecl");
         this.parseType();
         this.match("ID", this.currToken);
     }
 
     private parseWhileStatement() {
         this.debug("Parsing WhileStatement.");
+        this.CST.addNode("whileStatement");
         this.match("WHILE", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
@@ -134,6 +142,7 @@ class Parser extends Component {
 
     private parseIfStatement() {
         this.debug("Parsing IfStatement.");
+        this.CST.addNode("ifStatement");
         this.match("IF", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
@@ -141,6 +150,7 @@ class Parser extends Component {
 
     private parseExpression() {
         this.debug("Parsing Expression.");
+        this.CST.addNode("expr");
         switch (this.currToken.kind) {
             case "DIGIT": {
                 this.parseIntegerExpression();
@@ -162,6 +172,7 @@ class Parser extends Component {
 
     private parseIntegerExpression() {
         this.debug("Parsing IntegerExpression.");
+        this.CST.addNode("IntExpr");
         this.match("DIGIT", this.currToken);
         if (this.currToken.kind === "SYM_ADD") {
             this.match("SYM_ADD", this.currToken);
@@ -175,6 +186,7 @@ class Parser extends Component {
 
     private parseStringExpression() {
         this.debug("Parsing StringExpression.");
+        this.CST.addNode("StringExpr");
         this.match("SYM_QUOTE", this.currToken);
         this.parseCharList();
         this.match("SYM_QUOTE", this.currToken);
@@ -182,6 +194,7 @@ class Parser extends Component {
 
     private parseBooleanExpression() {
         this.debug("Parsing BooleanExpression.");
+        this.CST.addNode("BooleanExpr");
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
         this.parseBooleanOperation();
@@ -195,6 +208,7 @@ class Parser extends Component {
 
     private parseCharList() {
         this.debug("Parsing CharList.");
+        this.CST.addNode("CharList");
         if (this.currToken.kind === "CHAR") {
             this.match("CHAR", this.currToken);
             if (this.currToken.kind === "CHAR") {
@@ -214,7 +228,7 @@ class Parser extends Component {
     private parseType() {
         this.debug("Parsing Type.");
 
-
+        this.CST.addNode("type");
 
         switch (this.currToken.kind) {
             case "I_TYPE": {
@@ -246,6 +260,8 @@ class Parser extends Component {
 
     private parseBooleanOperation() {
         this.debug("Parsing BooleanOperation.");
+        this.CST.addNode("boolop");
+
         //a slightly modified version of match()
         //since a bool op only has two forms,
         //in order to allow for a more specific
