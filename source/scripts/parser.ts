@@ -29,7 +29,7 @@ class Parser extends Component {
 
     public parse() {
         this.currToken = this.tokens[this.currPos];
-        this.parseStart();
+        this.parseProgram();
         
         return {concreteSyntaxTree: this.CST, errors: this.errors, warnings: this.warnings};
     }
@@ -50,8 +50,8 @@ class Parser extends Component {
         }
     }
 
-    private parseStart() {
-        this.CST.addNode("Start");
+    private parseProgram() {
+        this.CST.addNode("Program");
         this.parseBlock();
         this.match("EOP", this.currToken);
         this.CST.moveUp();//necessary to break the loop when printing the tree

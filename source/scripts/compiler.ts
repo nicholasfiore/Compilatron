@@ -57,9 +57,12 @@ class Compiler extends Component {
                 if (parseOut.errors > 0) {
                     this.caughtError = true;
                 }
+
+                //CST printing
                 if (!this.caughtError) {
+                    var CST = parseOut.concreteSyntaxTree;
                     this.info("Concrete Syntax Tree:");
-                    parseOut.concreteSyntaxTree.printTree();
+                    CST.printTree(CST.getRoot());
                 }
 
             } else {

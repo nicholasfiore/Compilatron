@@ -1,6 +1,7 @@
 class Tree extends Component {
     private root: TreeNode;
     private currNode: TreeNode;
+    private currDepth: number;
 
     constructor(name: string) {
         super(name, false);
@@ -33,9 +34,20 @@ class Tree extends Component {
         this.currNode = this.currNode.getParent();
     }
 
-    //performs a depth-first traversal of the tree and prints it
-    public printTree() {
+    //performs a depth-first in-order traversal of the tree and prints it
+    public printTree(node: TreeNode) {
+        if (node.getChildren().length === 0) {
+            this.info("<" + node.getName() + ">");
+            return;
+        }
         
+        node.getChildren().forEach(e => {
+            this.printTree(e);
+        });
+    }
+
+    public getRoot() {
+        return this.root;
     }
 
 }
@@ -50,12 +62,20 @@ class TreeNode {
         this.children = new Array<TreeNode>;
     }
 
+    public getName() {
+        return this.name;
+    }
+
     public getParent() {
         return this.parent;
     }
 
     public setParent(node: TreeNode) {
         this.parent = node;
+    }
+
+    public getChildren() {
+        return this.children;
     }
 
     public addChild(node: TreeNode) {
