@@ -34,13 +34,14 @@ class Parser extends Component {
     }
 
     private match(desiredTokenKind: string, tokenToMatch: Token) {
-        if (tokenToMatch) { //only checks if the tokenToMatch exists
+        if (tokenToMatch) { //only checks if the tokenToMatch exists and is not undefined/null
             if (desiredTokenKind === tokenToMatch.kind) {
-                this.info("Found " + tokenToMatch.kind + " terminal");
+                this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
+
             }
             else {
                 //There is an error
-                this.err("Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+                this.err("at (" + tokenToMatch.line+ ":" + tokenToMatch.position + "): Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
                 this.errors++;
             }
             this.currPos++;
@@ -49,13 +50,14 @@ class Parser extends Component {
     }
 
     private parseStart() {
-        this.CST.addNode("start");
+        this.CST.addNode("Start");
         this.parseBlock();
         this.match("EOP", this.currToken);
+        this.CST.moveUp();//necessary to break the loop when printing the tree
     }
 
     private parseBlock() {
-        this.CST.addNode("block");
+        this.CST.addNode("Block");
         this.debug("Parsing Block.");
         this.match("SYM_L_BRACE", this.currToken);
         this.parseStatementList();
@@ -65,7 +67,7 @@ class Parser extends Component {
 
     private parseStatementList() {
         this.debug("Parsing StatementList.");
-        this.CST.addNode("statementList");
+        this.CST.addNode("StatementList");
         if (this.currToken !== undefined && ["SYM_L_BRACE", "PRINT", "ID", "I_TYPE", "S_TYPE", "B_TYPE", "WHILE", "IF"].indexOf(this.currToken.kind) !== -1) {
             this.parseStatement();
             this.parseStatementList();
@@ -79,7 +81,7 @@ class Parser extends Component {
 
     private parseStatement() {
         this.debug("Parsing Statement.");
-        this.CST.addNode("statement");
+        this.CST.addNode("Statement");
         //Block
         if (this.currToken.kind === "SYM_L_BRACE") {
             this.parseBlock();
@@ -109,7 +111,7 @@ class Parser extends Component {
 
     private parsePrintStatement() {
         this.debug("Parsing PrintStatement.");
-        this.CST.addNode("printStatement");
+        this.CST.addNode("PrintStatement");
         this.match("PRINT", this.currToken);
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
@@ -119,38 +121,42 @@ class Parser extends Component {
 
     private parseAssignmentStatement() {
         this.debug("Parsing AssignmentStatement.");
-        this.CST.addNode("assignmentStatement");
+        this.CST.addNode("AssignmentStatement");
         this.match("ID", this.currToken);
         this.match("SYM_ASSIGN", this.currToken);
         this.parseExpression();
+        this.CST.moveUp();
     }
 
     private parseVariableDeclaration() {
         this.debug("Parsing VariableDeclaration.");
-        this.CST.addNode("varDecl");
+        this.CST.addNode("VarDecl");
         this.parseType();
         this.match("ID", this.currToken);
+        this.CST.moveUp();
     }
 
     private parseWhileStatement() {
         this.debug("Parsing WhileStatement.");
-        this.CST.addNode("whileStatement");
+        this.CST.addNode("WhileStatement");
         this.match("WHILE", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
+        this.CST.moveUp();
     }
 
     private parseIfStatement() {
         this.debug("Parsing IfStatement.");
-        this.CST.addNode("ifStatement");
+        this.CST.addNode("FfStatement");
         this.match("IF", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();
+        this.CST.moveUp();
     }
 
     private parseExpression() {
         this.debug("Parsing Expression.");
-        this.CST.addNode("expr");
+        this.CST.addNode("Expr");
         switch (this.currToken.kind) {
             case "DIGIT": {
                 this.parseIntegerExpression();
@@ -168,6 +174,7 @@ class Parser extends Component {
                 this.match("ID", this.currToken);
             }
         }
+        this.CST.moveUp();
     }
 
     private parseIntegerExpression() {
@@ -182,6 +189,7 @@ class Parser extends Component {
             //Do nothing
             //A single digit is a valid IntegerExpression
         }
+        this.CST.moveUp();
     }
 
     private parseStringExpression() {
@@ -190,6 +198,7 @@ class Parser extends Component {
         this.match("SYM_QUOTE", this.currToken);
         this.parseCharList();
         this.match("SYM_QUOTE", this.currToken);
+        this.CST.moveUp();
     }
 
     private parseBooleanExpression() {
@@ -200,6 +209,7 @@ class Parser extends Component {
         this.parseBooleanOperation();
         this.parseExpression();
         this.match("SYM_R_PAREN", this.currToken);
+        this.CST.moveUp();
     }
 
     private parseID() {
@@ -223,6 +233,7 @@ class Parser extends Component {
         else {
             //Do nothing
         }
+        this.CST.moveUp();
     }
 
     private parseType() {
@@ -244,6 +255,7 @@ class Parser extends Component {
                 break;
             }
         }
+        this.CST.moveUp();
     }
 
     private parseChar() {
@@ -268,9 +280,11 @@ class Parser extends Component {
         //error message
         if ("SYM_IS_EQUAL" === this.currToken.kind) {
             this.info("Found " + this.currToken.kind + " terminal");
+            this.CST.moveUp();
         }
         else if ("SYM_IS_NOT_EQUAL" === this.currToken.kind) {
             this.info("Found " + this.currToken.kind + " terminal");
+            this.CST.moveUp();
         }
         else {
             //There is an error

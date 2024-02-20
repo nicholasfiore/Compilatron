@@ -45,6 +45,7 @@ class TreeNode {
 
     constructor(newName: string) {
         this.name = newName;
+        this.children = new Array<TreeNode>;
     }
 
     public getParent() {
