@@ -32,7 +32,7 @@ class Compiler extends Component {
         while (!this.reachedEOF && infiniteProtection < 10) {
             this.currentProgram++;
 
-            //Lexer
+            /* Lexer */
             this.info("Lexing program " + this.currentProgram);
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
@@ -44,7 +44,7 @@ class Compiler extends Component {
                 this.reachedEOF = true;
             }
 
-            //Parser
+            /* Parser */
             if (!this.caughtError) {
                 //console.log("here");
                 this._Parser = new Parser(tokens, this.inDebugMode);
@@ -54,9 +54,23 @@ class Compiler extends Component {
                 var parseOut = this._Parser.parse();
 
                 this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
+                if (parseOut.errors > 0) {
+                    this.caughtError = true;
+                }
+                if (!this.caughtError) {
+                    this.info("Concrete Syntax Tree:");
+                    parseOut.concreteSyntaxTree.printTree();
+                }
+
             } else {
-                this.err("")
+                this.err("Parsing skipped due to lexer error.");
             }
+
+            /* Semantic Analysis */
+
+            /* Code Generation */
+
+            //Reset for next program
             this.reset();
             infiniteProtection++;
         }
