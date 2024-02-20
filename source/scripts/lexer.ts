@@ -204,6 +204,14 @@ class Lexer extends Component {
 				this.warn("EOF reached while inside a comment");
 			} else {
 				this.warn("EOF reached before EOP ($)");
+				this.warn("Adding an EOP ($) token to end of the current program");
+				var token: Token = {
+					kind: "EOP",
+					value: "$",
+					line: this.currLine,
+					position: this.currPos + 1
+				}
+				this.tokens.push(token);
 			}
 			this.warnings++;
 		}

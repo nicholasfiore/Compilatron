@@ -19,7 +19,7 @@ class Parser extends Component {
 
         this.tokens = tokenStream;
 
-        this.CST = new Tree();
+        this.CST = new Tree("CST");
 
         this.currPos = 0;
 

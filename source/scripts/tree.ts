@@ -1,8 +1,9 @@
-class Tree {
+class Tree extends Component {
     private root: TreeNode;
     private currNode: TreeNode;
 
-    constructor() {
+    constructor(name: string) {
+        super(name, false);
         this.root = null;
         this.currNode = null;
     }
@@ -32,6 +33,7 @@ class Tree {
         this.currNode = this.currNode.getParent();
     }
 
+    //performs a depth-first traversal of the tree and prints it
     public printTree() {
         
     }
