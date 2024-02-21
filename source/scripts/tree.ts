@@ -4,9 +4,10 @@ class Tree extends Component {
     private currDepth: number;
 
     constructor(name: string) {
-        super(name, false);
+        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
+        this.currDepth = -1;
     }
 
     public addNode(label: string) {
@@ -40,11 +41,32 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-        if (node.getChildren().length === 0) {
-            this.info("<" + node.getName() + ">");
-            return;
-        }
         
+        console.log("depth: " +this.currDepth);
+
+        var depthStr: string = "";
+        for (var i = 0; i < this.currDepth; i++) {
+            depthStr += "-";
+        }
+        console.log("DepthStr1: " +depthStr);
+
+        if (node.getChildren().length === 0) {
+            this.info(depthStr + "<" + node.getName() + ">");
+            this.currDepth -= 1;
+            return;
+        } else {
+            this.currDepth++;
+        }
+
+        //reset depth str
+        depthStr = "";
+        console.log("DepthStr reset: " +depthStr);
+        for (var i = 0; i < this.currDepth; i++) {
+            depthStr += "-";
+        }
+        console.log("DepthStr2: " +depthStr);
+        
+        this.info(depthStr + "[" + node.getName() + "]");
         node.getChildren().forEach(e => {
             this.printTree(e);
         });
