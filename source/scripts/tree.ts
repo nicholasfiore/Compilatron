@@ -41,7 +41,7 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-
+        
         if (node.getChildren().length === 0) {
             this.info(this.getDepthStr() + "<" + node.getName() + ">");
             this.currDepth -= 1;
@@ -49,11 +49,14 @@ class Tree extends Component {
         }
 
         this.info(this.getDepthStr() + "[" + node.getName() + "]");
-        
         node.getChildren().forEach(e => {
+            //console.log("here")
+            //console.log(this.currDepth)
             this.currDepth++;
+            //console.log("now:" +this.currDepth)
             this.printTree(e);
         });
+        this.currDepth--;
     }
 
     public getRoot() {
