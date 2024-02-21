@@ -38,7 +38,7 @@ class Parser extends Component {
         if (tokenToMatch) { //only checks if the tokenToMatch exists and is not undefined/null
             if (desiredTokenKind === tokenToMatch.kind) {
                 this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
-                this.CST.addLeafNode(tokenToMatch.kind);
+                this.CST.addLeafNode("<" + tokenToMatch.kind + ", [ " + tokenToMatch.value + " ]>");
             }
             else {
                 //There is an error
@@ -148,7 +148,7 @@ class Parser extends Component {
 
     private parseIfStatement() {
         this.debug("Parsing IfStatement.");
-        this.CST.addNode("FfStatement");
+        this.CST.addNode("IfStatement");
         this.match("IF", this.currToken);
         this.parseBooleanExpression();
         this.parseBlock();

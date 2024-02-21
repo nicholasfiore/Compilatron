@@ -43,7 +43,11 @@ class Tree extends Component {
     public printTree(node: TreeNode) {
         
         if (node.getChildren().length === 0) {
-            this.info(this.getDepthStr() + "<" + node.getName() + ">");
+            if (node.getName().charAt(0) === "<") {
+                this.info(this.getDepthStr() + node.getName());
+            } else {
+                this.info(this.getDepthStr() + "[" + node.getName() + "]");
+            }
             this.currDepth -= 1;
             return;
         }

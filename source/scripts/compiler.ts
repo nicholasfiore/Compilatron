@@ -45,7 +45,7 @@ class Compiler extends Component {
             }
 
             /* Parser */
-            if (!this.caughtError && false) {
+            if (!this.caughtError) {
                 //console.log("here");
                 this._Parser = new Parser(tokens, this.inDebugMode);
                 
