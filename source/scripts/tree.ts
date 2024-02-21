@@ -7,7 +7,7 @@ class Tree extends Component {
         super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
-        this.currDepth = -1;
+        this.currDepth = 0;
     }
 
     public addNode(label: string) {
@@ -41,39 +41,31 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-        
-        console.log("depth: " +this.currDepth);
-
-        var depthStr: string = "";
-        for (var i = 0; i < this.currDepth; i++) {
-            depthStr += "-";
-        }
-        console.log("DepthStr1: " +depthStr);
 
         if (node.getChildren().length === 0) {
-            this.info(depthStr + "<" + node.getName() + ">");
+            this.info(this.getDepthStr() + "<" + node.getName() + ">");
             this.currDepth -= 1;
             return;
-        } else {
-            this.currDepth++;
         }
 
-        //reset depth str
-        depthStr = "";
-        console.log("DepthStr reset: " +depthStr);
-        for (var i = 0; i < this.currDepth; i++) {
-            depthStr += "-";
-        }
-        console.log("DepthStr2: " +depthStr);
+        this.info(this.getDepthStr() + "[" + node.getName() + "]");
         
-        this.info(depthStr + "[" + node.getName() + "]");
         node.getChildren().forEach(e => {
+            this.currDepth++;
             this.printTree(e);
         });
     }
 
     public getRoot() {
         return this.root;
+    }
+
+    private getDepthStr() {
+        var depthStr = "";
+        for (var i = 0; i < this.currDepth; i++) {
+            depthStr += "-";
+        }
+        return depthStr;
     }
 
 }
