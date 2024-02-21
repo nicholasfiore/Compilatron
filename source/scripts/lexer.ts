@@ -93,7 +93,7 @@ class Lexer extends Component {
 		
 		//main lexing loop
 		var infiniteProtection: number = 0;
-		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 50)) {
+		while(!this.reachedEOP && !this.reachedEOF && !(infiniteProtection >= 10000)) {
 			this.currChar = this.sourceCode.charAt(this.currStreamPos);
 
 			/* initial check for entering a comment */
