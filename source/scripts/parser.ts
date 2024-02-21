@@ -158,21 +158,23 @@ class Parser extends Component {
     private parseExpression() {
         this.debug("Parsing Expression.");
         this.CST.addNode("Expr");
-        switch (this.currToken.kind) {
-            case "DIGIT": {
-                this.parseIntegerExpression();
-                break;
-            }
-            case "SYM_QUOTE": {
-                this.parseStringExpression();
-                break;
-            }
-            case "SYM_L_PAREN": {
-                this.parseBooleanExpression();
-                break;
-            }
-            case "ID": {
-                this.match("ID", this.currToken);
+        if (this.currToken){
+            switch (this.currToken.kind) {
+                case "DIGIT": {
+                    this.parseIntegerExpression();
+                    break;
+                }
+                case "SYM_QUOTE": {
+                    this.parseStringExpression();
+                    break;
+                }
+                case "SYM_L_PAREN": {
+                    this.parseBooleanExpression();
+                    break;
+                }
+                case "ID": {
+                    this.match("ID", this.currToken);
+                }
             }
         }
         this.CST.moveUp();

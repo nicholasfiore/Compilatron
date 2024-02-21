@@ -57,6 +57,7 @@ class Tree extends Component {
             this.printTree(e);
         });
         this.currDepth--;
+        return;
     }
 
     public getRoot() {
