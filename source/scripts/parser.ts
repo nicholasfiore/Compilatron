@@ -38,7 +38,7 @@ class Parser extends Component {
         if (tokenToMatch) { //only checks if the tokenToMatch exists and is not undefined/null
             if (desiredTokenKind === tokenToMatch.kind) {
                 this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
-                this.CST.addLeafNode("<" + tokenToMatch.kind + ", [ " + tokenToMatch.value + " ]>");
+                this.CST.addLeafNode("<" + tokenToMatch.kind + " [ " + tokenToMatch.value + " ]>");
             }
             else {
                 //There is an error
@@ -58,8 +58,8 @@ class Parser extends Component {
     }
 
     private parseBlock() {
-        this.CST.addNode("Block");
         this.debug("Parsing Block.");
+        this.CST.addNode("Block");
         this.match("SYM_L_BRACE", this.currToken);
         this.parseStatementList();
         this.match("SYM_R_BRACE", this.currToken);
