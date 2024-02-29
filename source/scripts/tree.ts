@@ -46,7 +46,8 @@ class Tree extends Component {
             if (node.getName().charAt(0) === "<") {
                 this.info(this.getDepthStr() + node.getName());
             } else {
-                this.info(this.getDepthStr() + "[" + node.getName() + "]");
+                //possibly do nothing
+                //this.info(this.getDepthStr() + "[" + node.getName() + "]");
             }
             this.currDepth -= 1;
             return;
