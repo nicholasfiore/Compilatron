@@ -227,12 +227,14 @@ class Parser extends Component {
                     break;
             }
         }
-        this.match("SYM_L_PAREN", this.currToken);
-        this.parseExpression();
-        this.parseBooleanOperation();
-        this.parseExpression();
-        this.match("SYM_R_PAREN", this.currToken);
-        this.CST.moveUp();
+        else {
+            this.match("SYM_L_PAREN", this.currToken);
+            this.parseExpression();
+            this.parseBooleanOperation();
+            this.parseExpression();
+            this.match("SYM_R_PAREN", this.currToken);
+            this.CST.moveUp();
+        }
     }
 
     private parseID() {
