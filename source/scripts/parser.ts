@@ -159,6 +159,7 @@ class Parser extends Component {
         this.debug("Parsing Expression.");
         this.CST.addNode("Expr");
         if (this.currToken){
+            console.log(this.currToken.kind)
             switch (this.currToken.kind) {
                 case "DIGIT": {
                     this.parseIntegerExpression();
@@ -172,8 +173,17 @@ class Parser extends Component {
                     this.parseBooleanExpression();
                     break;
                 }
+                case "TRUE": {
+                    this.parseBooleanExpression();
+                    break;
+                }
+                case "FALSE": {
+                    this.parseBooleanExpression();
+                    break;
+                }
                 case "ID": {
                     this.match("ID", this.currToken);
+                    break;
                 }
             }
         }
@@ -207,6 +217,16 @@ class Parser extends Component {
     private parseBooleanExpression() {
         this.debug("Parsing BooleanExpression.");
         this.CST.addNode("BooleanExpr");
+        if (this.currToken.kind === "TRUE" || this.currToken.kind === "FALSE") {
+            switch (this.currToken.kind) {
+                case "TRUE":
+                    this.match("TRUE", this.currToken);
+                    break;
+                case "FALSE":
+                    this.match("FALSE", this.currToken);
+                    break;
+            }
+        }
         this.match("SYM_L_PAREN", this.currToken);
         this.parseExpression();
         this.parseBooleanOperation();
