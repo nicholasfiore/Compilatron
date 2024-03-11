@@ -69,6 +69,7 @@ class Compiler extends Component {
                     var CST = parseOut.concreteSyntaxTree;
                     this.info("Concrete Syntax Tree:");
                     CST.printTree(CST.getRoot());
+                    this.info("End CST\n");
                 }
 
             } else {
