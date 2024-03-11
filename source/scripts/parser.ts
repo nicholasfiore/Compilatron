@@ -125,6 +125,8 @@ class Parser extends Component {
         }
         //If no matches are found, it should throw an error since Statement doesn't have
         //an epsilon production
+        //In theory, this should never actually be reached, since statementLists CAN
+        //have an empty transition, so any "incorrect" follow case would be assumed to be empty
         else {
             this.match(["SYM_L_BRACE", "I_TYPE", "S_TYPE", "B_TYPE", "ID", "PRINT", "WHILE", "IF"], this.currToken)
         }
@@ -311,6 +313,9 @@ class Parser extends Component {
             }
             default: {
                 //error on not finding any of these
+                //Again, may never reach here since parseType()
+                //is never entered if none of these are found first
+                //but is here for safety and bug testing
                 this.match(["I_TYPE", "S_TYPE", "B_TYPE"], this.currToken);
                 break;
             }
