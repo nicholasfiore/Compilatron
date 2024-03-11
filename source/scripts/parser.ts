@@ -34,33 +34,49 @@ class Parser extends Component {
         return {concreteSyntaxTree: this.CST, errors: this.errors, warnings: this.warnings};
     }
 
-    private match(desiredTokenKind: string, tokenToMatch: Token) {
+    private match(desiredTokenKind: Array<string>, tokenToMatch: Token) {
+        var matchFound = false;
         if (tokenToMatch) { //only checks if the tokenToMatch exists and is not undefined/null
-            if (desiredTokenKind === tokenToMatch.kind) {
-                this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
-                this.CST.addLeafNode("<" + tokenToMatch.kind + " [ " + tokenToMatch.value + " ]>");
-            }
-            else {
-                //There is an error
-                this.err("at (" + tokenToMatch.line+ ":" + tokenToMatch.position + "): Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
-                this.errors++;
+            desiredTokenKind.forEach(e => {
+                if (e === tokenToMatch.kind) {
+                    this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
+                    this.CST.addLeafNode("<" + tokenToMatch.kind + " [ " + tokenToMatch.value + " ]>");
+                    matchFound = true;
+                }
+                // else {
+                //     //There is an error
+                //     this.err("at (" + tokenToMatch.line+ ":" + tokenToMatch.position + "): Expected {" + desiredTokenKind + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+                //     this.errors++;
+                // }
+                
+            });
+            if (!matchFound) {
+                //if no match was found, there is an error
+                if (desiredTokenKind.length === 1) {
+                    this.err("at (" + tokenToMatch.line + ":" + tokenToMatch.position + "): Expected {" + desiredTokenKind.join(", ") + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+                    this.errors++;
+                } else {
+                    this.err("at (" + tokenToMatch.line + ":" + tokenToMatch.position + "): Expected one of {" + desiredTokenKind.join(", ") + "}, found " + tokenToMatch.kind + " [" + tokenToMatch.value + "]");
+                    this.errors++;
+                }
             }
             this.currPos++;
             this.currToken = this.tokens[this.currPos];
         }
+        
     }
 
     private parseProgram() {
         this.CST.addNode("Program");
         this.parseBlock();
-        this.match("EOP", this.currToken);
+        this.match(["EOP"], this.currToken);
         //this.CST.moveUp();//necessary to break the loop when printing the tree
     }
 
     private parseBlock() {
         this.debug("Parsing Block.");
         this.CST.addNode("Block");
-        this.match("SYM_L_BRACE", this.currToken);
+        this.match(["SYM_L_BRACE"], this.currToken);
         this.parseStatementList();
         this.match("SYM_R_BRACE", this.currToken);
         this.CST.moveUp();
