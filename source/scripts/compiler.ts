@@ -36,9 +36,12 @@ class Compiler extends Component {
             this.info("Lexing program " + this.currentProgram);
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
-            this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
+            
             if (lexOut.errors > 0) {
+                this.info("Lexer failed with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
                 this.caughtError = true;
+            } else {
+                this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
             }
             if (lexOut.EOF) {
                 this.reachedEOF = true;
@@ -53,9 +56,12 @@ class Compiler extends Component {
                 
                 var parseOut = this._Parser.parse();
 
-                this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
+                
                 if (parseOut.errors > 0) {
+                    this.info("Parsing failed with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
                     this.caughtError = true;
+                } else {
+                    this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
                 }
 
                 //CST printing

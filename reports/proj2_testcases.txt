@@ -1,9 +1,6 @@
 /* created an infinite loop, turns out I missed a bug in the lexer */
 {while while (a = 3) {}}
 
-{}$
-{{{}$
-
 /* arnell test cases start */
 {}$
 {{{{{{}}}}}}$
@@ -32,3 +29,8 @@
 {print(int)}$
 {if a {}}$
 {if (a=b){}}$
+
+/* misc */
+{}$
+{{{}$
+
