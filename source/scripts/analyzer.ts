@@ -14,10 +14,5 @@ class SemanticAnalyzer extends Component {
         
     }
 
-    public buildAST(CST: Tree): Tree {
-        
-        return;
-    }
-
     
 }

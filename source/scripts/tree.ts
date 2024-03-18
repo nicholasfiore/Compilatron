@@ -70,7 +70,7 @@ class Tree extends Component {
         if (node.getChildren().length === 0) {
             this.addLeafNode(node.getName());
             this.moveUp();
-            
+            this.currDepth--;
             return;
         }
 
@@ -78,6 +78,36 @@ class Tree extends Component {
 
         node.getChildren().forEach(e => {
             switch (e.getName()) {
+                case "[Block]": {
+
+                    this.currDepth++;
+                    break;
+                }
+                case "[PrintStatement]": {
+
+                    break;
+                }
+                case "[AssignmentStatement]": {
+
+                    break;
+                }
+                case "[VarDecl]": {
+
+                    break;
+                }
+                case "[WhileStatement]": {
+
+                    break;
+                }
+                case "[IfStatement]": {
+
+                    break;
+                }
+                case "[]": {
+
+                    break;
+                }
+
 
             }
 
