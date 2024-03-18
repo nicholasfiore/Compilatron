@@ -1,15 +1,23 @@
 //semantic analyzer
 class SemanticAnalyzer extends Component {
-    private AST: Tree
+    
+    private CST: Tree;
+    private AST: Tree;
 
-    constructor(CST: Tree, enableDebug: boolean) {
+    constructor(ConcreteSyntaxTree: Tree, enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
         this.AST = new Tree("AST");
+        this.CST = ConcreteSyntaxTree;
     }
 
+    public analyze() {
+        
+    }
 
     public buildAST(CST: Tree): Tree {
         
         return;
     }
+
+    
 }
