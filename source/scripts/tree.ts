@@ -65,8 +65,12 @@ class Tree extends Component {
         return;
     }
 
-    public buildAST(CST: Tree): Tree {
-
+    //like print tree, but just grabs the good parts of the CST in order to build the AST
+    public dissectCST(node: TreeNode, AST: Tree) {
+        if (node.getChildren().length === 0) {
+            AST.addLeafNode(node.getName());
+            return;
+        }
     }
 
     public getRoot() {
