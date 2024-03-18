@@ -340,18 +340,6 @@ class Parser extends Component {
         this.debug("Parsing BooleanOperation.");
         this.CST.addNode("boolop");
 
-        // if ("SYM_IS_EQUAL" === this.currToken.kind) {
-        //     this.info("Found " + this.currToken.kind + " terminal");
-        //     this.CST.moveUp();
-        // }
-        // else if ("SYM_IS_NOT_EQUAL" === this.currToken.kind) {
-        //     this.info("Found " + this.currToken.kind + " terminal");
-        //     this.CST.moveUp();
-        // }
-        // else {
-        //     //There is an error
-        //     this.match(["SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL"], this.currToken);
-        // }
         this.match(["SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL"], this.currToken);
         this.CST.moveUp();
     }

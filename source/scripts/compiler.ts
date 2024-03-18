@@ -14,6 +14,7 @@ class Compiler extends Component {
 
     private _Lexer : Lexer;
     private _Parser : Parser;
+    private _Analyzer : SemanticAnalyzer;
 
 
     constructor(source: string, enableDebug: boolean) {
@@ -77,6 +78,14 @@ class Compiler extends Component {
             }
 
             /* Semantic Analysis */
+            if (!this.caughtError) {
+                this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode);
+
+                this._Analyzer.analyze();
+            } else {
+                this.err("Semantic analysis skipped due to parser error.")
+            }
+
 
             /* Code Generation */
 

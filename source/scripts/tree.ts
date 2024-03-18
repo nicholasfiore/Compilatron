@@ -1,6 +1,7 @@
 class Tree extends Component {
     private root: TreeNode;
     private currNode: TreeNode;
+    private lastGoodNode: TreeNode;
     private currDepth: number;
 
     constructor(name: string) {
@@ -18,7 +19,13 @@ class Tree extends Component {
             this.debug("Added root " + node.getName());
         }
         else {
-            node.setParent(this.currNode);
+            console.log(this.lastGoodNode);
+            if (this.lastGoodNode) {
+                node.setParent(this.lastGoodNode);
+                this.lastGoodNode = null;
+            } else {
+                node.setParent(this.currNode);
+            }
             node.getParent().addChild(node);
             this.debug("Added branch " + node.getName());
         }
@@ -28,6 +35,8 @@ class Tree extends Component {
     //Since terminals are ALWAYS leaf nodes, we can
     //make a specialized function
     public addLeafNode(label: string) {
+        // console.log(this.currNode);
+        // console.log(this.currNode.getParent());
         var node = new TreeNode(label);
         this.debug("Added leaf " + node.getName());
         node.setParent(this.currNode);
@@ -41,7 +50,7 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-        
+        //console.log(node);
         if (node.getChildren().length === 0) {
             if (node.getName().charAt(0) === "<") {
                 this.info(this.getDepthStr() + node.getName());
@@ -77,43 +86,53 @@ class Tree extends Component {
         
 
         node.getChildren().forEach(e => {
-            switch (e.getName()) {
-                case "[Block]": {
-
-                    this.currDepth++;
-                    break;
-                }
-                case "[PrintStatement]": {
-
-                    break;
-                }
-                case "[AssignmentStatement]": {
-
-                    break;
-                }
-                case "[VarDecl]": {
-
-                    break;
-                }
-                case "[WhileStatement]": {
-
-                    break;
-                }
-                case "[IfStatement]": {
-
-                    break;
-                }
-                case "[]": {
-
-                    break;
-                }
-
-
+            if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
+                this.addNode(e.getName());
+                console.log(this.currNode)
+                this.lastGoodNode = this.currNode;
+                console.log(this.lastGoodNode);
+                this.currDepth++;
+            } else {
+                this.currNode = e;
             }
+            // switch (e.getName()) {
+            //     case "[Block]": {
+
+                    
+            //         break;
+            //     }
+            //     case "[PrintStatement]": {
+
+            //         break;
+            //     }
+            //     case "[AssignmentStatement]": {
+
+            //         break;
+            //     }
+            //     case "[VarDecl]": {
+
+            //         break;
+            //     }
+            //     case "[WhileStatement]": {
+
+            //         break;
+            //     }
+            //     case "[IfStatement]": {
+
+            //         break;
+            //     }
+            //     case "[]": {
+
+            //         break;
+            //     }
+
+
+            // }
 
             this.buildAST(e);
         });
         this.moveUp();
+        this.currDepth--;
         return;
     }
 
