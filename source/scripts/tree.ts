@@ -65,6 +65,10 @@ class Tree extends Component {
         return;
     }
 
+    public buildAST(CST: Tree): Tree {
+
+    }
+
     public getRoot() {
         return this.root;
     }
