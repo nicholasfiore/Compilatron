@@ -62,6 +62,7 @@ class Parser extends Component {
             }
             this.currPos++;
             this.currToken = this.tokens[this.currPos];
+            //this.debug("Current token: " + this.currToken.kind);
         }
         
     }
@@ -353,8 +354,6 @@ class Parser extends Component {
         // }
         this.match(["SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL"], this.currToken);
         this.CST.moveUp();
-        this.currPos++;
-        this.currToken = this.tokens[this.currPos];
     }
 
     private parseBooleanValue() {
