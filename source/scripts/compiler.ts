@@ -81,6 +81,7 @@ class Compiler extends Component {
             if (!this.caughtError) {
                 this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode);
 
+                this.info("Syntactic Analysis for program " + this.currentProgram);
                 this._Analyzer.analyze();
             } else {
                 this.err("Semantic analysis skipped due to parser error.")

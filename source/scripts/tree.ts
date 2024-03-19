@@ -48,8 +48,15 @@ class Tree extends Component {
             if (node.getName().charAt(0) === "<") {
                 this.info(this.getDepthStr() + node.getName());
             } else {
-                //possibly do nothing
-                //this.info(this.getDepthStr() + "[" + node.getName() + "]");
+                if (node.getName() !== "StatementList") {
+                    if (node.getName() !== "CharList") {
+                        //statementList and charList can have an epsilon transition,
+                        //so they shouldn't be printed. This allows printing the AST
+                        //to work without breaking printing the CST.
+                        this.info(this.getDepthStr() + "[" + node.getName() + "]");
+                    }
+                }
+                
             }
             this.currDepth -= 1;
             return;
