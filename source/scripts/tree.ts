@@ -11,18 +11,23 @@ class Tree extends Component {
     }
 
     public addNode(label: string) {
+        console.log("Curr node: " + this.currNode);
         var node = new TreeNode(label);
         if (this.root === null) {
+            console.log("root")
             this.root = node;
             node.setParent(null);
             this.debug("Added root " + node.getName());
         }
         else {
+            console.log("not root")
             node.setParent(this.currNode);
             node.getParent().addChild(node);
             this.debug("Added branch " + node.getName());
         }
         this.currNode = node;
+        console.log("Curr node: " + this.currNode);
+        
     }
 
     //Since terminals are ALWAYS leaf nodes, we can
@@ -43,7 +48,7 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-        console.log(node);
+        //console.log(node);
         if (node.getChildren().length === 0) {
             if (node.getName().charAt(0) === "<") {
                 this.info(this.getDepthStr() + node.getName());
@@ -77,6 +82,7 @@ class Tree extends Component {
     //like print tree, but just grabs the good parts of the CST in order to build the AST
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
+            if ()
             this.addLeafNode(node.getName());
             this.moveUp();
             this.currDepth--;
@@ -87,10 +93,11 @@ class Tree extends Component {
 
         node.getChildren().forEach(e => {
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
+                console.log("in here")
                 this.addNode(e.getName());
                 this.currDepth++;
             } else {
-                this.currNode = e;
+                //this.currNode = e;
             }
             // switch (e.getName()) {
             //     case "[Block]": {
