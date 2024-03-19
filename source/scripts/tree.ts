@@ -1,11 +1,10 @@
 class Tree extends Component {
     private root: TreeNode;
     private currNode: TreeNode;
-    private lastGoodNode: TreeNode;
     private currDepth: number;
 
     constructor(name: string) {
-        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
+        super(name, true); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
         this.currDepth = 0;
@@ -19,13 +18,7 @@ class Tree extends Component {
             this.debug("Added root " + node.getName());
         }
         else {
-            console.log(this.lastGoodNode);
-            if (this.lastGoodNode) {
-                node.setParent(this.lastGoodNode);
-                this.lastGoodNode = null;
-            } else {
-                node.setParent(this.currNode);
-            }
+            node.setParent(this.currNode);
             node.getParent().addChild(node);
             this.debug("Added branch " + node.getName());
         }
@@ -50,7 +43,7 @@ class Tree extends Component {
 
     //performs a depth-first in-order traversal of the tree and prints it
     public printTree(node: TreeNode) {
-        //console.log(node);
+        console.log(node);
         if (node.getChildren().length === 0) {
             if (node.getName().charAt(0) === "<") {
                 this.info(this.getDepthStr() + node.getName());
@@ -88,9 +81,6 @@ class Tree extends Component {
         node.getChildren().forEach(e => {
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
                 this.addNode(e.getName());
-                console.log(this.currNode)
-                this.lastGoodNode = this.currNode;
-                console.log(this.lastGoodNode);
                 this.currDepth++;
             } else {
                 this.currNode = e;
