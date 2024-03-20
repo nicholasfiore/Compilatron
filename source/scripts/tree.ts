@@ -32,10 +32,10 @@ class Tree extends Component {
 
     //Since terminals are ALWAYS leaf nodes, we can
     //make a specialized function
-    public addLeafNode(label: string) {
+    public addLeafNode(label: string, value: string) {
         // console.log(this.currNode);
         // console.log(this.currNode.getParent());
-        var node = new TreeNode(label);
+        var node = new TreeNode(label, value);
         this.debug("Added leaf " + node.getName());
         node.setParent(this.currNode);
         node.getParent().addChild(node);
@@ -82,9 +82,10 @@ class Tree extends Component {
     //like print tree, but just grabs the good parts of the CST in order to build the AST
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
-            if ()
-            this.addLeafNode(node.getName());
-            this.moveUp();
+            if ([].indexOf(node.getName()) > -1) {
+                this.addLeafNode(node.getName(), node.);
+                this.moveUp();
+            }
             this.currDepth--;
             return;
         }
@@ -92,6 +93,7 @@ class Tree extends Component {
         
 
         node.getChildren().forEach(e => {
+            console.log("e iteration")
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
                 console.log("in here")
                 this.addNode(e.getName());
@@ -132,7 +134,6 @@ class Tree extends Component {
 
 
             // }
-
             this.buildAST(e);
         });
         this.moveUp();
@@ -156,16 +157,23 @@ class Tree extends Component {
 
 class TreeNode {
     private name: string;
+    private value: string;
     private parent: TreeNode;
     private children: Array<TreeNode>;
 
-    constructor(newName: string) {
+    constructor(newName: string, newValue?: string) {
         this.name = newName;
+        this.value = newValue;
         this.children = new Array<TreeNode>;
     }
+    
 
     public getName() {
         return this.name;
+    }
+
+    public getValue() {
+        return this.value;
     }
 
     public getParent() {
