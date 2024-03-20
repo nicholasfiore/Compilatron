@@ -81,20 +81,18 @@ class Tree extends Component {
     //like print tree, but just grabs the good parts of the CST in order to build the AST
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
-            if ([].indexOf(node.getName()) > -1) {
+            if (["ID", "CHAR", "DIGIT", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
                 this.addLeafNode(node.getName(), node.getValue());
                 this.moveUp();
+                this.currDepth--;
             }
-            this.currDepth--;
             return;
         }
 
         
 
         node.getChildren().forEach(e => {
-            console.log("e iteration")
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
-                console.log("in here")
                 this.addNode(e.getName());
                 this.currDepth++;
             } else {
