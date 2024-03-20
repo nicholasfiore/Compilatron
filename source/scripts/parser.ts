@@ -40,7 +40,7 @@ class Parser extends Component {
             desiredTokenKind.forEach(e => {
                 if (e === tokenToMatch.kind) {
                     this.info("Found " + tokenToMatch.kind + " [ " + tokenToMatch.value + " ] terminal, adding leaf node");
-                    this.CST.addLeafNode("<" + tokenToMatch.kind + " [ " + tokenToMatch.value + " ]>");
+                    this.CST.addLeafNode(tokenToMatch.kind, tokenToMatch.value);
                     matchFound = true;
                 }
                 // else {

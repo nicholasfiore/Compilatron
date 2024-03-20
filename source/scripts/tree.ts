@@ -4,7 +4,7 @@ class Tree extends Component {
     private currDepth: number;
 
     constructor(name: string) {
-        super(name, true); //debugging has to manually set for tree as it's only useful for actual debugging
+        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
         this.currDepth = 0;
@@ -50,8 +50,8 @@ class Tree extends Component {
     public printTree(node: TreeNode) {
         //console.log(node);
         if (node.getChildren().length === 0) {
-            if (node.getName().charAt(0) === "<") {
-                this.info(this.getDepthStr() + node.getName());
+            if (node.getValue()) {
+                this.info(this.getDepthStr() + "<" + node.getName() + "[" + node.getValue() + "]>");
             } else {
                 if (node.getName() !== "StatementList") {
                     if (node.getName() !== "CharList") {
@@ -61,7 +61,6 @@ class Tree extends Component {
                         this.info(this.getDepthStr() + "[" + node.getName() + "]");
                     }
                 }
-                
             }
             this.currDepth -= 1;
             return;
@@ -83,7 +82,7 @@ class Tree extends Component {
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
             if ([].indexOf(node.getName()) > -1) {
-                this.addLeafNode(node.getName(), node.);
+                this.addLeafNode(node.getName(), node.getValue());
                 this.moveUp();
             }
             this.currDepth--;
