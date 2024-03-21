@@ -102,7 +102,7 @@ class Tree extends Component {
             this.buildAST(e);
             //this.moveUp();
         });
-        this.moveUp();
+        //this.moveUp();
         
         //this.currDepth--;
         return;
