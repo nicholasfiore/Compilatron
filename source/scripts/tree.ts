@@ -84,7 +84,7 @@ class Tree extends Component {
             if (["ID", "CHAR", "DIGIT", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
                 this.addLeafNode(node.getName(), node.getValue());
                 this.moveUp();
-                this.currDepth--;
+                //this.currDepth--;
             }
             return;
         }
@@ -94,47 +94,17 @@ class Tree extends Component {
         node.getChildren().forEach(e => {
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
                 this.addNode(e.getName());
-                this.currDepth++;
+                //this.currDepth++;
             } else {
-                //this.currNode = e;
+                //this.moveUp();
             }
-            // switch (e.getName()) {
-            //     case "[Block]": {
-
-                    
-            //         break;
-            //     }
-            //     case "[PrintStatement]": {
-
-            //         break;
-            //     }
-            //     case "[AssignmentStatement]": {
-
-            //         break;
-            //     }
-            //     case "[VarDecl]": {
-
-            //         break;
-            //     }
-            //     case "[WhileStatement]": {
-
-            //         break;
-            //     }
-            //     case "[IfStatement]": {
-
-            //         break;
-            //     }
-            //     case "[]": {
-
-            //         break;
-            //     }
-
-
-            // }
             this.buildAST(e);
         });
-        this.moveUp();
-        this.currDepth--;
+        // if (this.currNode) {
+        //     this.moveUp();
+        // }
+        
+        //this.currDepth--;
         return;
     }
 
