@@ -81,9 +81,9 @@ class Tree extends Component {
     //like print tree, but just grabs the good parts of the CST in order to build the AST
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
-            if (["ID", "CHAR", "DIGIT", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
+            if (["ID", "CHAR", "DIGIT", "I_TYPE", "S_TYPE", "B_TYPE", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
                 this.addLeafNode(node.getName(), node.getValue());
-                this.moveUp();
+                //this.moveUp();
                 //this.currDepth--;
             }
             return;
@@ -95,18 +95,49 @@ class Tree extends Component {
             if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
                 this.addNode(e.getName());
                 //this.currDepth++;
+                //this.moveUp();
             } else {
                 //this.moveUp();
             }
             this.buildAST(e);
+            //this.moveUp();
         });
-        // if (this.currNode) {
-        //     this.moveUp();
-        // }
+        this.moveUp();
         
         //this.currDepth--;
         return;
     }
+
+    //print function that is specific to ASTs
+    // public printAST(node: TreeNode) {
+    //     if (node.getChildren().length === 0) {
+    //         if (node.getValue()) {
+    //             this.info(this.getDepthStr() + "<[" + node.getValue() + "]>");
+    //         } else {
+    //             if (node.getName() !== "StatementList") {
+    //                 if (node.getName() !== "CharList") {
+    //                     //statementList and charList can have an epsilon transition,
+    //                     //so they shouldn't be printed. This allows printing the AST
+    //                     //to work without breaking printing the CST.
+    //                     this.info(this.getDepthStr() + "[" + node.getName() + "]");
+    //                 }
+    //             }
+    //         }
+    //         this.currDepth -= 1;
+    //         return;
+    //     }
+
+    //     this.info(this.getDepthStr() + "[" + node.getName() + "]");
+    //     node.getChildren().forEach(e => {
+    //         //console.log("here")
+    //         //console.log(this.currDepth)
+    //         this.currDepth++;
+    //         //console.log("now:" +this.currDepth)
+    //         this.printAST(e);
+    //     });
+    //     this.currDepth--;
+    //     return;
+    // }
 
     public getRoot() {
         return this.root;
