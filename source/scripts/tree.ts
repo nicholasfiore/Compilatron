@@ -79,34 +79,34 @@ class Tree extends Component {
     }
 
     //like print tree, but just grabs the good parts of the CST in order to build the AST
-    // public buildAST(node: TreeNode) {
-    //     if (node.getChildren().length === 0) {
-    //         if (["ID", "CHAR", "DIGIT", "I_TYPE", "S_TYPE", "B_TYPE", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
-    //             this.addLeafNode(node.getName(), node.getValue());
-    //             //this.moveUp();
-    //             //this.currDepth--;
-    //         }
-    //         return;
-    //     }
+    public buildAST(node: TreeNode) {
+        if (node.getChildren().length === 0) {
+            if (["ID", "CHAR", "DIGIT", "I_TYPE", "S_TYPE", "B_TYPE", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
+                this.addLeafNode(node.getName(), node.getValue());
+                //this.moveUp();
+                //this.currDepth--;
+            }
+            return;
+        }
 
         
 
-    //     node.getChildren().forEach(e => {
-    //         if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
-    //             this.addNode(e.getName());
-    //             //this.currDepth++;
-    //             //this.moveUp();
-    //         } else {
-    //             //this.moveUp();
-    //         }
-    //         this.buildAST(e);
-    //         //this.moveUp();
-    //     });
-    //     //this.moveUp();
+        node.getChildren().forEach(e => {
+            if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
+                this.addNode(e.getName());
+                //this.currDepth++;
+                //this.moveUp();
+            } else {
+                //this.moveUp();
+            }
+            this.buildAST(e);
+            //this.moveUp();
+        });
+        //this.moveUp();
         
-    //     //this.currDepth--;
-    //     return;
-    // }
+        //this.currDepth--;
+        return;
+    }
 
     //print function that is specific to ASTs
     // public printAST(node: TreeNode) {

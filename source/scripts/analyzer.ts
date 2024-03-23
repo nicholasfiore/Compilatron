@@ -5,22 +5,22 @@ class SemanticAnalyzer extends Component {
     private tokens: Array<Token>;
     private AST: Tree;
 
-    constructor(ConcreteSyntaxTree: Tree, TokenStream: Array<Token>, enableDebug: boolean) {
+    constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
         this.AST = new Tree("AST");
         this.CST = ConcreteSyntaxTree;
-        this.tokens = TokenStream;
+        //this.tokens = TokenStream;
     }
 
     public analyze() {
-        //this.AST.buildAST(this.CST.getRoot());
-        this.buildAST();
+        this.AST.buildAST(this.CST.getRoot());
+        //this.buildAST();
         this.info("Abstract Syntax Tree:");
         this.AST.printTree(this.AST.getRoot());
     }
 
     private buildAST() {
-
+        
     }
     
 }
