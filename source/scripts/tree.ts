@@ -4,30 +4,26 @@ class Tree extends Component {
     private currDepth: number;
 
     constructor(name: string) {
-        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
+        super(name, true); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
         this.currDepth = 0;
     }
 
     public addNode(label: string) {
-        console.log("Curr node: " + this.currNode);
+        //console.log(this.currNode);
         var node = new TreeNode(label);
         if (this.root === null) {
-            console.log("root")
             this.root = node;
             node.setParent(null);
             this.debug("Added root " + node.getName());
         }
         else {
-            console.log("not root")
             node.setParent(this.currNode);
             node.getParent().addChild(node);
             this.debug("Added branch " + node.getName());
         }
         this.currNode = node;
-        console.log("Curr node: " + this.currNode);
-        
     }
 
     //Since terminals are ALWAYS leaf nodes, we can
@@ -44,6 +40,7 @@ class Tree extends Component {
     public moveUp() {
         this.debug("Moved up.");
         this.currNode = this.currNode.getParent();
+        console.log(this.currNode);
     }
 
     //performs a depth-first in-order traversal of the tree and prints it
@@ -91,20 +88,19 @@ class Tree extends Component {
 
         
 
-        node.getChildren().forEach(e => {
-            if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(e.getName()) > -1) {
-                this.addNode(e.getName());
-                //this.currDepth++;
-                //this.moveUp();
-            } else {
-                //this.moveUp();
+        for (var i = 0; i < node.getChildren().length; i++) {
+            var child = node.getChildren()[i];
+            if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(child.getName()) > -1) {
+                this.addNode(child.getName());
             }
-            this.buildAST(e);
-            //this.moveUp();
-        });
+            
+            this.buildAST(child);
+            // if (i === node.getChildren().length - 1) {
+            //     this.moveUp();
+            // }
+            // this.moveUp();
+        }
         //this.moveUp();
-        
-        //this.currDepth--;
         return;
     }
 
