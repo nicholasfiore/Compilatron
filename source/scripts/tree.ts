@@ -134,7 +134,12 @@ class Tree extends Component {
     }
 
     private analyzeVarDecl(node: TreeNode) {
-        
+        var type;
+        var id;
+        var currSubNode: TreeNode;
+        while (currSubNode.getName() !== node.getName()) {
+
+        }
     }
 
 
