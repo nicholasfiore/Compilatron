@@ -79,7 +79,7 @@ class Tree extends Component {
     public buildAST(node: TreeNode) {
         if (node.getChildren().length === 0) {
             if (["ID", "CHAR", "DIGIT", "I_TYPE", "S_TYPE", "B_TYPE", "SYM_IS_EQUAL", "SYM_IS_NOT_EQUAL", "SYM_ADD", "TRUE", "FALSE"].indexOf(node.getName()) > -1) {
-                this.addLeafNode(node.getName(), node.getValue());
+                //this.addLeafNode(node.getName(), node.getValue());
                 //this.moveUp();
                 //this.currDepth--;
             }
@@ -90,19 +90,53 @@ class Tree extends Component {
 
         for (var i = 0; i < node.getChildren().length; i++) {
             var child = node.getChildren()[i];
-            if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(child.getName()) > -1) {
-                this.addNode(child.getName());
-            }
-            
-            this.buildAST(child);
-            // if (i === node.getChildren().length - 1) {
-            //     this.moveUp();
+            // if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(child.getName()) > -1) {
+                
             // }
-            // this.moveUp();
+            
+            switch (child.getName()) {
+                case "Block": {
+                    this.addNode(child.getName());
+                    break;
+                }
+                case "PrintStatement": {
+                    this.addNode(child.getName());
+                    break;
+                }
+                case "AssignmentStatement": {
+                    this.addNode(child.getName());
+                    break;
+                }
+                case "IfStatement": {
+                    this.addNode(child.getName());
+                    break;
+                }
+                case "WhileStatement": {
+                    this.addNode(child.getName());
+                    break;
+                }
+                case "VarDecl": {
+                    this.addNode(child.getName());
+                    this.analyzeVarDecl(this.currNode);
+                    break;
+                }
+                default: {
+                    this.buildAST(child);
+                }
+            }
+
+
+            
+            
         }
-        //this.moveUp();
+        
         return;
     }
+
+    private analyzeVarDecl(node: TreeNode) {
+        
+    }
+
 
     //print function that is specific to ASTs
     // public printAST(node: TreeNode) {
@@ -135,6 +169,8 @@ class Tree extends Component {
     //     return;
     // }
 
+
+    //accessors
     public getRoot() {
         return this.root;
     }
