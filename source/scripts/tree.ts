@@ -90,6 +90,7 @@ class Tree extends Component {
 
         for (var i = 0; i < node.getChildren().length; i++) {
             var child = node.getChildren()[i];
+
             // if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(child.getName()) > -1) {
                 
             // }
@@ -97,26 +98,27 @@ class Tree extends Component {
             switch (child.getName()) {
                 case "Block": {
                     this.addNode(child.getName());
+                    this.buildAST(child);
                     break;
                 }
                 case "PrintStatement": {
-                    this.addNode(child.getName());
+                    //this.addNode(child.getName());
                     break;
                 }
                 case "AssignmentStatement": {
-                    this.addNode(child.getName());
+                    //this.addNode(child.getName());
                     break;
                 }
                 case "IfStatement": {
-                    this.addNode(child.getName());
+                    //this.addNode(child.getName());
                     break;
                 }
                 case "WhileStatement": {
-                    this.addNode(child.getName());
+                    //this.addNode(child.getName());
                     break;
                 }
                 case "VarDecl": {
-                    this.addNode(child.getName());
+                    //this.addNode(child.getName());
                     this.analyzeVarDecl(this.currNode);
                     break;
                 }
