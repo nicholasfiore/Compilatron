@@ -4,7 +4,7 @@ class Tree extends Component {
     private currDepth: number;
 
     constructor(name: string) {
-        super(name, true); //debugging has to manually set for tree as it's only useful for actual debugging
+        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
         this.currDepth = 0;
@@ -122,7 +122,7 @@ class Tree extends Component {
                     //this.addNode(child.getName());
                     var type;
                     var id;
-                    this.analyzeVarDecl(type, id, child);
+                    this.analyzeVarDecl(type, id, child, new TreeNode(child.getName()));
                     break;
                 }
                 default: {
@@ -138,7 +138,7 @@ class Tree extends Component {
         return;
     }
 
-    private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode) {
+    private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
         console.log(type);
         console.log(id);
         console.log(node);
@@ -158,7 +158,7 @@ class Tree extends Component {
         
 
         node.getChildren().forEach(child => {
-            var returnVal = this.analyzeVarDecl(type, id, child);
+            var returnVal = this.analyzeVarDecl(type, id, child, root);
             if (returnVal.type) {
                 console.log("type")
                 type = returnVal.type;
@@ -174,8 +174,10 @@ class Tree extends Component {
         if (type && id) {
             this.debug("building subtree");
             console.log(this.currNode);
-            this.currNode.addChild(type);
-            this.currNode.addChild(id);
+            
+            var newNode = this.currNode.addChild(root);
+            newNode.addChild(type);
+            newNode.addChild(id);
             return;
         }
         
@@ -265,5 +267,6 @@ class TreeNode {
 
     public addChild(node: TreeNode) {
         this.children.push(node);
+        return node;
     }
 }
