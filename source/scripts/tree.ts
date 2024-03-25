@@ -90,10 +90,6 @@ class Tree extends Component {
 
         for (var i = 0; i < node.getChildren().length; i++) {
             var child = node.getChildren()[i];
-
-            // if (["Block", "PrintStatement", "AssignmentStatement", "IfStatement", "WhileStatement", "VarDecl"].indexOf(child.getName()) > -1) {
-                
-            // }
             
             switch (child.getName()) {
                 case "Block": {
