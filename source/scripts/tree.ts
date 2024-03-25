@@ -139,28 +139,42 @@ class Tree extends Component {
     }
 
     private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode) {
-        console.log("in here")
+        console.log(type);
+        console.log(id);
         console.log(node);
         if (node.getChildren().length === 0) {
             if (!type) {
+                this.debug("found TYPE");
                 type = node;
             }
             else if (!id) {
+                this.debug("Found ID");
                 id = node;
+                
             }
-            return;
+            return {type: type, id: id};
         }
 
         if (type && id) {
+            this.debug("building subtree");
+            console.log(this.currNode);
             this.currNode.addChild(type);
             this.currNode.addChild(id);
             return;
         }
 
         node.getChildren().forEach(child => {
-            this.analyzeVarDecl(type, id, node);
+            var returnVal = this.analyzeVarDecl(type, id, child);
+            if (type) {
+                type = returnVal.type;
+            }
+            
+            if (id) {
+                id = returnVal.id;
+            }
+            
         });
-        return;
+        return {type, id};
     }
 
 
