@@ -26,6 +26,10 @@ class Tree extends Component {
         this.currNode = node;
     }
 
+    public addASTNode() {
+
+    }
+
     //Since terminals are ALWAYS leaf nodes, we can
     //make a specialized function
     public addLeafNode(label: string, value: string) {
@@ -95,6 +99,7 @@ class Tree extends Component {
                 case "Block": {
                     this.addNode(child.getName());
                     this.buildAST(child);
+                    this.moveUp();
                     break;
                 }
                 case "PrintStatement": {
@@ -115,7 +120,9 @@ class Tree extends Component {
                 }
                 case "VarDecl": {
                     //this.addNode(child.getName());
-                    this.analyzeVarDecl(this.currNode);
+                    var type;
+                    var id;
+                    this.analyzeVarDecl(type, id, child);
                     break;
                 }
                 default: {
@@ -131,13 +138,29 @@ class Tree extends Component {
         return;
     }
 
-    private analyzeVarDecl(node: TreeNode) {
-        var type;
-        var id;
-        var currSubNode: TreeNode;
-        while (currSubNode.getName() !== node.getName()) {
-
+    private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode) {
+        console.log("in here")
+        console.log(node);
+        if (node.getChildren().length === 0) {
+            if (!type) {
+                type = node;
+            }
+            else if (!id) {
+                id = node;
+            }
+            return;
         }
+
+        if (type && id) {
+            this.currNode.addChild(type);
+            this.currNode.addChild(id);
+            return;
+        }
+
+        node.getChildren().forEach(child => {
+            this.analyzeVarDecl(type, id, node);
+        });
+        return;
     }
 
 
