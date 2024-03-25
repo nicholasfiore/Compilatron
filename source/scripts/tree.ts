@@ -155,6 +155,22 @@ class Tree extends Component {
             return {type: type, id: id};
         }
 
+        
+
+        node.getChildren().forEach(child => {
+            var returnVal = this.analyzeVarDecl(type, id, child);
+            if (returnVal.type) {
+                console.log("type")
+                type = returnVal.type;
+            }
+            
+            if (returnVal.id) {
+                console.log("id")
+                id = returnVal.id;
+            }
+            
+        });
+
         if (type && id) {
             this.debug("building subtree");
             console.log(this.currNode);
@@ -162,18 +178,7 @@ class Tree extends Component {
             this.currNode.addChild(id);
             return;
         }
-
-        node.getChildren().forEach(child => {
-            var returnVal = this.analyzeVarDecl(type, id, child);
-            if (type) {
-                type = returnVal.type;
-            }
-            
-            if (id) {
-                id = returnVal.id;
-            }
-            
-        });
+        
         return {type, id};
     }
 
