@@ -139,19 +139,17 @@ class Tree extends Component {
     }
 
     //recursively condenses a char list into a single string for printing
-    private condenseString(node: TreeNode) {
-        var currChar;
-        var currStr;
+    private condenseString(node: TreeNode, queue: Array<string>) {
         if (node.getChildren().length === 0) {
-            currChar = node.getValue();
+            console.log(node.getValue())
+            queue.push(node.getValue())
+            return;
         }
 
-        for (var i = node.getChildren().length - 1; i > 0; i--) {
-            currStr = this.condenseString(node.getChildren()[i]);
-        }
-            
-        
-        return (currChar + currStr);
+        node.getChildren().forEach(child => {
+            this.condenseString(child, queue);
+        });
+        return;
     }
 
     private analyzeExpr(node: TreeNode) {
@@ -160,7 +158,6 @@ class Tree extends Component {
         switch (child.getName()) {
             case "StringExpr": {
                 retVal = this.analyzeStrExpr(child);
-                console.log(retVal);
                 return retVal;
             }
             default: { console.log("default")}//throw it out, we only care about expressions
@@ -169,7 +166,9 @@ class Tree extends Component {
 
     analyzeStrExpr(node: TreeNode) {
         console.log("here")
-        var retVal = this.condenseString(node.getChildren()[1]);
+        var queue = [];
+        this.condenseString(node.getChildren()[1], queue);
+        var retVal = queue.join("");
         return retVal;
     }
 
