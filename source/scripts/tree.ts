@@ -146,22 +146,29 @@ class Tree extends Component {
             currChar = node.getValue();
         }
 
-        node.getChildren().forEach(child => {
-            currStr = this.condenseString(child);
-        });
+        for (var i = node.getChildren().length - 1; i > 0; i--) {
+            currStr = this.condenseString(node.getChildren()[i]);
+        }
+            
+        
         return (currChar + currStr);
     }
 
     private analyzeExpr(node: TreeNode) {
-        switch (node.getName()) {
+        var retVal;
+        var child = node.getChildren()[0];
+        switch (child.getName()) {
             case "StringExpr": {
-                return this.analyzeStrExpr(node);
+                retVal = this.analyzeStrExpr(child);
+                console.log(retVal);
+                return retVal;
             }
-            default: {}//throw it out, we only care about expressions
+            default: { console.log("default")}//throw it out, we only care about expressions
         }
     }
 
     analyzeStrExpr(node: TreeNode) {
+        console.log("here")
         var retVal = this.condenseString(node.getChildren()[1]);
         return retVal;
     }
@@ -172,9 +179,13 @@ class Tree extends Component {
         }
 
         node.getChildren().forEach(child => {
-            var val = this.analyzeExpr(child);
-            this.currNode.addChild(new TreeNode(val));
+            if (child.getName() === "Expr") {
+                var val = this.analyzeExpr(child);
+                var nextNode = this.currNode.addChild(new TreeNode("PrintStatement"));
+                nextNode.addChild(new TreeNode(val));
+            } 
         });
+        return;
     }
 
     private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
