@@ -103,7 +103,7 @@ class Tree extends Component {
                     break;
                 }
                 case "PrintStatement": {
-                    //this.addNode(child.getName());
+                    this.analyzePrintStatement(child);
                     break;
                 }
                 case "AssignmentStatement": {
@@ -155,8 +155,9 @@ class Tree extends Component {
     private analyzeExpr(node: TreeNode) {
         switch (node.getName()) {
             case "StringExpr": {
-                this.analyzeStrExpr(node);
+                return this.analyzeStrExpr(node);
             }
+            default: {}//throw it out, we only care about expressions
         }
     }
 
@@ -171,7 +172,8 @@ class Tree extends Component {
         }
 
         node.getChildren().forEach(child => {
-            this.analyzeExpr(child);
+            var val = this.analyzeExpr(child);
+            this.currNode.addChild(new TreeNode(val));
         });
     }
 
