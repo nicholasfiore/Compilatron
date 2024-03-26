@@ -138,10 +138,25 @@ class Tree extends Component {
         return;
     }
 
+    //recursively condenses a char list into a single string for printing
+    private condenseString(node: TreeNode) {
+        var currChar;
+        var currStr;
+        if (node.getChildren().length === 0) {
+            currChar = node.getValue();
+        }
+
+        node.getChildren().forEach(child => {
+            currStr = this.condenseString(child);
+        });
+        return (currChar + currStr);
+    }
+
+    private analyzePrintStatement() {
+        
+    }
+
     private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
-        console.log(type);
-        console.log(id);
-        console.log(node);
         if (node.getChildren().length === 0) {
             if (!type) {
                 this.debug("found TYPE");
@@ -184,6 +199,47 @@ class Tree extends Component {
         return {type, id};
     }
 
+    private analyzeAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
+        if (node.getChildren().length === 0) {
+            if (!id) {
+                this.debug("found ID");
+                id = node;
+            }
+            else if (!expr) {
+                this.debug("Found EXPR");
+                expr = node;
+                
+            }
+            return {id: id, expr: expr};
+        }
+
+        
+
+        node.getChildren().forEach(child => {
+            var returnVal = this.analyzeAssignmentStatement(expr, id, child, root);
+            if (returnVal.expr) {
+                id = returnVal.id;
+            }
+            
+            if (returnVal.id) {
+                console.log("id")
+                expr = returnVal.expr;
+            }
+            
+        });
+
+        if (expr && id) {
+            this.debug("building subtree");
+            console.log(this.currNode);
+            
+            var newNode = this.currNode.addChild(root);
+            newNode.addChild(id);
+            newNode.addChild(expr);
+            return;
+        }
+        
+        return {id, expr};
+    }
 
     //print function that is specific to ASTs
     // public printAST(node: TreeNode) {
