@@ -152,8 +152,27 @@ class Tree extends Component {
         return (currChar + currStr);
     }
 
-    private analyzePrintStatement() {
-        
+    private analyzeExpr(node: TreeNode) {
+        switch (node.getName()) {
+            case "StringExpr": {
+                this.analyzeStrExpr(node);
+            }
+        }
+    }
+
+    analyzeStrExpr(node: TreeNode) {
+        var retVal = this.condenseString(node.getChildren()[1]);
+        return retVal;
+    }
+
+    private analyzePrintStatement(node: TreeNode) {
+        if (node.getChildren().length === 0) {
+            return;
+        }
+
+        node.getChildren().forEach(child => {
+            this.analyzeExpr(child);
+        });
     }
 
     private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
