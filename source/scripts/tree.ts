@@ -164,6 +164,10 @@ class Tree extends Component {
                 retVal = this.analyzeIntExpr(child);
                 return retVal;
             }
+            case "BooleanExpr": {
+                retVal = this.analyzeBooleanExpr(child);
+                return;
+            }
             default: { console.log("default") }//throw it out, we only care about expressions
         }
     }
@@ -195,6 +199,25 @@ class Tree extends Component {
         opNode.addChild(new TreeNode(digit.getName(), digit.getValue()));
         opNode.addChild(expr);
         return opNode;
+    }
+
+    analyzeBooleanExpr(node: TreeNode) {
+        var boolOp;
+        var expr1;
+        var expr2;
+        var children = node.getChildren();
+        if (children[0].getName() === "SYM_L_PAREN") {
+            expr1 = this.analyzeExpr(children[1]);
+            boolOp = children[2];
+            expr1 = this.analyzeExpr(children[3]);
+            
+            var retVal = new TreeNode(boolOp.getName(), boolOp.getValue());
+            retVal.addChild(expr1);
+            retVal.addChild(expr2);
+        } else {
+            var boolval = new TreeNode(children[0].getName());
+            return boolval;
+        }
     }
 
     //print statement
