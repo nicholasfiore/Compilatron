@@ -141,7 +141,7 @@ class Tree extends Component {
     //recursively condenses a char list into a single string for printing
     private condenseString(node: TreeNode, queue: Array<string>) {
         if (node.getChildren().length === 0) {
-            console.log(node.getValue())
+            //console.log(node.getValue())
             queue.push(node.getValue())
             return;
         }
@@ -161,7 +161,8 @@ class Tree extends Component {
                 return retVal;
             }
             case "IntExpr": {
-
+                retVal = this.analyzeIntExpr(child);
+                return retVal;
             }
             default: { console.log("default") }//throw it out, we only care about expressions
         }
@@ -171,12 +172,29 @@ class Tree extends Component {
         console.log("here")
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
-        var retVal = queue.join("");
+        var str = queue.join("");
+        var retVal = new TreeNode(str);
+
         return retVal;
     }
 
     analyzeIntExpr(node: TreeNode) {
-        
+        var digit;
+        var op;
+        var expr;
+        if (node.getChildren().length === 1) {
+            digit = node.getChildren()[0];
+            return new TreeNode(digit.getName(), digit.getValue());
+        }
+        else {
+            digit = node.getChildren()[0];
+            op = node.getChildren()[1];
+            expr = this.analyzeExpr(node.getChildren()[2]);
+        }
+        var opNode = new TreeNode(op.getName(), op.getValue());
+        opNode.addChild(new TreeNode(digit.getName(), digit.getValue()));
+        opNode.addChild(expr);
+        return opNode;
     }
 
     //print statement
@@ -189,7 +207,7 @@ class Tree extends Component {
             if (child.getName() === "Expr") {
                 var val = this.analyzeExpr(child);
                 var nextNode = this.currNode.addChild(new TreeNode("PrintStatement"));
-                nextNode.addChild(new TreeNode(val));
+                nextNode.addChild(val);
             } 
         });
         return;
