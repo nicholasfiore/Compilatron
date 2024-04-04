@@ -97,9 +97,7 @@ class Tree extends Component {
             
             switch (child.getName()) {
                 case "Block": {
-                    this.addNode(child.getName());
-                    this.buildAST(child);
-                    this.moveUp();
+                    this.analyzeBlock(child);
                     break;
                 }
                 case "PrintStatement": {
@@ -108,14 +106,18 @@ class Tree extends Component {
                 }
                 case "AssignmentStatement": {
                     //this.addNode(child.getName());
+                    //this.analyzeAssignmentStatement(child);
                     break;
                 }
                 case "IfStatement": {
                     //this.addNode(child.getName());
+                    this.analyzeIfOrWhile(child);
+                    
                     break;
                 }
                 case "WhileStatement": {
                     //this.addNode(child.getName());
+                    this.analyzeIfOrWhile(child);
                     break;
                 }
                 case "VarDecl": {
@@ -152,6 +154,12 @@ class Tree extends Component {
         return;
     }
 
+    private analyzeBlock(node: TreeNode) {
+        this.addNode(node.getName());
+        this.buildAST(node);
+        this.moveUp();
+    }
+
     private analyzeExpr(node: TreeNode) {
         var retVal;
         var child = node.getChildren()[0];
@@ -172,7 +180,7 @@ class Tree extends Component {
         }
     }
 
-    analyzeStrExpr(node: TreeNode) {
+    private analyzeStrExpr(node: TreeNode) {
         console.log("here")
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
@@ -182,7 +190,7 @@ class Tree extends Component {
         return retVal;
     }
 
-    analyzeIntExpr(node: TreeNode) {
+    private analyzeIntExpr(node: TreeNode) {
         var digit;
         var op;
         var expr;
@@ -201,7 +209,7 @@ class Tree extends Component {
         return opNode;
     }
 
-    analyzeBooleanExpr(node: TreeNode) {
+    private analyzeBooleanExpr(node: TreeNode) {
         var boolOp;
         var expr1;
         var expr2;
@@ -233,6 +241,16 @@ class Tree extends Component {
                 nextNode.addChild(val);
             } 
         });
+        return;
+    }
+
+    //
+    private analyzeIfOrWhile(node: TreeNode) {
+        
+        var boolExpr = this.analyzeBooleanExpr(node.getChildren()[1]);
+        node.addChild(boolExpr);
+        this.analyzeBlock(node.getChildren()[2]);
+        
         return;
     }
 
