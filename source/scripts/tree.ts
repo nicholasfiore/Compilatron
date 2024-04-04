@@ -160,7 +160,10 @@ class Tree extends Component {
                 retVal = this.analyzeStrExpr(child);
                 return retVal;
             }
-            default: { console.log("default")}//throw it out, we only care about expressions
+            case "IntExpr": {
+
+            }
+            default: { console.log("default") }//throw it out, we only care about expressions
         }
     }
 
@@ -172,6 +175,11 @@ class Tree extends Component {
         return retVal;
     }
 
+    analyzeIntExpr(node: TreeNode) {
+        
+    }
+
+    //print statement
     private analyzePrintStatement(node: TreeNode) {
         if (node.getChildren().length === 0) {
             return;
