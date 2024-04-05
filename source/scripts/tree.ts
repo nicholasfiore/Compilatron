@@ -26,10 +26,6 @@ class Tree extends Component {
         this.currNode = node;
     }
 
-    public addASTNode() {
-
-    }
-
     //Since terminals are ALWAYS leaf nodes, we can
     //make a specialized function
     public addLeafNode(label: string, value: string) {
