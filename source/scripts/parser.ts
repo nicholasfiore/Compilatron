@@ -255,6 +255,7 @@ class Parser extends Component {
                     this.match(["FALSE"], this.currToken);
                     break;
             }
+            this.CST.moveUp();
         }
         else if (this.currToken.kind === "SYM_L_PAREN"){
             this.match(["SYM_L_PAREN"], this.currToken);

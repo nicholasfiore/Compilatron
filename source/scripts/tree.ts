@@ -225,6 +225,7 @@ class Tree extends Component {
             return retVal;
         } else {
             var boolval = new TreeNode(children[0].getName());
+            console.log("here");
             return boolval;
         }
     }
