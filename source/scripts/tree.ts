@@ -106,13 +106,12 @@ class Tree extends Component {
                 }
                 case "AssignmentStatement": {
                     //this.addNode(child.getName());
-                    //this.analyzeAssignmentStatement(child);
+                    this.analyzeAssignmentStatement(child);
                     break;
                 }
                 case "IfStatement": {
                     //this.addNode(child.getName());
                     this.analyzeIfOrWhile(child);
-                    
                     break;
                 }
                 case "WhileStatement": {
@@ -299,46 +298,59 @@ class Tree extends Component {
         return {type, id};
     }
 
-    private analyzeAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
-        if (node.getChildren().length === 0) {
-            if (!id) {
-                this.debug("found ID");
-                id = node;
-            }
-            else if (!expr) {
-                this.debug("Found EXPR");
-                expr = node;
+    // private analyzeAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
+    //     if (node.getChildren().length === 0) {
+    //         if (!id) {
+    //             this.debug("found ID");
+    //             id = node;
+    //         }
+    //         else if (!expr) {
+    //             this.debug("Found EXPR");
+    //             expr = node;
                 
-            }
-            return {id: id, expr: expr};
-        }
+    //         }
+    //         return {id: id, expr: expr};
+    //     }
 
         
 
-        node.getChildren().forEach(child => {
-            var returnVal = this.analyzeAssignmentStatement(expr, id, child, root);
-            if (returnVal.expr) {
-                id = returnVal.id;
-            }
+    //     node.getChildren().forEach(child => {
+    //         var returnVal = this.analyzeAssignmentStatement(expr, id, child, root);
+    //         if (returnVal.expr) {
+    //             id = returnVal.id;
+    //         }
             
-            if (returnVal.id) {
-                console.log("id")
-                expr = returnVal.expr;
-            }
+    //         if (returnVal.id) {
+    //             console.log("id")
+    //             expr = returnVal.expr;
+    //         }
             
-        });
+    //     });
 
-        if (expr && id) {
-            this.debug("building subtree");
-            console.log(this.currNode);
+    //     if (expr && id) {
+    //         this.debug("building subtree");
+    //         console.log(this.currNode);
             
-            var newNode = this.currNode.addChild(root);
-            newNode.addChild(id);
-            newNode.addChild(expr);
-            return;
-        }
+    //         var newNode = this.currNode.addChild(root);
+    //         newNode.addChild(id);
+    //         newNode.addChild(expr);
+    //         return;
+    //     }
         
-        return {id, expr};
+    //     return {id, expr};
+    // }
+
+    private analyzeAssignmentStatement(node: TreeNode) {
+        var id;
+        var expr;
+        var children = node.getChildren();
+        id = children[0];
+        expr = this.analyzeExpr(children[2]);
+        var newNode;
+        newNode = new TreeNode(node.getName());
+        newNode.addChild(id);
+        newNode.addChild(expr);
+        this.currNode.addChild(newNode);
     }
 
     //print function that is specific to ASTs
