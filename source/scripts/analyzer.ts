@@ -16,6 +16,7 @@ class SemanticAnalyzer extends Component {
         this.AST.buildAST(this.CST.getRoot());
         //this.buildAST();
         this.info("Abstract Syntax Tree:");
+        console.log(this.AST.getRoot())
         this.AST.printTree(this.AST.getRoot());
     }
 

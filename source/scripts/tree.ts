@@ -44,7 +44,7 @@ class Tree extends Component {
     public moveUp() {
         this.debug("Moved up.");
         this.currNode = this.currNode.getParent();
-        console.log(this.currNode);
+        //console.log(this.currNode);
     }
 
     //performs a depth-first in-order traversal of the tree and prints it
@@ -155,6 +155,7 @@ class Tree extends Component {
     }
 
     private analyzeBlock(node: TreeNode) {
+        //console.log(this.currNode);
         this.addNode(node.getName());
         this.buildAST(node);
         this.moveUp();
@@ -181,7 +182,6 @@ class Tree extends Component {
     }
 
     private analyzeStrExpr(node: TreeNode) {
-        console.log("here")
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
         var str = queue.join("");
@@ -216,12 +216,13 @@ class Tree extends Component {
         var children = node.getChildren();
         if (children[0].getName() === "SYM_L_PAREN") {
             expr1 = this.analyzeExpr(children[1]);
-            boolOp = children[2];
-            expr1 = this.analyzeExpr(children[3]);
+            boolOp = children[2].getChildren()[0];
+            expr2 = this.analyzeExpr(children[3]);
             
             var retVal = new TreeNode(boolOp.getName(), boolOp.getValue());
             retVal.addChild(expr1);
             retVal.addChild(expr2);
+            return retVal;
         } else {
             var boolval = new TreeNode(children[0].getName());
             return boolval;
@@ -246,11 +247,11 @@ class Tree extends Component {
 
     //
     private analyzeIfOrWhile(node: TreeNode) {
-        
+        this.addNode(node.getName());
         var boolExpr = this.analyzeBooleanExpr(node.getChildren()[1]);
-        node.addChild(boolExpr);
+        this.currNode.addChild(boolExpr);
         this.analyzeBlock(node.getChildren()[2]);
-        
+        this.moveUp();
         return;
     }
 
