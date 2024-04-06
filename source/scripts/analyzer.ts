@@ -46,6 +46,8 @@ class SemanticAnalyzer extends Component {
                 case "VarDecl": {
                     var type = child.getChildren()[0];
                     var id = child.getChildren()[1];
+
+                    this.currScope.getTable().put(id.getValue(), type.getValue());
                 }
             }
         });

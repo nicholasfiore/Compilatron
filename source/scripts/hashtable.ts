@@ -16,9 +16,12 @@ class HashTable {
 
     //puts an entry into the hash table
     //returns true if successful, false if there is a collision
-    public put(key: string) {
+    public put(key: string, type?: string) {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
+        if (type) {
+
+        }
         if (!this.table[hash]) {
             this.table[hash] = entry;
             return true;
@@ -45,6 +48,8 @@ class HashEntry {
 
     constructor(id: string) {
         this.id = id;
+        this.isInit = false;
+        this.hasBeenUsed = false;
     }
 
     public getID() {

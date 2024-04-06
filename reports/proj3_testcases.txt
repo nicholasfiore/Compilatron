@@ -8,3 +8,6 @@
 {
   while (a == b) {}
 }
+
+{{if true{int a a = 1}}}
+
