@@ -25,11 +25,15 @@ class SemanticAnalyzer extends Component {
 
     }
 
-    public buildSymbolTable(node: HashNode) {
+    public buildSymbolTable(node: TreeNode) {
         if (node.getChildren().length === 0) {
-            
+
             return;
         }
+
+        node.getChildren().forEach(child => {
+
+        });
     }
 
     

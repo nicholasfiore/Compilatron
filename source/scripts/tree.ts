@@ -93,33 +93,33 @@ class Tree extends Component {
             
             switch (child.getName()) {
                 case "Block": {
-                    this.analyzeBlock(child);
+                    this.interpretBlock(child);
                     break;
                 }
                 case "PrintStatement": {
-                    this.analyzePrintStatement(child);
+                    this.interpretPrintStatement(child);
                     break;
                 }
                 case "AssignmentStatement": {
                     //this.addNode(child.getName());
-                    this.analyzeAssignmentStatement(child);
+                    this.interpretAssignmentStatement(child);
                     break;
                 }
                 case "IfStatement": {
                     //this.addNode(child.getName());
-                    this.analyzeIfOrWhile(child);
+                    this.interpretIfOrWhile(child);
                     break;
                 }
                 case "WhileStatement": {
                     //this.addNode(child.getName());
-                    this.analyzeIfOrWhile(child);
+                    this.interpretIfOrWhile(child);
                     break;
                 }
                 case "VarDecl": {
                     //this.addNode(child.getName());
                     var type;
                     var id;
-                    this.analyzeVarDecl(type, id, child, new TreeNode(child.getName()));
+                    this.interpretVarDecl(type, id, child, new TreeNode(child.getName()));
                     break;
                 }
                 default: {
@@ -149,34 +149,34 @@ class Tree extends Component {
         return;
     }
 
-    private analyzeBlock(node: TreeNode) {
+    private interpretBlock(node: TreeNode) {
         //console.log(this.currNode);
         this.addNode(node.getName());
         this.buildAST(node);
         this.moveUp();
     }
 
-    private analyzeExpr(node: TreeNode) {
+    private interpretExpr(node: TreeNode) {
         var retVal;
         var child = node.getChildren()[0];
         switch (child.getName()) {
             case "StringExpr": {
-                retVal = this.analyzeStrExpr(child);
+                retVal = this.interpretStrExpr(child);
                 return retVal;
             }
             case "IntExpr": {
-                retVal = this.analyzeIntExpr(child);
+                retVal = this.interpretIntExpr(child);
                 return retVal;
             }
             case "BooleanExpr": {
-                retVal = this.analyzeBooleanExpr(child);
+                retVal = this.interpretBooleanExpr(child);
                 return;
             }
             default: { console.log("default") }//throw it out, we only care about expressions
         }
     }
 
-    private analyzeStrExpr(node: TreeNode) {
+    private interpretStrExpr(node: TreeNode) {
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
         var str = queue.join("");
@@ -185,7 +185,7 @@ class Tree extends Component {
         return retVal;
     }
 
-    private analyzeIntExpr(node: TreeNode) {
+    private interpretIntExpr(node: TreeNode) {
         var digit;
         var op;
         var expr;
@@ -196,7 +196,7 @@ class Tree extends Component {
         else {
             digit = node.getChildren()[0];
             op = node.getChildren()[1];
-            expr = this.analyzeExpr(node.getChildren()[2]);
+            expr = this.interpretExpr(node.getChildren()[2]);
         }
         var opNode = new TreeNode(op.getName(), op.getValue());
         opNode.addChild(new TreeNode(digit.getName(), digit.getValue()));
@@ -204,15 +204,15 @@ class Tree extends Component {
         return opNode;
     }
 
-    private analyzeBooleanExpr(node: TreeNode) {
+    private interpretBooleanExpr(node: TreeNode) {
         var boolOp;
         var expr1;
         var expr2;
         var children = node.getChildren();
         if (children[0].getName() === "SYM_L_PAREN") {
-            expr1 = this.analyzeExpr(children[1]);
+            expr1 = this.interpretExpr(children[1]);
             boolOp = children[2].getChildren()[0];
-            expr2 = this.analyzeExpr(children[3]);
+            expr2 = this.interpretExpr(children[3]);
             
             var retVal = new TreeNode(boolOp.getName(), boolOp.getValue());
             retVal.addChild(expr1);
@@ -226,14 +226,14 @@ class Tree extends Component {
     }
 
     //print statement
-    private analyzePrintStatement(node: TreeNode) {
+    private interpretPrintStatement(node: TreeNode) {
         if (node.getChildren().length === 0) {
             return;
         }
 
         node.getChildren().forEach(child => {
             if (child.getName() === "Expr") {
-                var val = this.analyzeExpr(child);
+                var val = this.interpretExpr(child);
                 var nextNode = this.currNode.addChild(new TreeNode("PrintStatement"));
                 nextNode.addChild(val);
             } 
@@ -242,16 +242,16 @@ class Tree extends Component {
     }
 
     //
-    private analyzeIfOrWhile(node: TreeNode) {
+    private interpretIfOrWhile(node: TreeNode) {
         this.addNode(node.getName());
-        var boolExpr = this.analyzeBooleanExpr(node.getChildren()[1]);
+        var boolExpr = this.interpretBooleanExpr(node.getChildren()[1]);
         this.currNode.addChild(boolExpr);
-        this.analyzeBlock(node.getChildren()[2]);
+        this.interpretBlock(node.getChildren()[2]);
         this.moveUp();
         return;
     }
 
-    private analyzeVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
+    private interpretVarDecl(type: TreeNode, id: TreeNode, node: TreeNode, root: TreeNode) {
         if (node.getChildren().length === 0) {
             if (!type) {
                 this.debug("found TYPE");
@@ -268,7 +268,7 @@ class Tree extends Component {
         
 
         node.getChildren().forEach(child => {
-            var returnVal = this.analyzeVarDecl(type, id, child, root);
+            var returnVal = this.interpretVarDecl(type, id, child, root);
             if (returnVal.type) {
                 console.log("type")
                 type = returnVal.type;
@@ -294,7 +294,7 @@ class Tree extends Component {
         return {type, id};
     }
 
-    // private analyzeAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
+    // private interpretAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
     //     if (node.getChildren().length === 0) {
     //         if (!id) {
     //             this.debug("found ID");
@@ -311,7 +311,7 @@ class Tree extends Component {
         
 
     //     node.getChildren().forEach(child => {
-    //         var returnVal = this.analyzeAssignmentStatement(expr, id, child, root);
+    //         var returnVal = this.interpretAssignmentStatement(expr, id, child, root);
     //         if (returnVal.expr) {
     //             id = returnVal.id;
     //         }
@@ -336,12 +336,12 @@ class Tree extends Component {
     //     return {id, expr};
     // }
 
-    private analyzeAssignmentStatement(node: TreeNode) {
+    private interpretAssignmentStatement(node: TreeNode) {
         var id;
         var expr;
         var children = node.getChildren();
         id = children[0];
-        expr = this.analyzeExpr(children[2]);
+        expr = this.interpretExpr(children[2]);
         var newNode;
         newNode = new TreeNode(node.getName());
         newNode.addChild(id);
