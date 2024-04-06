@@ -29,7 +29,7 @@ class SemanticAnalyzer extends Component {
         this.buildSymbolTable(this.AST.getRoot())
     }
 
-    public buildSymbolTable(node: TreeNode) {
+    public buildScopeTree(node: TreeNode) {
         if (node.getChildren().length === 0) {
 
             return;
@@ -41,7 +41,7 @@ class SemanticAnalyzer extends Component {
                     this.currDepth++;
                     this.scopeTree.addNode(new HashTable(this.currDepth + ""));
                     this.currScope = this.scopeTree.getCurrent();
-                    this.buildSymbolTable(child);
+                    this.buildScopeTree(child);
                 }
                 case "VarDecl": {
                     var type = child.getChildren()[0];
@@ -55,6 +55,14 @@ class SemanticAnalyzer extends Component {
         this.currDepth--;
         this.moveUp();
         return;
+    }
+
+    private buildSymbolTable() {
+
+    }
+
+    private printSymbolTable() {
+
     }
 
     private moveUp() {
