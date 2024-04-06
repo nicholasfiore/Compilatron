@@ -8,23 +8,34 @@ class HashTable extends Component {
     }
 
     public makeHashCode(input: string) {
-        var hash = input.charCodeAt(0) - 65 + "";
+        var hash = input.charCodeAt(0) - 65;
         return hash;
     }
 
+    //puts an entry into the hash table
+    //returns true if successful, false if there is a collision
     public put(key: string) {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
         if (!this.table[hash]) {
             this.table[hash] = entry;
+            return true;
         } else {
-            this.err("Redeclaration error");
+            return false;
+        }
+    }
+
+    //finds the entry with the hash provided and returns it
+    public get(hash: number) {
+        if (this.table[hash]) {
+            return this.table[hash];
+        } else {
+            return null;
         }
     }
 }
 
 class HashEntry {
-    private hash;
     private id;
     private type;
     private isInit;
@@ -34,6 +45,33 @@ class HashEntry {
         this.id = id;
     }
 
+    public getID() {
+        return this.id;
+    }
+
+    public getType() {
+        return this.type;
+    }
+
+    public getInit() {
+        return this.isInit;
+    }
+
+    public getBeenUsed() {
+        return this.getBeenUsed;
+    }
+
+    public setType(type: String) {
+        this.type = type;
+    }
+
+    public flipIsInit() {
+        this.isInit = !this.isInit;
+    }
+
+    public flipBeenUsed() {
+        this.hasBeenUsed = !this.hasBeenUsed;
+    }
 }
 
 class HashTree extends Component {
