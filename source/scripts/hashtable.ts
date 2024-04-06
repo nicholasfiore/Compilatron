@@ -7,10 +7,11 @@ class HashTable {
     constructor(name: string) {
         //super(name, false);
         this.name = name;
+        this.table = new Array<HashEntry>;
     }
 
     public makeHashCode(input: string) {
-        var hash = input.charCodeAt(0) - 65;
+        var hash = input.charCodeAt(0) - 97;
         return hash;
     }
 
@@ -20,7 +21,7 @@ class HashTable {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
         if (type) {
-
+            entry.setType(type);
         }
         if (!this.table[hash]) {
             this.table[hash] = entry;
@@ -108,6 +109,10 @@ class HashTree {
 
     public getCurrent() {
         return this.currNode;
+    }
+
+    public getRoot() {
+        return this.root;
     }
 
 }

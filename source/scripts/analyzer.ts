@@ -29,37 +29,47 @@ class SemanticAnalyzer extends Component {
         this.buildSymbolTable(this.AST.getRoot())
     }
 
-    public buildScopeTree(node: TreeNode) {
+    public buildSymbolTable(node: TreeNode) {
         if (node.getChildren().length === 0) {
 
             return;
         }
 
-        node.getChildren().forEach(child => {
-            switch (node.getName()) {
-                case "Block": {
-                    this.currDepth++;
-                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
-                    this.currScope = this.scopeTree.getCurrent();
-                    this.buildScopeTree(child);
-                }
-                case "VarDecl": {
-                    var type = child.getChildren()[0];
-                    var id = child.getChildren()[1];
+        if (this.currDepth < 0) {
+            this.currDepth++;
+            this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+            this.currScope = this.scopeTree.getCurrent();
+            this.buildSymbolTable(node);
+        } else {
+            node.getChildren().forEach(child => {
+                console.log(this.currScope);
+                switch (child.getName()) {
+                    case "Block": {
+                        this.currDepth++;
+                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScope = this.scopeTree.getCurrent();
+                        this.buildSymbolTable(child);
+                    }
+                    case "VarDecl": {
+                        //console.log(child)
+                        var type = child.getChildren()[0];
+                        var id = child.getChildren()[1];
 
-                    this.currScope.getTable().put(id.getValue(), type.getValue());
+                        this.currScope.getTable().put(id.getValue(), type.getValue());
+                    }
                 }
-            }
-        });
-
-        this.currDepth--;
-        this.moveUp();
+                console.log(this.scopeTree.getRoot());
+            });
+            this.currDepth--;
+            this.moveUp();
+        }
+        
         return;
     }
 
-    private buildSymbolTable() {
-
-    }
+    // private buildSymbolTable() {
+        
+    // }
 
     private printSymbolTable() {
 
