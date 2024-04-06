@@ -49,6 +49,7 @@ class HashEntry {
 
     constructor(id: string) {
         this.id = id;
+        this.type = "";
         this.isInit = false;
         this.hasBeenUsed = false;
     }
@@ -124,6 +125,7 @@ class HashNode {
 
     constructor(newTable: HashTable) {
         this.table = newTable;
+        this.children = new Array<HashNode>;
     }
 
     public getTable() {

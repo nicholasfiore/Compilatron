@@ -49,6 +49,7 @@ class SemanticAnalyzer extends Component {
                         this.scopeTree.addNode(new HashTable(this.currDepth + ""));
                         this.currScope = this.scopeTree.getCurrent();
                         this.buildSymbolTable(child);
+                        break;
                     }
                     case "VarDecl": {
                         //console.log(child)
@@ -56,6 +57,10 @@ class SemanticAnalyzer extends Component {
                         var id = child.getChildren()[1];
 
                         this.currScope.getTable().put(id.getValue(), type.getValue());
+                        break;
+                    }
+                    case "": {
+                        break;
                     }
                 }
                 console.log(this.scopeTree.getRoot());
