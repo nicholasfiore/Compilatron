@@ -5,7 +5,8 @@ class SemanticAnalyzer extends Component {
     private tokens: Array<Token>;
     private AST: Tree;
 
-    private 
+
+    private ScopeTree: HashTree;
 
     constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
@@ -20,6 +21,15 @@ class SemanticAnalyzer extends Component {
         this.info("Abstract Syntax Tree:");
         console.log(this.AST.getRoot());
         this.AST.printTree(this.AST.getRoot());
+
+
+    }
+
+    public buildSymbolTable(node: HashNode) {
+        if (node.getChildren().length === 0) {
+            
+            return;
+        }
     }
 
     

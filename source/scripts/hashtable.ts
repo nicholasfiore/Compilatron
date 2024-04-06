@@ -1,10 +1,10 @@
-class HashTable extends Component {
+class HashTable {
     private static readonly HASH_TABLE_SIZE = 26;
 
     private table: Array<HashEntry>;
 
     constructor(name: string) {
-        super(name, false);
+        //super(name, false);
     }
 
     public makeHashCode(input: string) {
@@ -74,17 +74,25 @@ class HashEntry {
     }
 }
 
-class HashTree extends Component {
+class HashTree {
     private root: HashNode;
     private currNode: HashNode;
 
     constructor(name: string) {
-        super(name, false);
+        //super(name, false);
 
     }
 
     public addNode(table: HashTable) {
-
+        var node = new HashNode(table);
+        if (!this.root) {
+            this.root = node;
+            node.setParent(null);
+        } else {
+            node.setParent(this.currNode);
+            node.getParent().addChild(node);
+        }
+        this.currNode = node;
     }
 
 }
@@ -108,6 +116,10 @@ class HashNode {
 
     public getChildren() {
         return this.children;
+    }
+
+    public setParent(node: HashNode) {
+        this.parent = node;
     }
 
     public addChild(child: HashNode) {
