@@ -126,10 +126,6 @@ class Tree extends Component {
                     this.buildAST(child);
                 }
             }
-
-
-            
-            
         }
         
         return;

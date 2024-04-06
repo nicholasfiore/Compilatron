@@ -1,10 +1,12 @@
 class HashTable {
     private static readonly HASH_TABLE_SIZE = 26;
 
+    private name: string;
     private table: Array<HashEntry>;
 
     constructor(name: string) {
         //super(name, false);
+        this.name = name;
     }
 
     public makeHashCode(input: string) {
@@ -93,6 +95,14 @@ class HashTree {
             node.getParent().addChild(node);
         }
         this.currNode = node;
+    }
+
+    public moveUp() {
+        this.currNode = this.currNode.getParent();
+    }
+
+    public getCurrent() {
+        return this.currNode;
     }
 
 }

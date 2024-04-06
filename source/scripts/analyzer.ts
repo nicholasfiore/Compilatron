@@ -6,7 +6,9 @@ class SemanticAnalyzer extends Component {
     private AST: Tree;
 
 
-    private ScopeTree: HashTree;
+    private scopeTree: HashTree;
+    private currDepth: number = -1;
+    private currScope: HashNode;
 
     constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
@@ -22,7 +24,9 @@ class SemanticAnalyzer extends Component {
         console.log(this.AST.getRoot());
         this.AST.printTree(this.AST.getRoot());
 
-
+        this.scopeTree = new HashTree("Scope");
+        console.log(this.AST.getRoot())
+        this.buildSymbolTable(this.AST.getRoot())
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -32,10 +36,28 @@ class SemanticAnalyzer extends Component {
         }
 
         node.getChildren().forEach(child => {
-
+            switch (node.getName()) {
+                case "Block": {
+                    this.currDepth++;
+                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                    this.currScope = this.scopeTree.getCurrent();
+                    this.buildSymbolTable(child);
+                }
+                case "VarDecl": {
+                    var type = child.getChildren()[0];
+                    var id = child.getChildren()[1];
+                }
+            }
         });
+
+        this.currDepth--;
+        this.moveUp();
+        return;
     }
 
-    
+    private moveUp() {
+        this.scopeTree.moveUp();
+        this.currScope = this.scopeTree.getCurrent();
+    }
     
 }
