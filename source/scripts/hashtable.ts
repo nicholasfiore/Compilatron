@@ -31,8 +31,10 @@ class HashTable {
         }
     }
 
-    //finds the entry with the hash provided and returns it
-    public get(hash: number) {
+    //finds the entry with the id provided and returns it
+    public get(id: string) {
+        var hash = this.makeHashCode(id);
+        
         if (this.table[hash]) {
             return this.table[hash];
         } else {

@@ -10,6 +10,10 @@ class SemanticAnalyzer extends Component {
     private currDepth: number = -1;
     private currScope: HashNode;
 
+    private validInt = new RegExp('^[0-9]$');
+    private validString = new RegExp('[a-z]');
+    private validBoolean = new RegExp('');
+
     constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
         this.AST = new Tree("AST");
@@ -53,13 +57,18 @@ class SemanticAnalyzer extends Component {
                     }
                     case "VarDecl": {
                         //console.log(child)
-                        var type = child.getChildren()[0];
-                        var id = child.getChildren()[1];
+                        let type = child.getChildren()[0];
+                        let id = child.getChildren()[1];
 
                         this.currScope.getTable().put(id.getValue(), type.getValue());
                         break;
                     }
-                    case "": {
+                    case "AssignmentStatement": {
+                        let id = child.getChildren()[0];
+                        let value = child.getChildren()[1];
+
+                        
+
                         break;
                     }
                 }
@@ -70,6 +79,10 @@ class SemanticAnalyzer extends Component {
         }
         
         return;
+    }
+
+    private checkType(id: string, value: string) {
+        
     }
 
     // private buildSymbolTable() {
