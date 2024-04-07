@@ -224,6 +224,9 @@ class SemanticAnalyzer extends Component {
         var queue = [this.scopeTree.getRoot()];
         var result: Array<HashNode> = [];
         var currNode: HashNode;
+        var tableObj: Table;
+
+        tableObj = new Table("Symbol Table");
 
         while (queue.length > 0) {
             currNode = queue.shift();
@@ -242,10 +245,13 @@ class SemanticAnalyzer extends Component {
             let table = node.getTable().getEntries();
             table.forEach(entry => {
                 if (typeof entry !== undefined) {
-                    this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
+                    //this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
+                    tableObj.addEntry(entry);
                 }
             });
         });
+
+        tableObj.printTable();
 
     }
 
@@ -254,4 +260,25 @@ class SemanticAnalyzer extends Component {
         this.currScope = this.scopeTree.getCurrent();
     }
     
+}
+
+class Table extends Component {
+
+    table: Array<HashEntry>;
+
+    constructor(name: string) {
+        super(name, false)
+        this.table = new Array<HashEntry>;
+    }
+
+    addEntry(entry: HashEntry) {
+        this.table.push(entry);
+    }
+
+    printTable() {
+        console.table(this.table)
+        this.table.forEach(entry => {
+            
+        });
+    }
 }
