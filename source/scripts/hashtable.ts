@@ -44,6 +44,10 @@ class HashTable {
             return null;
         }
     }
+
+    public getEntries() {
+        return this.table;
+    }
 }
 
 class HashEntry {

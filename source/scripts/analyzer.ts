@@ -33,7 +33,9 @@ class SemanticAnalyzer extends Component {
 
         this.scopeTree = new HashTree("Scope");
         console.log(this.AST.getRoot());
-        this.buildSymbolTable(this.AST.getRoot())
+        this.buildSymbolTable(this.AST.getRoot());
+
+        this.printSymbolTable();
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -176,13 +178,38 @@ class SemanticAnalyzer extends Component {
         }
     }
 
-    private 
+    //private 
 
     // private buildSymbolTable() {
         
     // }
 
     private printSymbolTable() {
+        var queue = [this.scopeTree.getRoot()];
+        var result: Array<HashNode> = [];
+        var currNode: HashNode;
+
+        while (queue.length > 0) {
+            currNode = queue.shift();
+            result.push(currNode);
+            
+            if (currNode.getChildren().length === 0) {
+                continue;
+            }
+
+            for (var i = 0; i < currNode.getChildren().length; i++) {
+                queue.push(currNode.getChildren()[i]);
+            }
+        }
+
+        result.forEach(node => {
+            let table = node.getTable().getEntries();
+            table.forEach(entry => {
+                if (typeof entry !== undefined) {
+                    this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine())
+                }
+            });
+        });
 
     }
 
