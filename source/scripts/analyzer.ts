@@ -102,7 +102,10 @@ class SemanticAnalyzer extends Component {
                         break;
                     }
                     case "PrintStatement": {
-
+                        let printVal = child.getChildren()[0]
+                        if (printVal.getName() === "ID") {
+                            this.checkScope(printVal.getValue());
+                        }
                         break;
                     }
                 }
@@ -113,6 +116,25 @@ class SemanticAnalyzer extends Component {
         }
         
         return;
+    }
+
+    private checkScope(id) {
+        var entry = this.currScope.getTable().get(id);
+        if (entry) {
+            
+        } else {
+            var retVal;
+            var lookUpSuccess = this.lookUp();
+            if (lookUpSuccess) {
+                retVal = this.checkScope(id);
+            } else {
+                this.err("undeclared")
+                this.errors++;
+                retVal = false;
+            }
+            return retVal;
+        }
+        
     }
 
     private checkType(value1: string, value2: string) {

@@ -159,18 +159,23 @@ class Tree extends Component {
         switch (child.getName()) {
             case "StringExpr": {
                 retVal = this.interpretStrExpr(child);
-                return retVal;
+                break;
             }
             case "IntExpr": {
                 retVal = this.interpretIntExpr(child);
-                return retVal;
+                break;
             }
             case "BooleanExpr": {
                 retVal = this.interpretBooleanExpr(child);
-                return;
+                break;
+            }
+            case "ID": {
+                retVal = new TreeNode(child.getName(), child.getLine(), child.getValue());
+                break;
             }
             default: { console.log("default") }//throw it out, we only care about expressions
         }
+        return retVal;
     }
 
     private interpretStrExpr(node: TreeNode) {
