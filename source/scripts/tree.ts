@@ -221,7 +221,7 @@ class Tree extends Component {
             retVal.addChild(expr2);
             return retVal;
         } else {
-            var boolval = new TreeNode(children[0].getName(), children[0].getLine());
+            var boolval = new TreeNode(children[0].getName(), children[0].getLine(), children[0].getValue());
             console.log("here");
             return boolval;
         }

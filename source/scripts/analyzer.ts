@@ -74,7 +74,7 @@ class SemanticAnalyzer extends Component {
                         let value = child.getChildren()[1];
 
                         if (!this.checkType(id.getValue(), value.getValue())) {
-                            this.err("type mismatch");
+                            this.err("type mismatch, value: " + value.getValue());
                             this.errors++;
                         }
 
@@ -138,6 +138,8 @@ class SemanticAnalyzer extends Component {
     }
 
     private checkType(value1: string, value2: string) {
+        //TODO
+        //figure out how to check both values
         var entry = this.currScope.getTable().get(value1);
         if (entry) {
             switch (entry.getType()) {
@@ -145,7 +147,10 @@ class SemanticAnalyzer extends Component {
                     return this.validInt.test(value2);
                 }
                 case "string": {
-                    
+                    return this.validString.test(value2);
+                }
+                case "boolean": {
+                    return this.validBoolVal.test(value2);
                 }
             }
         } else {
