@@ -49,6 +49,9 @@ class HashEntry {
     private isInit;
     private hasBeenUsed;
 
+    private line;
+    private position;
+
     constructor(id: string) {
         this.id = id;
         this.type = "";
@@ -70,6 +73,14 @@ class HashEntry {
 
     public getBeenUsed() {
         return this.getBeenUsed;
+    }
+
+    public getLine() {
+        return this.line;
+    }
+
+    public getPos() {
+        return this.position;
     }
 
     public setType(type: String) {

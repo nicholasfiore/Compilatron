@@ -5,6 +5,8 @@ class SemanticAnalyzer extends Component {
     private tokens: Array<Token>;
     private AST: Tree;
 
+    private errors: number;
+    private warnings: number;
 
     private scopeTree: HashTree;
     private currDepth: number = -1;
@@ -12,7 +14,7 @@ class SemanticAnalyzer extends Component {
 
     private validInt = new RegExp('^[0-9]$');
     private validString = new RegExp('[a-z]');
-    private validBoolean = new RegExp('');
+    private validBoolVal = new RegExp('^true$|^false$');
 
     constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
@@ -29,7 +31,7 @@ class SemanticAnalyzer extends Component {
         this.AST.printTree(this.AST.getRoot());
 
         this.scopeTree = new HashTree("Scope");
-        console.log(this.AST.getRoot())
+        console.log(this.AST.getRoot());
         this.buildSymbolTable(this.AST.getRoot())
     }
 
@@ -67,7 +69,10 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[0];
                         let value = child.getChildren()[1];
 
-                        
+                        if (!this.checkType(id.getValue(), value.getValue())) {
+                            this.err("type mismatch")
+                            this.errors++;
+                        } 
 
                         break;
                     }
@@ -82,7 +87,15 @@ class SemanticAnalyzer extends Component {
     }
 
     private checkType(id: string, value: string) {
-        
+        var entry = this.currScope.getTable().get(id);
+        switch (entry.getType()) {
+            case "int": {
+                return this.validInt.test(value);
+            }
+            case "": {
+
+            }
+        }
     }
 
     // private buildSymbolTable() {
