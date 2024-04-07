@@ -17,11 +17,14 @@ class HashTable {
 
     //puts an entry into the hash table
     //returns true if successful, false if there is a collision
-    public put(key: string, type?: string) {
+    public put(key: string, type?: string, line?: number) {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
         if (type) {
             entry.setType(type);
+        }
+        if (line) {
+            entry.setLine(line);
         }
         if (!this.table[hash]) {
             this.table[hash] = entry;
@@ -83,8 +86,12 @@ class HashEntry {
         return this.position;
     }
 
-    public setType(type: String) {
+    public setType(type: string) {
         this.type = type;
+    }
+
+    public setLine(line: number) {
+        this.line = line;
     }
 
     public flipIsInit() {

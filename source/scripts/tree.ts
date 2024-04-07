@@ -28,10 +28,11 @@ class Tree extends Component {
 
     //Since terminals are ALWAYS leaf nodes, we can
     //make a specialized function
-    public addLeafNode(label: string, value: string) {
+    public addLeafNode(label: string, value: string, line: number, pos: number) {
         // console.log(this.currNode);
         // console.log(this.currNode.getParent());
-        var node = new TreeNode(label, value);
+        var node = new TreeNode(label, line, value);
+        node.setPos(pos);
         this.debug("Added leaf " + node.getName());
         node.setParent(this.currNode);
         node.getParent().addChild(node);
@@ -119,7 +120,7 @@ class Tree extends Component {
                     //this.addNode(child.getName());
                     var type;
                     var id;
-                    this.interpretVarDecl(type, id, child, new TreeNode(child.getName()));
+                    this.interpretVarDecl(type, id, child, new TreeNode(child.getName(), child.getLine()));
                     break;
                 }
                 default: {
@@ -176,7 +177,7 @@ class Tree extends Component {
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
         var str = queue.join("");
-        var retVal = new TreeNode(str);
+        var retVal = new TreeNode(str, node.getLine());
 
         return retVal;
     }
@@ -215,7 +216,7 @@ class Tree extends Component {
             retVal.addChild(expr2);
             return retVal;
         } else {
-            var boolval = new TreeNode(children[0].getName());
+            var boolval = new TreeNode(children[0].getName(), children[0].getLine());
             console.log("here");
             return boolval;
         }
@@ -339,7 +340,7 @@ class Tree extends Component {
         id = children[0];
         expr = this.interpretExpr(children[2]);
         var newNode;
-        newNode = new TreeNode(node.getName());
+        newNode = new TreeNode(node.getName(), node.getLine());
         newNode.addChild(id);
         newNode.addChild(expr);
         this.currNode.addChild(newNode);
@@ -398,9 +399,13 @@ class TreeNode {
     private parent: TreeNode;
     private children: Array<TreeNode>;
 
-    constructor(newName: string, newValue?: string) {
+    private line: number;
+    private pos: number;
+
+    constructor(newName: string, line?: number, newValue?: string) {
         this.name = newName;
         this.value = newValue;
+        this.line = line;
         this.children = new Array<TreeNode>;
     }
     
@@ -417,12 +422,28 @@ class TreeNode {
         return this.parent;
     }
 
+    public getLine() {
+        return this.line;
+    }
+
+    public getPos() {
+        return this.pos;
+    }
+
     public setParent(node: TreeNode) {
         this.parent = node;
     }
 
     public getChildren() {
         return this.children;
+    }
+
+    public setLine(line) {
+        this.line = line;
+    }
+
+    public setPos(pos) {
+        this.pos = pos;
     }
 
     public addChild(node: TreeNode) {

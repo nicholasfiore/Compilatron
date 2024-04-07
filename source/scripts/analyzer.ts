@@ -62,7 +62,7 @@ class SemanticAnalyzer extends Component {
                         let type = child.getChildren()[0];
                         let id = child.getChildren()[1];
 
-                        this.currScope.getTable().put(id.getValue(), type.getValue());
+                        this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine());
                         break;
                     }
                     case "AssignmentStatement": {
