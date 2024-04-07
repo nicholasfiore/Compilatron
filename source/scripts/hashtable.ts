@@ -17,7 +17,7 @@ class HashTable {
 
     //puts an entry into the hash table
     //returns true if successful, false if there is a collision
-    public put(key: string, type?: string, line?: number) {
+    public put(key: string, type?: string, line?: number, scope?: number) {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
         if (type) {
@@ -25,6 +25,9 @@ class HashTable {
         }
         if (line) {
             entry.setLine(line);
+        }
+        if (scope) {
+            entry.setScope(scope);
         }
         if (!this.table[hash]) {
             this.table[hash] = entry;
@@ -56,12 +59,15 @@ class HashEntry {
     private isInit;
     private hasBeenUsed;
 
+    private scope;
     private line;
     private position;
 
     constructor(id: string) {
         this.id = id;
         this.type = "";
+        this.scope = -1;
+        this.line = -1;
         this.isInit = false;
         this.hasBeenUsed = false;
     }
@@ -90,8 +96,16 @@ class HashEntry {
         return this.position;
     }
 
+    public getScope() {
+        return this.scope;
+    }
+
     public setType(type: string) {
         this.type = type;
+    }
+
+    public setScope(scope: number) {
+        this.scope = scope;
     }
 
     public setLine(line: number) {

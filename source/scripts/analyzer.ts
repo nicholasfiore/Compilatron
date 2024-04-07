@@ -65,7 +65,7 @@ class SemanticAnalyzer extends Component {
                         let type = child.getChildren()[0];
                         let id = child.getChildren()[1];
 
-                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine())) {
+                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
                             this.err("redeclaration");
                             this.errors++;
                         }
@@ -75,7 +75,7 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[0];
                         let value = child.getChildren()[1];
 
-                        if (!this.checkType(id.getValue(), value.getValue())) {
+                        if (!this.checkType(id, value)) {
                             this.err("type mismatch, value: " + value.getValue());
                             this.errors++;
                         }
@@ -91,7 +91,7 @@ class SemanticAnalyzer extends Component {
                             let val1 = keyword.getChildren()[0];
                             let val2 = keyword.getChildren()[1];
 
-                            if (!this.checkType(val1.getValue(), val2.getValue())) {
+                            if (!this.checkType(val1, val2)) {
                                 this.err("type mismatch");
                                 this.errors++;
                             }
@@ -139,34 +139,70 @@ class SemanticAnalyzer extends Component {
         
     }
 
-    private checkType(value1: string, value2: string) {
-        //TODO
-        //figure out how to check both values
-        var entry = this.currScope.getTable().get(value1);
-        if (entry) {
-            switch (entry.getType()) {
-                case "int": {
-                    return this.validInt.test(value2);
-                }
-                case "string": {
-                    return this.validString.test(value2);
-                }
-                case "boolean": {
-                    return this.validBoolVal.test(value2);
-                }
-            }
+    private checkType(value1: TreeNode, value2: TreeNode) {
+        var type1;
+        var type2;
+        if (value1.getName() === "ID") {
+            type1 = (this.findID(value1.getValue())).getType();
         } else {
-            var retVal;
+            type1 = this.determineType(value1.getValue());
+        }
+
+        if (value2.getName() === "ID") {
+            type2 = (this.findID(value2.getValue())).getType();
+        } else {
+            type2 = this.determineType(value2.getValue());
+        }
+
+        if (type1 === type2) {
+            return true;
+        } else {
+            return false;
+        }
+
+        // var entry = this.currScope.getTable().get(value1);
+        // if (entry) {
+        //     switch (entry.getType()) {
+        //         case "int": {
+        //             return this.validInt.test(value2);
+        //         }
+        //         case "string": {
+        //             return this.validString.test(value2);
+        //         }
+        //         case "boolean": {
+        //             return this.validBoolVal.test(value2);
+        //         }
+        //     }
+        // }
+    }
+
+    private determineType(val: string) {
+        if (this.validInt.test(val)) {
+            return "int";
+        } else if (this.validString.test(val)) {
+            return "string";
+        } else if (this.validBoolVal.test(val)) {
+            return "boolean";
+        }
+    }
+
+    //looks for the ID in scope recursively
+    private findID(id: string) {
+        var retVal;
+        var entry = this.currScope.getTable().get(id);
+        if (entry) {
+            retVal = entry;
+        } else {
             var lookUpSuccess = this.lookUp();
             if (lookUpSuccess) {
-                retVal = this.checkType(value1, value2);
+                retVal = this.findID(id);
             } else {
                 this.err("undeclared")
                 this.errors++;
                 retVal = false;
             }
-            return retVal;
         }
+        return retVal;
     }
 
     private lookUp() {
@@ -206,7 +242,7 @@ class SemanticAnalyzer extends Component {
             let table = node.getTable().getEntries();
             table.forEach(entry => {
                 if (typeof entry !== undefined) {
-                    this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine())
+                    this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
                 }
             });
         });
