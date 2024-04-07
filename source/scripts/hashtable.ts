@@ -79,7 +79,7 @@ class HashEntry {
     }
 
     public getBeenUsed() {
-        return this.getBeenUsed;
+        return this.hasBeenUsed;
     }
 
     public getLine() {

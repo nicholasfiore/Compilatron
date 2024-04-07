@@ -277,8 +277,10 @@ class Table extends Component {
 
     printTable() {
         console.table(this.table)
+        this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {
-            
+            this.info(entry.getID() + " | " + entry.getType() + " | " + entry.getScope()
+                + " | " + entry.getLine() + " | " + entry.getInit() + " | " + entry.getBeenUsed())
         });
     }
 }
