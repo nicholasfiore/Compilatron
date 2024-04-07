@@ -188,7 +188,7 @@ class Tree extends Component {
         var expr;
         if (node.getChildren().length === 1) {
             digit = node.getChildren()[0];
-            return new TreeNode(digit.getName(), digit.getValue());
+            return new TreeNode(digit.getName(), digit.getLine(), digit.getValue());
         }
         else {
             digit = node.getChildren()[0];
@@ -196,7 +196,7 @@ class Tree extends Component {
             expr = this.interpretExpr(node.getChildren()[2]);
         }
         var opNode = new TreeNode(op.getName(), op.getValue());
-        opNode.addChild(new TreeNode(digit.getName(), digit.getValue()));
+        opNode.addChild(new TreeNode(digit.getName(), digit.getLine(), digit.getValue()));
         opNode.addChild(expr);
         return opNode;
     }

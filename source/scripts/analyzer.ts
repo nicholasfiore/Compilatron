@@ -29,6 +29,7 @@ class SemanticAnalyzer extends Component {
         this.info("Abstract Syntax Tree:");
         console.log(this.AST.getRoot());
         this.AST.printTree(this.AST.getRoot());
+        this.info("End AST\n");
 
         this.scopeTree = new HashTree("Scope");
         console.log(this.AST.getRoot());
@@ -62,7 +63,10 @@ class SemanticAnalyzer extends Component {
                         let type = child.getChildren()[0];
                         let id = child.getChildren()[1];
 
-                        this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine());
+                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine())) {
+                            this.err("redeclaration");
+                            this.errors++;
+                        }
                         break;
                     }
                     case "AssignmentStatement": {
@@ -70,9 +74,19 @@ class SemanticAnalyzer extends Component {
                         let value = child.getChildren()[1];
 
                         if (!this.checkType(id.getValue(), value.getValue())) {
-                            this.err("type mismatch")
+                            this.err("type mismatch");
                             this.errors++;
-                        } 
+                        }
+
+                        this.currScope = this.scopeTree.getCurrent();
+                        break;
+                    }
+                    case "IfStatement": {}
+                    case "WhileStatement": {
+
+                        break;
+                    }
+                    case "PrintStatement": {
 
                         break;
                     }
@@ -88,13 +102,35 @@ class SemanticAnalyzer extends Component {
 
     private checkType(id: string, value: string) {
         var entry = this.currScope.getTable().get(id);
-        switch (entry.getType()) {
-            case "int": {
-                return this.validInt.test(value);
+        if (entry) {
+            switch (entry.getType()) {
+                case "int": {
+                    return this.validInt.test(value);
+                }
+                case "string": {
+                    
+                }
             }
-            case "": {
+        } else {
+            var retVal;
+            var lookUpSuccess = this.lookUp();
+            if (lookUpSuccess) {
+                retVal = this.checkType(id, value);
+            } else {
+                this.err("undeclared")
+                this.errors++;
+                retVal = false;
+            }
+            return retVal;
+        }
+    }
 
-            }
+    private lookUp() {
+        if (this.currScope.getParent()) {
+            this.currScope = this.currScope.getParent();
+            return true;
+        } else {
+            return false;
         }
     }
 
