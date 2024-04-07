@@ -83,7 +83,22 @@ class SemanticAnalyzer extends Component {
                     }
                     case "IfStatement": {}
                     case "WhileStatement": {
+                        let keyword = child.getChildren()[0];
+                        //true and false don't need to be type checked
+                        if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
+                            let val1 = keyword.getChildren()[0];
+                            let val2 = keyword.getChildren()[1];
 
+                            if (!this.checkType(val1.getValue(), val2.getValue())) {
+                                this.err("type mismatch");
+                                this.errors++;
+                            }
+                        }
+                        //block code
+                        this.currDepth++;
+                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScope = this.scopeTree.getCurrent();
+                        this.buildSymbolTable(child);
                         break;
                     }
                     case "PrintStatement": {
@@ -100,12 +115,12 @@ class SemanticAnalyzer extends Component {
         return;
     }
 
-    private checkType(id: string, value: string) {
-        var entry = this.currScope.getTable().get(id);
+    private checkType(value1: string, value2: string) {
+        var entry = this.currScope.getTable().get(value1);
         if (entry) {
             switch (entry.getType()) {
                 case "int": {
-                    return this.validInt.test(value);
+                    return this.validInt.test(value2);
                 }
                 case "string": {
                     
@@ -115,7 +130,7 @@ class SemanticAnalyzer extends Component {
             var retVal;
             var lookUpSuccess = this.lookUp();
             if (lookUpSuccess) {
-                retVal = this.checkType(id, value);
+                retVal = this.checkType(value1, value2);
             } else {
                 this.err("undeclared")
                 this.errors++;
@@ -133,6 +148,8 @@ class SemanticAnalyzer extends Component {
             return false;
         }
     }
+
+    private 
 
     // private buildSymbolTable() {
         
