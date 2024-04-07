@@ -106,7 +106,7 @@ class SemanticAnalyzer extends Component {
                     case "PrintStatement": {
                         let printVal = child.getChildren()[0]
                         if (printVal.getName() === "ID") {
-                            this.checkScope(printVal.getValue());
+                            this.findID(printVal.getValue());
                         }
                         break;
                     }
@@ -120,24 +120,24 @@ class SemanticAnalyzer extends Component {
         return;
     }
 
-    private checkScope(id) {
-        var entry = this.currScope.getTable().get(id);
-        if (entry) {
+    // private checkScope(id) {
+    //     var entry = this.currScope.getTable().get(id);
+    //     if (entry) {
             
-        } else {
-            var retVal;
-            var lookUpSuccess = this.lookUp();
-            if (lookUpSuccess) {
-                retVal = this.checkScope(id);
-            } else {
-                this.err("undeclared")
-                this.errors++;
-                retVal = false;
-            }
-            return retVal;
-        }
+    //     } else {
+    //         var retVal;
+    //         var lookUpSuccess = this.lookUp();
+    //         if (lookUpSuccess) {
+    //             retVal = this.checkScope(id);
+    //         } else {
+    //             this.err("undeclared")
+    //             this.errors++;
+    //             retVal = false;
+    //         }
+    //         return retVal;
+    //     }
         
-    }
+    // }
 
     private checkType(value1: TreeNode, value2: TreeNode) {
         var type1;

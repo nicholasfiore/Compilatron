@@ -17,18 +17,12 @@ class HashTable {
 
     //puts an entry into the hash table
     //returns true if successful, false if there is a collision
-    public put(key: string, type?: string, line?: number, scope?: number) {
+    public put(key: string, type: string, line: number, scope: number) {
         var hash = this.makeHashCode(key);
         var entry = new HashEntry(key);
-        if (type) {
-            entry.setType(type);
-        }
-        if (line) {
-            entry.setLine(line);
-        }
-        if (scope) {
-            entry.setScope(scope);
-        }
+        entry.setType(type);
+        entry.setLine(line);
+        entry.setScope(scope);
         if (!this.table[hash]) {
             this.table[hash] = entry;
             return true;
