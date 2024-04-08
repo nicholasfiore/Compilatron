@@ -5,8 +5,8 @@ class SemanticAnalyzer extends Component {
     //private tokens: Array<Token>;
     private AST: Tree;
 
-    private errors: number;
-    private warnings: number;
+    private errors: number = 0;
+    private warnings: number = 0;
 
     private scopeTree: HashTree;
     private currDepth: number = -1;
@@ -69,6 +69,7 @@ class SemanticAnalyzer extends Component {
                             this.err("Cannot declare the same ID twice. Attempted to redeclare [" + id.getValue() + "] on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
+
                         break;
                     }
                     case "AssignmentStatement": {
@@ -106,7 +107,7 @@ class SemanticAnalyzer extends Component {
                     case "PrintStatement": {
                         let printVal = child.getChildren()[0]
                         if (printVal.getName() === "ID") {
-                            this.findID(printVal.getValue());
+                            this.findID(printVal);
                         }
                         break;
                     }
@@ -143,13 +144,13 @@ class SemanticAnalyzer extends Component {
         var type1;
         var type2;
         if (value1.getName() === "ID") {
-            type1 = (this.findID(value1.getValue())).getType();
+            type1 = (this.findID(value1)).getType();
         } else {
             type1 = this.determineType(value1.getValue());
         }
 
         if (value2.getName() === "ID") {
-            type2 = (this.findID(value2.getValue())).getType();
+            type2 = (this.findID(value2)).getType();
         } else {
             type2 = this.determineType(value2.getValue());
         }
@@ -187,9 +188,10 @@ class SemanticAnalyzer extends Component {
     }
 
     //looks for the ID in scope recursively
-    private findID(id: string) {
+    private findID(id: TreeNode) {
         var retVal;
-        var entry = this.currScope.getTable().get(id);
+
+        var entry = this.currScope.getTable().get(id.getValue());
         if (entry) {
             retVal = entry;
         } else {
@@ -197,7 +199,7 @@ class SemanticAnalyzer extends Component {
             if (lookUpSuccess) {
                 retVal = this.findID(id);
             } else {
-                this.err("undeclared")
+                this.err("The ID " + id.getValue() + " on line " + id.getLine() + " was used before being declared")
                 this.errors++;
                 retVal = false;
             }
@@ -247,12 +249,20 @@ class SemanticAnalyzer extends Component {
                 if (typeof entry !== undefined) {
                     //this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
                     tableObj.addEntry(entry);
+                    if (!entry.getInit()) {
+                        this.warn("ID " + entry.getID() + " was declared but never initialized");
+                        this.warnings++;
+                    } else if (!entry.getBeenUsed()) {
+                        this.warn("ID " + entry.getID() + " was declared and initialized but never used")
+                        this.warnings++;
+                    }
                 }
             });
         });
 
-        tableObj.printTable();
-
+        if (this.errors < 1) {
+            tableObj.printTable();
+        }
     }
 
     private moveUp() {
