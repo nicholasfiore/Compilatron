@@ -63,7 +63,7 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[1];
 
                         if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                            this.err("Cannot declare the same ID twice. Attempted to redeclare \"" + id.getValue() + "\"] on line " + id.getLine() + " when it was already declared.");
+                            this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\"] on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
 
@@ -103,14 +103,14 @@ class SemanticAnalyzer extends Component {
                                 if (entry1.getInit()) {
                                     entry1.flipBeenUsed();
                                 } else {
-                                    this.err("Uninitialized value. ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was declared, but its value was never initialized");
+                                    this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was declared, but its value was never initialized");
                                     this.errors++;
                                 }
                                 
                                 if (entry2.getInit()) {
                                     entry2.flipBeenUsed();
                                 } else {
-                                    this.err("Uninitialized value. ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was declared, but its value was never initialized");
+                                    this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was declared, but its value was never initialized");
                                     this.errors++;
                                 }
                             }
@@ -129,7 +129,7 @@ class SemanticAnalyzer extends Component {
                             if (entry.getInit()) {
                                 entry.flipBeenUsed();
                             } else {
-                                this.err("Uninitialized value. ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was declared, but its value was never initialized");
+                                this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was declared, but its value was never initialized");
                                 this.errors++;
                             }
                         }
@@ -155,7 +155,7 @@ class SemanticAnalyzer extends Component {
         }
 
         if (value2.getValue() === "+") {
-            return this.checkType(value2.getChildren()[0], value2.getChildren()[1]);
+            type2 = this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1]);
         } else if (value2.getName() === "ID") {
             type2 = (this.findID(value2)).getType();
         } else {
@@ -165,23 +165,29 @@ class SemanticAnalyzer extends Component {
         if (type1 === type2) {
             return true;
         } else {
-            return false;
+            return type2;
+        }
+    }
+
+    private checkAddChain(value1: TreeNode, value2: TreeNode) {
+        var type1
+        var type2
+        if (value2.getValue() === "+") {
+            type2 = this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
+        } else if (value2.getName() === "ID") {
+            type2 = (this.findID(value2)).getType();
+        } else {
+            type2 = this.determineType(value2.getValue());
         }
 
-        // var entry = this.currScope.getTable().get(value1);
-        // if (entry) {
-        //     switch (entry.getType()) {
-        //         case "int": {
-        //             return this.validInt.test(value2);
-        //         }
-        //         case "string": {
-        //             return this.validString.test(value2);
-        //         }
-        //         case "boolean": {
-        //             return this.validBoolVal.test(value2);
-        //         }
-        //     }
-        // }
+        type1 = this.determineType(value1.getValue());
+
+        if (type1 === type2) {
+            return "int";
+        } else {
+            return type2;
+        }
+
     }
 
     private determineType(val: string) {
