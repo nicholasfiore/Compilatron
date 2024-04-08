@@ -107,11 +107,11 @@ class HashEntry {
     }
 
     public flipIsInit() {
-        this.isInit = !this.isInit;
+        this.isInit = true;
     }
 
     public flipBeenUsed() {
-        this.hasBeenUsed = !this.hasBeenUsed;
+        this.hasBeenUsed = true;
     }
 }
 

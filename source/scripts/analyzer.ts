@@ -12,7 +12,7 @@ class SemanticAnalyzer extends Component {
     private currDepth: number = -1;
     private currScope: HashNode;
 
-    private validInt = new RegExp('^[0-9]$|^\\+$');
+    private validInt = new RegExp('^[0-9]$');
     private validString = new RegExp('[a-z]');
     private validBoolVal = new RegExp('^true$|^false$');
 
@@ -66,7 +66,7 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[1];
 
                         if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                            this.err("Cannot declare the same ID twice. Attempted to redeclare [" + id.getValue() + "] on line " + id.getLine() + " when it was already declared.");
+                            this.err("Cannot declare the same ID twice. Attempted to redeclare \"" + id.getValue() + "\"] on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
 
@@ -75,26 +75,35 @@ class SemanticAnalyzer extends Component {
                     case "AssignmentStatement": {
                         let id = child.getChildren()[0];
                         let value = child.getChildren()[1];
+                        let entry = this.findID(id);
 
                         if (!this.checkType(id, value)) {
                             this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + this.determineType(id.getValue()) + "]");
                             this.errors++;
+                        } else {
+                            entry.flipIsInit();
                         }
-
+                        
                         this.currScope = this.scopeTree.getCurrent();
                         break;
                     }
                     case "IfStatement": {}
                     case "WhileStatement": {
                         let keyword = child.getChildren()[0];
+                        
                         //true and false don't need to be type checked
                         if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
                             let val1 = keyword.getChildren()[0];
                             let val2 = keyword.getChildren()[1];
+                            let entry1 = this.findID(val1);
+                            let entry2 = this.findID(val2);
 
                             if (!this.checkType(val1, val2)) {
                                 this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + this.determineType(val1.getValue()) + "] to type [" + this.determineType(val2.getValue()) + "]");
                                 this.errors++;
+                            } else {
+                                entry1.flipBeenUsed();
+                                entry2.flipBeenUsed();
                             }
                         }
                         //block code
@@ -149,7 +158,9 @@ class SemanticAnalyzer extends Component {
             type1 = this.determineType(value1.getValue());
         }
 
-        if (value2.getName() === "ID") {
+        if (value2.getValue() === "+") {
+            return this.checkType(value2.getChildren()[0], value2.getChildren()[1]);
+        } else if (value2.getName() === "ID") {
             type2 = (this.findID(value2)).getType();
         } else {
             type2 = this.determineType(value2.getValue());
@@ -178,6 +189,8 @@ class SemanticAnalyzer extends Component {
     }
 
     private determineType(val: string) {
+        //TODO: fixing adding
+
         if (this.validInt.test(val)) {
             return "int";
         }else if (this.validBoolVal.test(val)) {
@@ -199,7 +212,7 @@ class SemanticAnalyzer extends Component {
             if (lookUpSuccess) {
                 retVal = this.findID(id);
             } else {
-                this.err("The ID " + id.getValue() + " on line " + id.getLine() + " was used before being declared")
+                this.err("The ID \"" + id.getValue() + "\" on line " + id.getLine() + " was used before being declared")
                 this.errors++;
                 retVal = false;
             }
@@ -250,10 +263,10 @@ class SemanticAnalyzer extends Component {
                     //this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
                     tableObj.addEntry(entry);
                     if (!entry.getInit()) {
-                        this.warn("ID " + entry.getID() + " was declared but never initialized");
+                        this.warn("ID \"" + entry.getID() + "\" was declared but never initialized");
                         this.warnings++;
                     } else if (!entry.getBeenUsed()) {
-                        this.warn("ID " + entry.getID() + " was declared and initialized but never used")
+                        this.warn("ID \"" + entry.getID() + "\" was declared and initialized but never used")
                         this.warnings++;
                     }
                 }
