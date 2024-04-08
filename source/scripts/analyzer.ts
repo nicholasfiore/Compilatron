@@ -277,14 +277,57 @@ class Table extends Component {
 
     printTable() {
         console.table(this.table)
-        var output = "\nID | Type | Scope | Line | IsInit | BeenUsed\n";
+        var output = "";
+
+        var typeSpacing;
+        var lineSpacing;
+        var lineHeaderSpacing = "";
+        var initSpacing;
+
+        
+
         //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {
 
-            output += entry.getID() + "  | " + entry.getType() + " | " + entry.getScope()
-                + " | " + entry.getLine() + " | " + entry.getInit() + " | " + entry.getBeenUsed() + "\n"
+            if (entry.getType() === "int") {
+                typeSpacing = "    ";
+            } else if (entry.getType() === "string") {
+                typeSpacing = " ";
+            }
+
+            if (entry.getInit() === "true") {
+                initSpacing = "   ";
+            } else {
+                initSpacing = "  ";
+            }
+
+            // let temp = entry.getLine() + "";
+            // switch (temp.length) {
+            //     case 1:
+            //         lineSpacing = "   "
+            //         break;
+            //     case 2:
+            //         lineSpacing = "  "
+            //         break;
+            //     case 3:
+            //         lineSpacing = " ";
+            //         break;
+            //     default:
+            //         lineSpacing = "";
+            //         for (var i = 0; i < (temp.length - 4); i++) {
+            //             lineHeaderSpacing += " ";
+            //         }
+
+            // }
+
+            output += entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
+            + "     | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed() + "\n"
+            
+            typeSpacing = "";
         });
 
+        var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
+        output = header + output;
         this.info(output);
     }
 }
