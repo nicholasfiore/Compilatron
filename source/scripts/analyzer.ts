@@ -26,13 +26,13 @@ class SemanticAnalyzer extends Component {
     public analyze() {
         this.AST.buildAST(this.CST.getRoot());
         //this.buildAST();
-        this.info("Abstract Syntax Tree:");
-        console.log(this.AST.getRoot());
+        this.info("\nAbstract Syntax Tree:");
+        //console.log(this.AST.getRoot());
         this.AST.printTree(this.AST.getRoot());
         this.info("End AST\n");
 
         this.scopeTree = new HashTree("Scope");
-        console.log(this.AST.getRoot());
+        //console.log(this.AST.getRoot());
         this.buildSymbolTable(this.AST.getRoot());
 
         this.printSymbolTable();
@@ -51,7 +51,7 @@ class SemanticAnalyzer extends Component {
             this.buildSymbolTable(node);
         } else {
             node.getChildren().forEach(child => {
-                console.log(this.currScope);
+                //console.log(this.currScope);
                 switch (child.getName()) {
                     case "Block": {
                         this.currDepth++;
@@ -111,7 +111,7 @@ class SemanticAnalyzer extends Component {
                         break;
                     }
                 }
-                console.log(this.scopeTree.getRoot());
+                //console.log(this.scopeTree.getRoot());
             });
             this.currDepth--;
             this.moveUp();
@@ -179,11 +179,11 @@ class SemanticAnalyzer extends Component {
     private determineType(val: string) {
         if (this.validInt.test(val)) {
             return "int";
+        }else if (this.validBoolVal.test(val)) {
+            return "boolean";
         } else if (this.validString.test(val)) {
             return "string";
-        } else if (this.validBoolVal.test(val)) {
-            return "boolean";
-        }
+        } 
     }
 
     //looks for the ID in scope recursively
@@ -277,10 +277,14 @@ class Table extends Component {
 
     printTable() {
         console.table(this.table)
-        this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
+        var output = "\nID | Type | Scope | Line | IsInit | BeenUsed\n";
+        //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {
-            this.info(entry.getID() + " | " + entry.getType() + " | " + entry.getScope()
-                + " | " + entry.getLine() + " | " + entry.getInit() + " | " + entry.getBeenUsed())
+
+            output += entry.getID() + "  | " + entry.getType() + " | " + entry.getScope()
+                + " | " + entry.getLine() + " | " + entry.getInit() + " | " + entry.getBeenUsed() + "\n"
         });
+
+        this.info(output);
     }
 }
