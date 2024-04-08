@@ -66,7 +66,7 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[1];
 
                         if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                            this.err("redeclaration");
+                            this.err("Cannot declare the same ID twice. Attempted to redeclare [" + id.getValue() + "] on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
                         break;
@@ -76,7 +76,7 @@ class SemanticAnalyzer extends Component {
                         let value = child.getChildren()[1];
 
                         if (!this.checkType(id, value)) {
-                            this.err("type mismatch, value: " + value.getValue());
+                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + this.determineType(id.getValue()) + "]");
                             this.errors++;
                         }
 
@@ -92,7 +92,7 @@ class SemanticAnalyzer extends Component {
                             let val2 = keyword.getChildren()[1];
 
                             if (!this.checkType(val1, val2)) {
-                                this.err("type mismatch");
+                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + this.determineType(val1.getValue()) + "] to type [" + this.determineType(val2.getValue()) + "]");
                                 this.errors++;
                             }
                         }
