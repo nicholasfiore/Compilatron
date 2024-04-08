@@ -75,7 +75,7 @@ class SemanticAnalyzer extends Component {
                         let entry = this.findID(id);
 
                         if (!this.checkType(id, value)) {
-                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + this.determineType(id.getValue()) + "]");
+                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + entry.getType() + "]");
                             this.errors++;
                         } else {
                             entry.flipIsInit();
@@ -96,7 +96,7 @@ class SemanticAnalyzer extends Component {
                             let entry2 = this.findID(val2);
 
                             if (!this.checkType(val1, val2)) {
-                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + this.determineType(val1.getValue()) + "] to type [" + this.determineType(val2.getValue()) + "]");
+                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + entry1.getType() + "] to type [" + entry2.getType() + "]");
                                 this.errors++;
                             } else {
                                 //throws an error if the variable is not initialized;
@@ -144,25 +144,6 @@ class SemanticAnalyzer extends Component {
         
         return;
     }
-
-    // private checkScope(id) {
-    //     var entry = this.currScope.getTable().get(id);
-    //     if (entry) {
-            
-    //     } else {
-    //         var retVal;
-    //         var lookUpSuccess = this.lookUp();
-    //         if (lookUpSuccess) {
-    //             retVal = this.checkScope(id);
-    //         } else {
-    //             this.err("undeclared")
-    //             this.errors++;
-    //             retVal = false;
-    //         }
-    //         return retVal;
-    //     }
-        
-    // }
 
     private checkType(value1: TreeNode, value2: TreeNode) {
         var type1;
