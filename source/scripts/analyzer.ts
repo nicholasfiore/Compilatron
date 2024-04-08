@@ -2,7 +2,7 @@
 class SemanticAnalyzer extends Component {
     
     private CST: Tree;
-    private tokens: Array<Token>;
+    //private tokens: Array<Token>;
     private AST: Tree;
 
     private errors: number;
@@ -12,7 +12,7 @@ class SemanticAnalyzer extends Component {
     private currDepth: number = -1;
     private currScope: HashNode;
 
-    private validInt = new RegExp('^[0-9]$');
+    private validInt = new RegExp('^[0-9]$|^\\+$');
     private validString = new RegExp('[a-z]');
     private validBoolVal = new RegExp('^true$|^false$');
 

@@ -200,7 +200,7 @@ class Tree extends Component {
             op = node.getChildren()[1];
             expr = this.interpretExpr(node.getChildren()[2]);
         }
-        var opNode = new TreeNode(op.getName(), op.getValue());
+        var opNode = new TreeNode(op.getName(), op.getLine(), op.getValue());
         opNode.addChild(new TreeNode(digit.getName(), digit.getLine(), digit.getValue()));
         opNode.addChild(expr);
         return opNode;
