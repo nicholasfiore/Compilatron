@@ -16,23 +16,22 @@ class SemanticAnalyzer extends Component {
     private validString = new RegExp('[a-z]');
     private validBoolVal = new RegExp('^true$|^false$');
 
-    constructor(ConcreteSyntaxTree: Tree, /*TokenStream: Array<Token>,*/ enableDebug: boolean) {
+    constructor(ConcreteSyntaxTree: Tree, enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
         this.AST = new Tree("AST");
         this.CST = ConcreteSyntaxTree;
-        //this.tokens = TokenStream;
     }
 
     public analyze() {
         this.AST.buildAST(this.CST.getRoot());
-        //this.buildAST();
+
         this.info("\nAbstract Syntax Tree:");
-        //console.log(this.AST.getRoot());
+
         this.AST.printTree(this.AST.getRoot());
         this.info("End AST\n");
 
         this.scopeTree = new HashTree("Scope");
-        //console.log(this.AST.getRoot());
+
         this.buildSymbolTable(this.AST.getRoot());
 
         this.printSymbolTable();
@@ -51,7 +50,6 @@ class SemanticAnalyzer extends Component {
             this.buildSymbolTable(node);
         } else {
             node.getChildren().forEach(child => {
-                //console.log(this.currScope);
                 switch (child.getName()) {
                     case "Block": {
                         this.currDepth++;
@@ -61,7 +59,6 @@ class SemanticAnalyzer extends Component {
                         break;
                     }
                     case "VarDecl": {
-                        //console.log(child)
                         let type = child.getChildren()[0];
                         let id = child.getChildren()[1];
 
@@ -91,7 +88,7 @@ class SemanticAnalyzer extends Component {
                     case "WhileStatement": {
                         let keyword = child.getChildren()[0];
                         
-                        //true and false don't need to be type checked
+                        //true and false literals don't need to be type checked
                         if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
                             let val1 = keyword.getChildren()[0];
                             let val2 = keyword.getChildren()[1];
@@ -102,8 +99,20 @@ class SemanticAnalyzer extends Component {
                                 this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + this.determineType(val1.getValue()) + "] to type [" + this.determineType(val2.getValue()) + "]");
                                 this.errors++;
                             } else {
-                                entry1.flipBeenUsed();
-                                entry2.flipBeenUsed();
+                                //throws an error if the variable is not initialized;
+                                if (entry1.getInit()) {
+                                    entry1.flipBeenUsed();
+                                } else {
+                                    this.err("Uninitialized value. ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was declared, but its value was never initialized");
+                                    this.errors++;
+                                }
+                                
+                                if (entry2.getInit()) {
+                                    entry2.flipBeenUsed();
+                                } else {
+                                    this.err("Uninitialized value. ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was declared, but its value was never initialized");
+                                    this.errors++;
+                                }
                             }
                         }
                         //block code
@@ -114,9 +123,15 @@ class SemanticAnalyzer extends Component {
                         break;
                     }
                     case "PrintStatement": {
-                        let printVal = child.getChildren()[0]
+                        let printVal = child.getChildren()[0];
                         if (printVal.getName() === "ID") {
-                            this.findID(printVal);
+                            let entry = this.findID(printVal);
+                            if (entry.getInit()) {
+                                entry.flipBeenUsed();
+                            } else {
+                                this.err("Uninitialized value. ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was declared, but its value was never initialized");
+                                this.errors++;
+                            }
                         }
                         break;
                     }
