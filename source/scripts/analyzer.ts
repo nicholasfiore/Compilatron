@@ -307,7 +307,10 @@ class SemanticAnalyzer extends Component {
                     let id = child.getChildren()[0];
                     let value = child.getChildren()[1];
 
-                    this.checkType(id, value);
+                    if (!this.checkType(id, value)) {
+                        this.err("Type mismatch: cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
+                        this.errors++;
+                    }
                 }
             }
         });
@@ -324,31 +327,31 @@ class SemanticAnalyzer extends Component {
     }
 
     private evaluateBoolean(val1: TreeNode, val2: TreeNode) {
-        var type1 = this.determineType(val1.getValue());
+        var type1 = this.determineType(val1);
         var type2 = 1;
     }
 
     private checkType(value1: TreeNode, value2: TreeNode) {
-        var type1;
-        var type2;
-        if (value1.getName() === "ID") {
-            type1 = (this.findID(value1)).getType();
-        } else {
-            type1 = this.determineType(value1.getValue());
-        }
+        let type1 = this.determineType(value1);
+        let type2 = this.determineType(value2);
 
-        if (value2.getValue() === "+") {
-            type2 = this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1]);
-        } else if (value2.getName() === "ID") {
-            type2 = (this.findID(value2)).getType();
-        } else {
-            type2 = this.determineType(value2.getValue());
-        }
-
-        if (type1 === type2) {
+        if (type1 == type2) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private checkAddChain(value1: TreeNode, value2: TreeNode) {
+        if (value2.getName() === "SYM_ADD") {
+            return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
+        }
+        else if (!this.checkType(value1, value2)) {
+            this.err("Type mismatch: cannot add [" + this.determineType(value2) + "] to [" + this.determineType(value1) + "]")
+            this.errors++;
+            return "error";
+        } else {
+            return "int";
         }
     }
 
@@ -376,58 +379,71 @@ class SemanticAnalyzer extends Component {
     //     }
     // }
 
-    private checkAddChain(value1: TreeNode, value2: TreeNode) {
-        var type1;
-        var type2;
+    // private checkAddChain(value1: TreeNode, value2: TreeNode) {
+    //     var type1;
+    //     var type2;
 
-        if (value2.getValue() === "+") {
-            return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
-        } else if (value2.getName() === "ID") {
-            let entry = (this.findID(value2))
-            if (!entry.getInit()) {
-                this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized")
-                this.errors++;
-                return false;
-            } else {
-                type2 = entry.getType();
-                this.findID(value2).flipBeenUsed();
-            }
+    //     if (value2.getValue() === "+") {
+    //         return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
+    //     } else if (value2.getName() === "ID") {
+    //         let entry = (this.findID(value2))
+    //         if (!entry.getInit()) {
+    //             this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized")
+    //             this.errors++;
+    //             return false;
+    //         } else {
+    //             type2 = entry.getType();
+    //             this.findID(value2).flipBeenUsed();
+    //         }
             
-        } else {
-            type2 = this.determineType(value2.getValue());
-        }
+    //     } else {
+    //         type2 = this.determineType(value2);
+    //     }
 
-        if (value1.getName() === "ID") {
-            let entry = (this.findID(value1))
-            if (!entry.getInit()) {
-                this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized")
-                this.errors++;
-            } else {
-                type1 = entry.getType();
-            }
+    //     if (value1.getName() === "ID") {
+    //         let entry = (this.findID(value1))
+    //         if (!entry.getInit()) {
+    //             this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized")
+    //             this.errors++;
+    //         } else {
+    //             type1 = entry.getType();
+    //         }
             
+    //     } else {
+    //         type1 = this.determineType(value1);
+    //     }
+
+    //     if (type1 === type2) {
+    //         return "int";
+    //     } else {
+    //         this.err("Type mismatch on line " + value1.getLine() + ": cannot add type [" + type2 + "] to type [" +type1+ "]")
+    //         this.errors++;
+    //         return type2;
+    //     }
+
+    // }
+
+    
+
+    private determineType(val: TreeNode) {
+        if (val.getName() === "SYM_ADD") {
+            return this.checkAddChain(val.getChildren()[0], val.getChildren()[1])
+        } else if (val.getName() === "SYM_IS_EQUAL" || val.getName() === "SYM_IS_NOT_EQUAL") {
+
+        } else if (val.getName() === "ID") {
+            return this.findID(val).getType();
         } else {
-            type1 = this.determineType(value1.getValue());
+            if (this.validInt.test(val.getValue())) {
+                return "int";
+            }else if (this.validBoolVal.test(val.getValue())) {
+                return "boolean";
+            } else if (this.validString.test(val.getValue())) {
+                return "string";
+            } 
         }
 
-        if (type1 === type2) {
-            return "int";
-        } else {
-            this.err("Type mismatch on line " + value1.getLine() + ": cannot add type [" + type2 + "] to type [" +type1+ "]")
-            this.errors++;
-            return type2;
-        }
 
-    }
-
-    private determineType(val: string) {
-        if (this.validInt.test(val)) {
-            return "int";
-        }else if (this.validBoolVal.test(val)) {
-            return "boolean";
-        } else if (this.validString.test(val)) {
-            return "string";
-        } 
+        
     }
 
     //looks for the ID in scope recursively
