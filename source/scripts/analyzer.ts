@@ -450,13 +450,12 @@ class SemanticAnalyzer extends Component {
     
 
     private determineType(val: TreeNode) {
-        let retVal;
         let child1 = val.getChildren()[0];
         let child2 = val.getChildren()[1];
         if (val.getName() === "SYM_ADD") {
             if (child2.getName() === "ID") {
                 if (!this.findID(child2).getInit()) {
-                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used but was never initialized")
+                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used before being initialized")
                     this.errors++;
                 } else {
                     this.findID(child2).flipBeenUsed();
@@ -466,7 +465,7 @@ class SemanticAnalyzer extends Component {
         } else if (val.getName() === "SYM_IS_EQUAL" || val.getName() === "SYM_IS_NOT_EQUAL") {
             if (child1.getName() === "ID") {
                 if (!this.findID(child1).getInit()) {
-                    this.err("Uninitialized value: ID \"" + child1.getValue() + "\" at line " + child1.getLine() + " was used but was never initialized")
+                    this.err("Uninitialized value: ID \"" + child1.getValue() + "\" at line " + child1.getLine() + " was used before being initialized")
                     this.errors++;
                 } else {
                     this.findID(child1).flipBeenUsed();
@@ -476,7 +475,7 @@ class SemanticAnalyzer extends Component {
             }
             if (child2.getName() === "ID") {
                 if (!this.findID(child2).getInit()) {
-                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used but was never initialized")
+                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used before being initialized")
                     this.errors++;
                 } else {
                     this.findID(child2).flipBeenUsed();
@@ -490,7 +489,7 @@ class SemanticAnalyzer extends Component {
         } else {
             if (this.validInt.test(val.getValue())) {
                 return "int";
-            }else if (this.validBoolVal.test(val.getValue())) {
+            } else if (this.validBoolVal.test(val.getValue())) {
                 return "boolean";
             } else if (this.validString.test(val.getValue())) {
                 return "string";
@@ -513,7 +512,7 @@ class SemanticAnalyzer extends Component {
             if (lookUpSuccess) {
                 retVal = this.findID(id);
             } else {
-                this.err("The ID \"" + id.getValue() + "\" on line " + id.getLine() + " was used before being declared")
+                this.err("Undeclared variable: The ID \"" + id.getValue() + "\" on line " + id.getLine() + " was used but not declared")
                 this.errors++;
                 retVal = null;
             }
@@ -529,12 +528,6 @@ class SemanticAnalyzer extends Component {
             return false;
         }
     }
-
-    //private 
-
-    // private buildSymbolTable() {
-        
-    // }
 
     private printSymbolTable() {
         var queue = [this.scopeTree.getRoot()];
@@ -652,6 +645,10 @@ class Table extends Component {
 
         var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
         output = header + output;
-        this.info(output);
+        //only bother printing the table if there are any variables, otherwise skip
+        if (this.table.length > 0) {
+            this.info(output);
+        }
+        
     }
 }
