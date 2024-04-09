@@ -65,7 +65,7 @@ class SemanticAnalyzer extends Component {
                         let id = child.getChildren()[1];
 
                         if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                            this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\"] on line " + id.getLine() + " when it was already declared.");
+                            this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
 
@@ -255,6 +255,14 @@ class SemanticAnalyzer extends Component {
         }
         
         return;
+    }
+
+    private checkBoolExpr() {
+
+    }
+
+    private evaluateBoolean(val1: TreeNode, val2: TreeNode) {
+        var type1 = this.determineType(val1.getValue());
     }
 
     private checkType(value1: TreeNode, value2: TreeNode) {

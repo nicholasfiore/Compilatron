@@ -19,3 +19,41 @@ a = 1 + 1 + 1 + b
 print(1 + b)
 if (b == 1) {}
 }$
+
+/*** following are all Arnell test cases ***/
+{
+int a
+a = 1
+print(a)
+}$
+
+
+{
+int a
+a = 1
+if (2+a == 2){
+    a = 1
+}
+while false {
+
+}
+}$    
+
+/**This should break on a but allow b to go through**/
+{
+int b
+int a
+{
+    string b
+}
+string a
+}$
+
+
+{
+/*This should give a warning as the initialization is using the uninitialized value*/
+int a
+a = 2+a
+boolean b
+b = (false == b)
+}$
