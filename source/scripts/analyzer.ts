@@ -273,7 +273,7 @@ class SemanticAnalyzer extends Component {
     // }
     public buildSymbolTable(node: TreeNode) {
         if (node.getChildren().length === 0) {
-
+            
             return;
         }
 
@@ -283,8 +283,33 @@ class SemanticAnalyzer extends Component {
             this.currScope = this.scopeTree.getCurrent();
             this.buildSymbolTable(node);
         } else {
-            node.getChildren().forEach(child => {
-            
+        node.getChildren().forEach(child => {
+            switch (child.getName()) {
+                case "Block": {
+                    this.currDepth++;
+                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                    this.currScope = this.scopeTree.getCurrent();
+                    this.buildSymbolTable(child);
+                    break;
+                }
+                case "VarDecl": {
+                    let type = child.getChildren()[0];
+                    let id = child.getChildren()[1];
+
+                    if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
+                        this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
+                        this.errors++;
+                    }
+
+                    break;
+                }
+                case "AssignmentStatement": {
+                    let id = child.getChildren()[0];
+                    let value = child.getChildren()[1];
+
+                    this.checkType(id, value);
+                }
+            }
         });
         this.currDepth--;
         this.moveUp();
@@ -326,6 +351,30 @@ class SemanticAnalyzer extends Component {
             return false;
         }
     }
+
+    // private checkType(value1: TreeNode, value2: TreeNode) {
+    //     var type1;
+    //     var type2;
+    //     if (value1.getName() === "ID") {
+    //         type1 = (this.findID(value1)).getType();
+    //     } else {
+    //         type1 = this.determineType(value1.getValue());
+    //     }
+
+    //     if (value2.getValue() === "+") {
+    //         type2 = this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1]);
+    //     } else if (value2.getName() === "ID") {
+    //         type2 = (this.findID(value2)).getType();
+    //     } else {
+    //         type2 = this.determineType(value2.getValue());
+    //     }
+
+    //     if (type1 === type2) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     private checkAddChain(value1: TreeNode, value2: TreeNode) {
         var type1;
