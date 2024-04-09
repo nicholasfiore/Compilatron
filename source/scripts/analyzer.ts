@@ -36,7 +36,7 @@ class SemanticAnalyzer extends Component {
 
         this.printSymbolTable();
 
-        return {errors: this.errors, warnings: this.warnings}
+        return {AST: this.AST, symbolTable: this.scopeTree, errors: this.errors, warnings: this.warnings}
     }
 
     public buildSymbolTable(node: TreeNode) {
