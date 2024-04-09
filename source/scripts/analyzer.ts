@@ -103,7 +103,12 @@ class SemanticAnalyzer extends Component {
                             this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
                             this.errors++;
                         } else {
-                            entryID.flipIsInit();
+                            if (!entryID.getInit()) {
+                                entryID.flipIsInit();
+                            } else {
+                                entryID.flipBeenUsed();
+                            }
+                            
                         }
                         
                         this.currScope = this.scopeTree.getCurrent();
@@ -212,6 +217,8 @@ class SemanticAnalyzer extends Component {
                                         this.errors++;
                                     }
                                 }
+
+
                             }
                         }
                         //block code
@@ -281,6 +288,7 @@ class SemanticAnalyzer extends Component {
             return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
         } else if (value2.getName() === "ID") {
             type2 = (this.findID(value2)).getType();
+            this.findID(value2).flipBeenUsed();
         } else {
             type2 = this.determineType(value2.getValue());
         }
