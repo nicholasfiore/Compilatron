@@ -296,48 +296,6 @@ class Tree extends Component {
         return {type, id};
     }
 
-    // private interpretAssignmentStatement(id: TreeNode, expr: TreeNode, node: TreeNode, root: TreeNode) {
-    //     if (node.getChildren().length === 0) {
-    //         if (!id) {
-    //             this.debug("found ID");
-    //             id = node;
-    //         }
-    //         else if (!expr) {
-    //             this.debug("Found EXPR");
-    //             expr = node;
-                
-    //         }
-    //         return {id: id, expr: expr};
-    //     }
-
-        
-
-    //     node.getChildren().forEach(child => {
-    //         var returnVal = this.interpretAssignmentStatement(expr, id, child, root);
-    //         if (returnVal.expr) {
-    //             id = returnVal.id;
-    //         }
-            
-    //         if (returnVal.id) {
-    //             console.log("id")
-    //             expr = returnVal.expr;
-    //         }
-            
-    //     });
-
-    //     if (expr && id) {
-    //         this.debug("building subtree");
-    //         console.log(this.currNode);
-            
-    //         var newNode = this.currNode.addChild(root);
-    //         newNode.addChild(id);
-    //         newNode.addChild(expr);
-    //         return;
-    //     }
-        
-    //     return {id, expr};
-    // }
-
     private interpretAssignmentStatement(node: TreeNode) {
         var id;
         var expr;
@@ -350,38 +308,6 @@ class Tree extends Component {
         newNode.addChild(expr);
         this.currNode.addChild(newNode);
     }
-
-    //print function that is specific to ASTs
-    // public printAST(node: TreeNode) {
-    //     if (node.getChildren().length === 0) {
-    //         if (node.getValue()) {
-    //             this.info(this.getDepthStr() + "<[" + node.getValue() + "]>");
-    //         } else {
-    //             if (node.getName() !== "StatementList") {
-    //                 if (node.getName() !== "CharList") {
-    //                     //statementList and charList can have an epsilon transition,
-    //                     //so they shouldn't be printed. This allows printing the AST
-    //                     //to work without breaking printing the CST.
-    //                     this.info(this.getDepthStr() + "[" + node.getName() + "]");
-    //                 }
-    //             }
-    //         }
-    //         this.currDepth -= 1;
-    //         return;
-    //     }
-
-    //     this.info(this.getDepthStr() + "[" + node.getName() + "]");
-    //     node.getChildren().forEach(e => {
-    //         //console.log("here")
-    //         //console.log(this.currDepth)
-    //         this.currDepth++;
-    //         //console.log("now:" +this.currDepth)
-    //         this.printAST(e);
-    //     });
-    //     this.currDepth--;
-    //     return;
-    // }
-
 
     //accessors
     public getRoot() {
