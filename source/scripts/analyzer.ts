@@ -308,14 +308,31 @@ class SemanticAnalyzer extends Component {
                     let value = child.getChildren()[1];
 
                     if (!this.checkType(id, value)) {
-                        this.err("Type mismatch: cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
+                        this.err("Type mismatch, line " + id.getLine() + " : cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
                         this.errors++;
+                    } else {
+                        this.findID(id).flipIsInit();
                     }
                     break;
                 }
                 case "IfStatement": {}
                 case "WhileStatement": {
+                    let keyword = child.getChildren()[0];
 
+                    this.determineType(keyword) //ensures the keyword is proper boolean
+                    //block code
+                    this.currDepth++;
+                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                    this.currScope = this.scopeTree.getCurrent();
+                    this.buildSymbolTable(child);
+                    break;
+                }
+                case "PrintStatement": {
+                    let printVal = child.getChildren()[0];
+                    if (this.determineType(printVal) !== "error") {
+                        
+                    }
+                    break;
                 }
             }
         });
@@ -329,7 +346,7 @@ class SemanticAnalyzer extends Component {
 
     private evaluateBoolean(value1: TreeNode, value2: TreeNode) {
         if (!this.checkType(value1, value2)) {
-            this.err("Type mismatch, line + " + value1.getLine() + ": cannot compare [" + this.determineType(value1) + "] to [" + this.determineType(value2) + "]")
+            this.err("Type mismatch, line " + value1.getLine() + ": cannot compare [" + this.determineType(value1) + "] to [" + this.determineType(value2) + "]")
             this.errors++;
             return "error";
         } else {
@@ -353,7 +370,7 @@ class SemanticAnalyzer extends Component {
             return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
         }
         else if (!this.checkType(value1, value2)) {
-            this.err("Type mismatch, line + " + value1.getLine() + ": cannot add [" + this.determineType(value2) + "] to [" + this.determineType(value1) + "]")
+            this.err("Type mismatch, line " + value1.getLine() + ": cannot add [" + this.determineType(value2) + "] to [" + this.determineType(value1) + "]")
             this.errors++;
             return "error";
         } else {
@@ -446,7 +463,26 @@ class SemanticAnalyzer extends Component {
             }
             return this.checkAddChain(child1, child2);
         } else if (val.getName() === "SYM_IS_EQUAL" || val.getName() === "SYM_IS_NOT_EQUAL") {
-
+            if (child1.getName() === "ID") {
+                if (!this.findID(child1).getInit()) {
+                    this.err("Uninitialized value: ID \"" + child1.getValue() + "\" at line " + child1.getLine() + " was used but was never initialized")
+                    this.errors++;
+                } else {
+                    this.findID(child1).flipBeenUsed();
+                }
+            } else if (child1.getName() === "SYM_ADD") {
+                this.checkAddChain(child1.getChildren()[0], child1.getChildren()[1]);
+            }
+            if (child2.getName() === "ID") {
+                if (!this.findID(child2).getInit()) {
+                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used but was never initialized")
+                    this.errors++;
+                } else {
+                    this.findID(child2).flipBeenUsed();
+                }
+            } else if (child2.getName() === "SYM_ADD") {
+                this.checkAddChain(child2.getChildren()[0], child2.getChildren()[1]);
+            }
             return this.evaluateBoolean(child1, child2)
         } else if (val.getName() === "ID") {
             return this.findID(val).getType();
