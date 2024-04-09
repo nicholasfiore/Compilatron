@@ -39,6 +39,238 @@ class SemanticAnalyzer extends Component {
         return {errors: this.errors, warnings: this.warnings}
     }
 
+    // public buildSymbolTable(node: TreeNode) {
+    //     if (node.getChildren().length === 0) {
+
+    //         return;
+    //     }
+
+    //     if (this.currDepth < 0) {
+    //         this.currDepth++;
+    //         this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+    //         this.currScope = this.scopeTree.getCurrent();
+    //         this.buildSymbolTable(node);
+    //     } else {
+    //         node.getChildren().forEach(child => {
+    //             switch (child.getName()) {
+    //                 case "Block": {
+    //                     this.currDepth++;
+    //                     this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+    //                     this.currScope = this.scopeTree.getCurrent();
+    //                     this.buildSymbolTable(child);
+    //                     break;
+    //                 }
+    //                 case "VarDecl": {
+    //                     let type = child.getChildren()[0];
+    //                     let id = child.getChildren()[1];
+
+    //                     if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
+    //                         this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
+    //                         this.errors++;
+    //                     }
+
+    //                     break;
+    //                 }
+    //                 case "AssignmentStatement": {
+    //                     let id = child.getChildren()[0];
+    //                     let value = child.getChildren()[1];
+    //                     let entryID = this.findID(id);
+    //                     let entryVal;
+    //                     let typeID = entryID.getType();
+    //                     let typeVal;
+    //                     let foundBool;
+
+    //                     if (value.getName() === "ID") {
+    //                         entryVal = this.findID(value);
+    //                         typeVal = entryVal.getType();
+    //                     } else if (value.getValue() === "==" || value.getValue() === "!=") {
+    //                         typeVal = "boolean";
+    //                         foundBool = true;
+    //                     } 
+    //                     else if (value.getValue() === "+") {
+    //                         typeVal = this.checkAddChain(value.getChildren()[0], value.getChildren()[1]);
+    //                         if (!typeVal) {
+    //                             return;
+    //                         }
+    //                     } else {
+    //                         typeVal = this.determineType(value.getValue());
+    //                     }
+
+    //                     if (value.getValue() === "+") {
+    //                         if (!(typeID === typeVal)) {
+    //                             this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
+    //                             this.errors++;
+    //                         } else {
+    //                             entryID.flipIsInit();
+    //                             if (entryVal) {
+    //                                 entryVal.flipBeenUsed();
+    //                             }
+    //                         }
+    //                     }
+    //                     else if (foundBool) {
+    //                         if (!entryID.getInit()) {
+    //                             console.log("here")
+    //                             entryID.flipIsInit();
+    //                         } else {
+    //                             entryID.flipBeenUsed();
+    //                         }
+    //                     }
+    //                     else if (!this.checkType(id, value)) {
+    //                         this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
+    //                         this.errors++;
+    //                     } else {
+    //                         if (!entryID.getInit()) {
+    //                             entryID.flipIsInit();
+    //                         } else {
+    //                             entryID.flipBeenUsed();
+    //                         }
+    //                     }
+                        
+    //                     this.currScope = this.scopeTree.getCurrent();
+    //                     break;
+    //                 }
+    //                 case "IfStatement": {}
+    //                 case "WhileStatement": {
+    //                     let keyword = child.getChildren()[0];
+                        
+    //                     //true and false literals don't need to be type checked
+    //                     if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
+    //                         let val1 = keyword.getChildren()[0];
+    //                         let val2 = keyword.getChildren()[1];
+    //                         let type1;
+    //                         let type2;
+
+    //                         if (val1.getName() === "ID") {
+    //                             var entry1 = this.findID(val1);
+    //                             type1 = entry1.getType();
+    //                         } else if (val1.getValue() === "+") {
+    //                             type1 = this.checkAddChain(val1.getChildren()[0], val1.getChildren()[1]);
+    //                         } 
+    //                         else {
+    //                             type1 = this.determineType(val1.getValue())
+    //                         }
+
+    //                         if (val2.getName() === "ID") {
+    //                             var entry2 = this.findID(val2);
+    //                             type2 = entry2.getType();
+    //                         } else if (val2.getValue() === "+") {
+    //                             type2 = this.checkAddChain(val2.getChildren()[0], val2.getChildren()[1]);
+    //                         } else {
+    //                             type2 = this.determineType(val2.getValue());
+    //                         }
+                            
+
+    //                         if (val1.getValue() === "+") {
+    //                             if (!(type1 === type2)) {
+    //                                 this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
+    //                                 this.errors++;
+    //                             } else {
+    //                                 //throws an error if the variable is not initialized; only applies to IDs
+    //                                 if (entry1) {
+    //                                     if (entry1.getInit()) {
+    //                                         entry1.flipBeenUsed();
+    //                                     } else {
+    //                                         this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+    //                                         this.errors++;
+    //                                     }
+    //                                 }
+                                    
+    //                                 if (entry2) {
+    //                                     if (entry2.getInit()) {
+    //                                         entry2.flipBeenUsed();
+    //                                     } else {
+    //                                         this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+    //                                         this.errors++;
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                         else if (val2.getValue() === "+") {
+    //                             if (!(type1 === type2)) {
+    //                                 this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
+    //                                 this.errors++;
+    //                             } else {
+    //                                 //throws an error if the variable is not initialized; only applies to IDs
+    //                                 if (entry1) {
+    //                                     if (entry1.getInit()) {
+    //                                         entry1.flipBeenUsed();
+    //                                     } else {
+    //                                         this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+    //                                         this.errors++;
+    //                                     }
+    //                                 }
+                                    
+    //                                 if (entry2) {
+    //                                     if (entry2.getInit()) {
+    //                                         entry2.flipBeenUsed();
+    //                                     } else {
+    //                                         this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+    //                                         this.errors++;
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                         else if (!this.checkType(val1, val2)) {
+    //                             this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type1 + "] to type [" + type2 + "]");
+    //                             this.errors++;
+    //                         } else {
+    //                             //throws an error if the variable is not initialized; only applies to IDs
+    //                             if (entry1) {
+    //                                 if (entry1.getInit()) {
+    //                                     entry1.flipBeenUsed();
+    //                                 } else {
+    //                                     this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+    //                                     this.errors++;
+    //                                 }
+    //                             }
+                                
+    //                             if (entry2) {
+    //                                 if (entry2.getInit()) {
+    //                                     entry2.flipBeenUsed();
+    //                                 } else {
+    //                                     this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+    //                                     this.errors++;
+    //                                 }
+    //                             }
+
+
+    //                         }
+    //                     }
+    //                     //block code
+    //                     this.currDepth++;
+    //                     this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+    //                     this.currScope = this.scopeTree.getCurrent();
+    //                     this.buildSymbolTable(child);
+    //                     break;
+    //                 }
+    //                 case "PrintStatement": {
+    //                     let printVal = child.getChildren()[0];
+    //                     if (printVal.getValue() === "+") {
+    //                         //makes sure the addition statement has no error
+    //                         this.checkAddChain(printVal.getChildren()[0], printVal.getChildren()[1])
+    //                     }
+    //                     else if (printVal.getName() === "ID") {
+    //                         let entry = this.findID(printVal);
+    //                         if (entry.getInit()) {
+    //                             entry.flipBeenUsed();
+    //                         } else {
+    //                             this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized");
+    //                             this.errors++;
+    //                         }
+    //                     } else {
+    //                         //do nothing; any other expression type is valid
+    //                     }
+    //                     break;
+    //                 }
+    //             }
+    //             //console.log(this.scopeTree.getRoot());
+    //         });
+    //         this.currDepth--;
+    //         this.moveUp();
+    //     }
+        
+    //     return;
+    // }
     public buildSymbolTable(node: TreeNode) {
         if (node.getChildren().length === 0) {
 
@@ -52,225 +284,14 @@ class SemanticAnalyzer extends Component {
             this.buildSymbolTable(node);
         } else {
             node.getChildren().forEach(child => {
-                switch (child.getName()) {
-                    case "Block": {
-                        this.currDepth++;
-                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
-                        this.currScope = this.scopeTree.getCurrent();
-                        this.buildSymbolTable(child);
-                        break;
-                    }
-                    case "VarDecl": {
-                        let type = child.getChildren()[0];
-                        let id = child.getChildren()[1];
-
-                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                            this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
-                            this.errors++;
-                        }
-
-                        break;
-                    }
-                    case "AssignmentStatement": {
-                        let id = child.getChildren()[0];
-                        let value = child.getChildren()[1];
-                        let entryID = this.findID(id);
-                        let entryVal;
-                        let typeID = entryID.getType();
-                        let typeVal;
-                        let foundBool;
-
-                        if (value.getName() === "ID") {
-                            entryVal = this.findID(value);
-                            typeVal = entryVal.getType();
-                        } else if (value.getValue() === "==" || value.getValue() === "!=") {
-                            typeVal = "boolean";
-                            foundBool = true;
-                        } 
-                        else if (value.getValue() === "+") {
-                            typeVal = this.checkAddChain(value.getChildren()[0], value.getChildren()[1]);
-                            if (!typeVal) {
-                                return;
-                            }
-                        } else {
-                            typeVal = this.determineType(value.getValue());
-                        }
-
-                        if (value.getValue() === "+") {
-                            if (!(typeID === typeVal)) {
-                                this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
-                                this.errors++;
-                            } else {
-                                entryID.flipIsInit();
-                                if (entryVal) {
-                                    entryVal.flipBeenUsed();
-                                }
-                            }
-                        }
-                        else if (foundBool) {
-                            if (!entryID.getInit()) {
-                                console.log("here")
-                                entryID.flipIsInit();
-                            } else {
-                                entryID.flipBeenUsed();
-                            }
-                        }
-                        else if (!this.checkType(id, value)) {
-                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
-                            this.errors++;
-                        } else {
-                            if (!entryID.getInit()) {
-                                entryID.flipIsInit();
-                            } else {
-                                entryID.flipBeenUsed();
-                            }
-                        }
-                        
-                        this.currScope = this.scopeTree.getCurrent();
-                        break;
-                    }
-                    case "IfStatement": {}
-                    case "WhileStatement": {
-                        let keyword = child.getChildren()[0];
-                        
-                        //true and false literals don't need to be type checked
-                        if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
-                            let val1 = keyword.getChildren()[0];
-                            let val2 = keyword.getChildren()[1];
-                            let type1;
-                            let type2;
-
-                            if (val1.getName() === "ID") {
-                                var entry1 = this.findID(val1);
-                                type1 = entry1.getType();
-                            } else if (val1.getValue() === "+") {
-                                type1 = this.checkAddChain(val1.getChildren()[0], val1.getChildren()[1]);
-                            } 
-                            else {
-                                type1 = this.determineType(val1.getValue())
-                            }
-
-                            if (val2.getName() === "ID") {
-                                var entry2 = this.findID(val2);
-                                type2 = entry2.getType();
-                            } else if (val2.getValue() === "+") {
-                                type2 = this.checkAddChain(val2.getChildren()[0], val2.getChildren()[1]);
-                            } else {
-                                type2 = this.determineType(val2.getValue());
-                            }
-                            
-
-                            if (val1.getValue() === "+") {
-                                if (!(type1 === type2)) {
-                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
-                                    this.errors++;
-                                } else {
-                                    //throws an error if the variable is not initialized; only applies to IDs
-                                    if (entry1) {
-                                        if (entry1.getInit()) {
-                                            entry1.flipBeenUsed();
-                                        } else {
-                                            this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
-                                            this.errors++;
-                                        }
-                                    }
-                                    
-                                    if (entry2) {
-                                        if (entry2.getInit()) {
-                                            entry2.flipBeenUsed();
-                                        } else {
-                                            this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
-                                            this.errors++;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (val2.getValue() === "+") {
-                                if (!(type1 === type2)) {
-                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
-                                    this.errors++;
-                                } else {
-                                    //throws an error if the variable is not initialized; only applies to IDs
-                                    if (entry1) {
-                                        if (entry1.getInit()) {
-                                            entry1.flipBeenUsed();
-                                        } else {
-                                            this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
-                                            this.errors++;
-                                        }
-                                    }
-                                    
-                                    if (entry2) {
-                                        if (entry2.getInit()) {
-                                            entry2.flipBeenUsed();
-                                        } else {
-                                            this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
-                                            this.errors++;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (!this.checkType(val1, val2)) {
-                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type1 + "] to type [" + type2 + "]");
-                                this.errors++;
-                            } else {
-                                //throws an error if the variable is not initialized; only applies to IDs
-                                if (entry1) {
-                                    if (entry1.getInit()) {
-                                        entry1.flipBeenUsed();
-                                    } else {
-                                        this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
-                                        this.errors++;
-                                    }
-                                }
-                                
-                                if (entry2) {
-                                    if (entry2.getInit()) {
-                                        entry2.flipBeenUsed();
-                                    } else {
-                                        this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
-                                        this.errors++;
-                                    }
-                                }
-
-
-                            }
-                        }
-                        //block code
-                        this.currDepth++;
-                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
-                        this.currScope = this.scopeTree.getCurrent();
-                        this.buildSymbolTable(child);
-                        break;
-                    }
-                    case "PrintStatement": {
-                        let printVal = child.getChildren()[0];
-                        if (printVal.getValue() === "+") {
-                            //makes sure the addition statement has no error
-                            this.checkAddChain(printVal.getChildren()[0], printVal.getChildren()[1])
-                        }
-                        else if (printVal.getName() === "ID") {
-                            let entry = this.findID(printVal);
-                            if (entry.getInit()) {
-                                entry.flipBeenUsed();
-                            } else {
-                                this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was used, but its value was never initialized");
-                                this.errors++;
-                            }
-                        } else {
-                            //do nothing; any other expression type is valid
-                        }
-                        break;
-                    }
-                }
-                //console.log(this.scopeTree.getRoot());
-            });
-            this.currDepth--;
-            this.moveUp();
-        }
-        
-        return;
+            
+        });
+        this.currDepth--;
+        this.moveUp();
     }
+    
+    return;
+}
 
     //makes sure a boolean expression is actually valid
     private checkBoolExpr() {
