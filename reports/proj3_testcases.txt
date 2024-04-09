@@ -11,3 +11,11 @@
 
 {{if true{int a a = 1}}}
 
+/* throws a bunch of different errors */
+{
+int a
+string b
+a = 1 + 1 + 1 + b
+print(1 + b)
+if (b == 1) {}
+}$

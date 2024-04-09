@@ -74,23 +74,36 @@ class SemanticAnalyzer extends Component {
                     case "AssignmentStatement": {
                         let id = child.getChildren()[0];
                         let value = child.getChildren()[1];
-                        let entry = this.findID(id);
+                        let entryID = this.findID(id);
+                        let entryVal;
+                        let typeID = entryID.getType();
+                        let typeVal;
+
+                        if (value.getName() === "ID") {
+                            entryVal = this.findID(value);
+                            typeVal = entryVal.getType();
+                        } else if (value.getValue() === "+") {
+                            typeVal = this.checkAddChain(value.getChildren()[0], value.getChildren()[1])
+                        } else {
+                            typeVal = this.determineType(value.getValue());
+                        }
 
                         if (value.getValue() === "+") {
-                            let valType;
-                            valType = this.checkAddChain(id, value);
-                            if (!(entry.getType() === valType)) {
-                                this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + valType + "] to type [" + entry.getType() + "]");
+                            if (!(typeID === typeVal)) {
+                                this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
                                 this.errors++;
                             } else {
-                                entry.flipIsInit();
+                                entryID.flipIsInit();
+                                if (entryVal) {
+                                    entryVal.flipBeenUsed();
+                                }
                             }
                         }
                         else if (!this.checkType(id, value)) {
-                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + entry.getType() + "]");
+                            this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + typeVal + "] to type [" + typeID + "]");
                             this.errors++;
                         } else {
-                            entry.flipIsInit();
+                            entryID.flipIsInit();
                         }
                         
                         this.currScope = this.scopeTree.getCurrent();
@@ -104,38 +117,74 @@ class SemanticAnalyzer extends Component {
                         if (!(keyword.getValue() === "false" || keyword.getValue() === "true" )) {
                             let val1 = keyword.getChildren()[0];
                             let val2 = keyword.getChildren()[1];
-                            let entry1 = this.findID(val1);
-                            let entry2 = this.findID(val2);
+                            let type1;
+                            let type2;
 
-                            
+                            if (val1.getName() === "ID") {
+                                var entry1 = this.findID(val1);
+                                type1 = entry1.getType();
+                            } else if (val2.getValue() === "+") {
+                                
+                            } 
+                            else {
+                                type1 = this.determineType(val1.getValue())
+                            }
+
+                            if (val2.getName() === "ID") {
+                                var entry2 = this.findID(val2);
+                                type2 = entry2.getType();
+                            } else if (val2.getValue() === "+") {
+                                type2 = this.checkAddChain(val2.getChildren()[0], val2.getChildren()[1]);
+                            } else {
+                                type2 = this.determineType(val2.getValue());
+                            }
+                
                             if (val2.getValue() === "+") {
-                                let valType;
-                                valType = this.checkAddChain(val1, val2);
-                                if (!(entry1.getType() === valType)) {
-                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + valType + "] to type [" + entry1.getType() + "]");
+                                if (!(type1 === type2)) {
+                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
                                     this.errors++;
                                 } else {
-                                    entry1.flipIsInit();
-                                    entry2.flipIsInit();
+                                    //throws an error if the variable is not initialized; only applies to IDs
+                                    if (entry1) {
+                                        if (entry1.getInit()) {
+                                            entry1.flipBeenUsed();
+                                        } else {
+                                            this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+                                            this.errors++;
+                                        }
+                                    }
+                                    
+                                    if (entry2) {
+                                        if (entry2.getInit()) {
+                                            entry2.flipBeenUsed();
+                                        } else {
+                                            this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+                                            this.errors++;
+                                        }
+                                    }
                                 }
                             }
                             else if (!this.checkType(val1, val2)) {
-                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + entry1.getType() + "] to type [" + entry2.getType() + "]");
+                                this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type1 + "] to type [" + type2 + "]");
                                 this.errors++;
                             } else {
-                                //throws an error if the variable is not initialized;
-                                if (entry1.getInit()) {
-                                    entry1.flipBeenUsed();
-                                } else {
-                                    this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was declared, but its value was never initialized");
-                                    this.errors++;
+                                //throws an error if the variable is not initialized; only applies to IDs
+                                if (entry1) {
+                                    if (entry1.getInit()) {
+                                        entry1.flipBeenUsed();
+                                    } else {
+                                        this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+                                        this.errors++;
+                                    }
                                 }
                                 
-                                if (entry2.getInit()) {
-                                    entry2.flipBeenUsed();
-                                } else {
-                                    this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was declared, but its value was never initialized");
-                                    this.errors++;
+                                if (entry2) {
+                                    if (entry2.getInit()) {
+                                        entry2.flipBeenUsed();
+                                    } else {
+                                        this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+                                        this.errors++;
+                                    }
                                 }
                             }
                         }
@@ -160,6 +209,8 @@ class SemanticAnalyzer extends Component {
                                 this.err("Uninitialized value: ID \"" + entry.getID() + "\" on line " + entry.getLine() + " was declared, but its value was never initialized");
                                 this.errors++;
                             }
+                        } else {
+                            //do nothing; any other expression type is valid
                         }
                         break;
                     }
@@ -225,8 +276,6 @@ class SemanticAnalyzer extends Component {
     }
 
     private determineType(val: string) {
-        //TODO: fixing adding
-
         if (this.validInt.test(val)) {
             return "int";
         }else if (this.validBoolVal.test(val)) {
