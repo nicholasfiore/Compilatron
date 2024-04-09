@@ -216,7 +216,7 @@ class Tree extends Component {
             boolOp = children[2].getChildren()[0];
             expr2 = this.interpretExpr(children[3]);
             
-            var retVal = new TreeNode(boolOp.getName(), boolOp.getValue());
+            var retVal = new TreeNode(boolOp.getName(), boolOp.getLine(), boolOp.getValue());
             retVal.addChild(expr1);
             retVal.addChild(expr2);
             return retVal;

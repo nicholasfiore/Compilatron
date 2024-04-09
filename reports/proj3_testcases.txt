@@ -49,11 +49,18 @@ int a
 string a
 }$
 
-
 {
-/*This should give a warning as the initialization is using the uninitialized value*/
+/*This should give a error as the initialization is using the uninitialized value*/
 int a
 a = 2+a
 boolean b
 b = (false == b)
 }$
+
+
+{
+if ((2+2==4)!=("hi"=="hello")){
+    print("correct")
+}
+}$
+

@@ -87,7 +87,7 @@ class Compiler extends Component {
                     this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
                     this.caughtError = true;
                 } else {
-                    this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
+                    this.info("Syntactic Analysis finished with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
                 }
             } else {
                 this.err("Semantic analysis skipped due to parser error.")
