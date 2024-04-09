@@ -311,6 +311,11 @@ class SemanticAnalyzer extends Component {
                         this.err("Type mismatch: cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
                         this.errors++;
                     }
+                    break;
+                }
+                case "IfStatement": {}
+                case "WhileStatement": {
+
                 }
             }
         });
@@ -321,14 +326,15 @@ class SemanticAnalyzer extends Component {
     return;
 }
 
-    //makes sure a boolean expression is actually valid
-    private checkBoolExpr() {
 
-    }
-
-    private evaluateBoolean(val1: TreeNode, val2: TreeNode) {
-        var type1 = this.determineType(val1);
-        var type2 = 1;
+    private evaluateBoolean(value1: TreeNode, value2: TreeNode) {
+        if (!this.checkType(value1, value2)) {
+            this.err("Type mismatch, line + " + value1.getLine() + ": cannot compare [" + this.determineType(value1) + "] to [" + this.determineType(value2) + "]")
+            this.errors++;
+            return "error";
+        } else {
+            return "boolean";
+        }
     }
 
     private checkType(value1: TreeNode, value2: TreeNode) {
@@ -347,7 +353,7 @@ class SemanticAnalyzer extends Component {
             return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
         }
         else if (!this.checkType(value1, value2)) {
-            this.err("Type mismatch: cannot add [" + this.determineType(value2) + "] to [" + this.determineType(value1) + "]")
+            this.err("Type mismatch, line + " + value1.getLine() + ": cannot add [" + this.determineType(value2) + "] to [" + this.determineType(value1) + "]")
             this.errors++;
             return "error";
         } else {
@@ -426,10 +432,22 @@ class SemanticAnalyzer extends Component {
     
 
     private determineType(val: TreeNode) {
+        let retVal;
+        let child1 = val.getChildren()[0];
+        let child2 = val.getChildren()[1];
         if (val.getName() === "SYM_ADD") {
-            return this.checkAddChain(val.getChildren()[0], val.getChildren()[1])
+            if (child2.getName() === "ID") {
+                if (!this.findID(child2).getInit()) {
+                    this.err("Uninitialized value: ID \"" + child2.getValue() + "\" at line " + child2.getLine() + " was used but was never initialized")
+                    this.errors++;
+                } else {
+                    this.findID(child2).flipBeenUsed();
+                }
+            }
+            return this.checkAddChain(child1, child2);
         } else if (val.getName() === "SYM_IS_EQUAL" || val.getName() === "SYM_IS_NOT_EQUAL") {
 
+            return this.evaluateBoolean(child1, child2)
         } else if (val.getName() === "ID") {
             return this.findID(val).getType();
         } else {
@@ -460,7 +478,7 @@ class SemanticAnalyzer extends Component {
             } else {
                 this.err("The ID \"" + id.getValue() + "\" on line " + id.getLine() + " was used before being declared")
                 this.errors++;
-                retVal = false;
+                retVal = null;
             }
         }
         return retVal;
