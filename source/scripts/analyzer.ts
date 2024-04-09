@@ -123,8 +123,8 @@ class SemanticAnalyzer extends Component {
                             if (val1.getName() === "ID") {
                                 var entry1 = this.findID(val1);
                                 type1 = entry1.getType();
-                            } else if (val2.getValue() === "+") {
-                                
+                            } else if (val1.getValue() === "+") {
+                                type1 = this.checkAddChain(val1.getChildren()[0], val1.getChildren()[1]);
                             } 
                             else {
                                 type1 = this.determineType(val1.getValue())
@@ -138,8 +138,34 @@ class SemanticAnalyzer extends Component {
                             } else {
                                 type2 = this.determineType(val2.getValue());
                             }
-                
-                            if (val2.getValue() === "+") {
+                            
+
+                            if (val1.getValue() === "+") {
+                                if (!(type1 === type2)) {
+                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
+                                    this.errors++;
+                                } else {
+                                    //throws an error if the variable is not initialized; only applies to IDs
+                                    if (entry1) {
+                                        if (entry1.getInit()) {
+                                            entry1.flipBeenUsed();
+                                        } else {
+                                            this.err("Uninitialized value: ID \"" + entry1.getID() + "\" on line " + entry1.getLine() + " was used, but its value was never initialized");
+                                            this.errors++;
+                                        }
+                                    }
+                                    
+                                    if (entry2) {
+                                        if (entry2.getInit()) {
+                                            entry2.flipBeenUsed();
+                                        } else {
+                                            this.err("Uninitialized value: ID \"" + entry2.getID() + "\" on line " + entry2.getLine() + " was used, but its value was never initialized");
+                                            this.errors++;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (val2.getValue() === "+") {
                                 if (!(type1 === type2)) {
                                     this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + type2 + "] to type [" + type1 + "]");
                                     this.errors++;
