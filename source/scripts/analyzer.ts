@@ -35,6 +35,8 @@ class SemanticAnalyzer extends Component {
         this.buildSymbolTable(this.AST.getRoot());
 
         this.printSymbolTable();
+
+        return {errors: this.errors, warnings: this.warnings}
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -74,7 +76,17 @@ class SemanticAnalyzer extends Component {
                         let value = child.getChildren()[1];
                         let entry = this.findID(id);
 
-                        if (!this.checkType(id, value)) {
+                        if (value.getValue() === "+") {
+                            let valType;
+                            valType = this.checkAddChain(id, value);
+                            if (!(entry.getType() === valType)) {
+                                this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + valType + "] to type [" + entry.getType() + "]");
+                                this.errors++;
+                            } else {
+                                entry.flipIsInit();
+                            }
+                        }
+                        else if (!this.checkType(id, value)) {
                             this.err("Type mismatch on line " + id.getLine() + ": cannot assign type [" + this.determineType(value.getValue()) + "] to type [" + entry.getType() + "]");
                             this.errors++;
                         } else {
@@ -95,7 +107,19 @@ class SemanticAnalyzer extends Component {
                             let entry1 = this.findID(val1);
                             let entry2 = this.findID(val2);
 
-                            if (!this.checkType(val1, val2)) {
+                            
+                            if (val2.getValue() === "+") {
+                                let valType;
+                                valType = this.checkAddChain(val1, val2);
+                                if (!(entry1.getType() === valType)) {
+                                    this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + valType + "] to type [" + entry1.getType() + "]");
+                                    this.errors++;
+                                } else {
+                                    entry1.flipIsInit();
+                                    entry2.flipIsInit();
+                                }
+                            }
+                            else if (!this.checkType(val1, val2)) {
                                 this.err("Type mismatch on line " + val1.getLine() + ": cannot compare type [" + entry1.getType() + "] to type [" + entry2.getType() + "]");
                                 this.errors++;
                             } else {
@@ -124,7 +148,11 @@ class SemanticAnalyzer extends Component {
                     }
                     case "PrintStatement": {
                         let printVal = child.getChildren()[0];
-                        if (printVal.getName() === "ID") {
+                        if (printVal.getValue() === "+") {
+                            //makes sure the addition statement has no error
+                            this.checkAddChain(printVal.getChildren()[0], printVal.getChildren()[1])
+                        }
+                        else if (printVal.getName() === "ID") {
                             let entry = this.findID(printVal);
                             if (entry.getInit()) {
                                 entry.flipBeenUsed();
@@ -165,26 +193,32 @@ class SemanticAnalyzer extends Component {
         if (type1 === type2) {
             return true;
         } else {
-            return type2;
+            return false;
         }
     }
 
     private checkAddChain(value1: TreeNode, value2: TreeNode) {
-        var type1
-        var type2
+        var type1;
+        var type2;
         if (value2.getValue() === "+") {
-            type2 = this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
+            return this.checkAddChain(value2.getChildren()[0], value2.getChildren()[1])
         } else if (value2.getName() === "ID") {
             type2 = (this.findID(value2)).getType();
         } else {
             type2 = this.determineType(value2.getValue());
         }
 
-        type1 = this.determineType(value1.getValue());
+        if (value1.getName() === "ID") {
+            type1 = (this.findID(value1)).getType();
+        } else {
+            type1 = this.determineType(value1.getValue());
+        }
 
         if (type1 === type2) {
             return "int";
         } else {
+            this.err("Type mismatch on line " + value1.getLine() + ": cannot add type [" + type2 + "] to type [" +type1+ "]")
+            this.errors++;
             return type2;
         }
 
