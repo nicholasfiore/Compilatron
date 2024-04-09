@@ -329,8 +329,9 @@ class SemanticAnalyzer extends Component {
                 }
                 case "PrintStatement": {
                     let printVal = child.getChildren()[0];
-                    if (this.determineType(printVal) !== "error") {
-                        
+                    this.determineType(printVal);
+                    if (printVal.getName() === "ID") {
+                        this.findID(printVal).flipBeenUsed();
                     }
                     break;
                 }
