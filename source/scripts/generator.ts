@@ -4,7 +4,7 @@ class Generator extends Component {
     
     private static readonly MAX_BYTES_MEMORY: number = 256;
 
-    private machineCode: string[];
+    private memory: string[];
 
 
     constructor(AST: Tree, symbolTable: HashTree, debug: boolean) {
@@ -12,6 +12,42 @@ class Generator extends Component {
         this.AST = AST;
         this.symbolTable = symbolTable;
         
-        this.machineCode = Array(Generator.MAX_BYTES_MEMORY).fill("00");
+        this.memory = Array(Generator.MAX_BYTES_MEMORY).fill("00");
+    }
+
+    public generate() {
+        this.initializeCode(this.AST.getRoot());
+    }
+
+    private initializeCode(node:TreeNode) {
+        node.getChildren().forEach(child => {
+            
+        });
+    }
+
+    private allocateStack() {
+
+    }
+
+    private allocateHeap() {
+
+    }
+
+    private backPatch() {
+
+    }
+
+    
+}
+
+class TempEntry {
+    private label: string;
+    private id: string;
+    private scope: string;
+
+    constructor(label:string, id:string, scope:string) {
+        this.label = label;
+        this.id = id;
+        this.scope = scope;
     }
 }
