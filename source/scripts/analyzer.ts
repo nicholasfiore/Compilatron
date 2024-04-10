@@ -34,9 +34,9 @@ class SemanticAnalyzer extends Component {
 
         this.buildSymbolTable(this.AST.getRoot());
 
-        this.printSymbolTable();
+        var table = this.printSymbolTable();
 
-        return {AST: this.AST, symbolTable: this.scopeTree, errors: this.errors, warnings: this.warnings}
+        return {AST: this.AST, symbolTable: table, errors: this.errors, warnings: this.warnings}
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -279,18 +279,22 @@ class SemanticAnalyzer extends Component {
 
 class Table extends Component {
 
-    table: Array<HashEntry>;
+    private table: Array<HashEntry>;
 
     constructor(name: string) {
         super(name, false)
         this.table = new Array<HashEntry>;
     }
 
-    addEntry(entry: HashEntry) {
+    public getTable() {
+        return this.table;
+    }
+
+    public addEntry(entry: HashEntry) {
         this.table.push(entry);
     }
 
-    printTable() {
+    public printTable() {
         console.table(this.table)
         var output = "";
 
@@ -328,6 +332,6 @@ class Table extends Component {
         if (this.table.length > 0) {
             this.info(output);
         }
-        
+        return this.table;
     }
 }
