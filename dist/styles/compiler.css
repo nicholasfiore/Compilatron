@@ -38,7 +38,7 @@ h1{
 }
 .output{
 	float:right;
-	margin:;
+	/* margin:; */
 
 }
 .source{
@@ -46,11 +46,18 @@ h1{
 	display: inline-block;
 	width:100%;
 }
-#taSourceCode, #taOutput{
+#taSourceCode, #taOutput, #codeOut{
+	background-color: black;
+	color: #00ff41;
 	width:48%;
 	margin: 10px;
-	height:400px;
+	height: 400px;
 }
-#taOutput{
+#taOutput, #codeOut{
 	float:right;
+}
+
+#codeOut{
+	height: 100px;
+	resize: none;
 }

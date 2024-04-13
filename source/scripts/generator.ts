@@ -51,7 +51,9 @@ class Generator extends Component {
                 }
                 case "AssignmentStatement": {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+                    let temp = this.staticData[this.currTableEntry];
 
+                    
 
                 }
             }
@@ -86,8 +88,8 @@ class StaticEntry {
         this.scope = scope;
     }
 
-    findEntry() {
-        
+    findEntry(label1:string, label2:string) {
+
     }
 }
 
