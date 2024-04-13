@@ -85,10 +85,10 @@ class Compiler extends Component {
                 var analyzeOut = this._Analyzer.analyze();
                 
                 if (analyzeOut.errors > 0) {
-                    this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
+                    this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings\n")
                     this.caughtError = true;
                 } else {
-                    this.info("Syntactic Analysis finished with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
+                    this.info("Syntactic Analysis finished with " + analyzeOut.warnings + " warnings\n")
                 }
             } else {
                 this.err("Semantic analysis skipped due to parser error.")
@@ -98,6 +98,9 @@ class Compiler extends Component {
             /* Code Generation */
             if (!this.caughtError) {
                 this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
+                
+                this.info("Generating code...");
+                this._Generator.generate();
             }
 
             //Reset for next program

@@ -20,6 +20,9 @@ class Generator extends Component {
 
         this.currByte = 0;
         this.currTableEntry = -1;
+
+        this.staticData = [];
+        this.jumps = [];
         
         this.memory = Array(Generator.MAX_BYTES_MEMORY).fill("00");
     }
@@ -50,13 +53,28 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "8D";
                     this.currByte++;
+                    this.memory[this.currByte] = label1;
+                    this.currByte++;
+                    this.memory[this.currByte] = label2;
+                    this.currByte++;
                 }
                 case "AssignmentStatement": {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                    let temp = this.staticData[this.currTableEntry];
+                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope())
 
-
-
+                    this.memory[this.currByte] = "A9";
+                    this.currByte++;
+                    this.memory[this.currByte] = "05";
+                    this.currByte++;
+                    this.memory[this.currByte] = "8D";
+                    this.currByte++;
+                    this.memory[this.currByte] = tempStatic.getLabel1();
+                    this.currByte++;
+                    this.memory[this.currByte] = tempStatic.getLabel2();
+                    this.currByte++;
+                }
+                case "Block": {
+                    this.initializeCode(child);
                 }
             }
         });
@@ -75,7 +93,18 @@ class Generator extends Component {
     }
 
     private printCode() {
-        (<HTMLInputElement>document.getElementById('codeOut')).value += this.memory;
+        console.log("here");
+        (<HTMLInputElement>document.getElementById('codeOut')).value += this.memory.join(" ");
+    }
+
+    private findStaticEntry(id:string, scope:string) {
+        for (var i = 0; i < this.staticData.length; i++) {
+            let entry = this.staticData[i];
+            if (entry.getID() === id && entry.getScope() === scope) {
+                return entry;
+            }
+        }
+        return null;
     }
 }
 
@@ -92,8 +121,20 @@ class StaticEntry {
         this.scope = scope;
     }
 
-    findEntry(label1:string, label2:string) {
+    public getID() {
+        return this.id;
+    }
+    
+    public getScope() {
+        return this.scope;
+    }
 
+    public getLabel1() {
+        return this.label1;
+    }
+
+    public getLabel2() {
+        return this.label2;
     }
 }
 
