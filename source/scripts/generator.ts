@@ -26,6 +26,8 @@ class Generator extends Component {
 
     public generate() {
         this.initializeCode(this.AST.getRoot());
+
+        this.printCode();
     }
 
     private initializeCode(node:TreeNode) {
@@ -53,7 +55,7 @@ class Generator extends Component {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
                     let temp = this.staticData[this.currTableEntry];
 
-                    
+
 
                 }
             }
@@ -72,7 +74,9 @@ class Generator extends Component {
 
     }
 
-    
+    private printCode() {
+        (<HTMLInputElement>document.getElementById('codeOut')).value += this.memory;
+    }
 }
 
 class StaticEntry {

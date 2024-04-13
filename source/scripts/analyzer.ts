@@ -16,6 +16,8 @@ class SemanticAnalyzer extends Component {
     private validString = new RegExp('[a-z]');
     private validBoolVal = new RegExp('^true$|^false$');
 
+    private table;
+
     constructor(ConcreteSyntaxTree: Tree, enableDebug: boolean) {
         super("Semantic Analyzer", enableDebug);
         this.AST = new Tree("AST");
@@ -36,7 +38,7 @@ class SemanticAnalyzer extends Component {
 
         var table = this.printSymbolTable();
 
-        return {AST: this.AST, symbolTable: table, errors: this.errors, warnings: this.warnings}
+        return {AST: this.AST, symbolTable: this.table, errors: this.errors, warnings: this.warnings}
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -231,9 +233,9 @@ class SemanticAnalyzer extends Component {
         var queue = [this.scopeTree.getRoot()];
         var result: Array<HashNode> = [];
         var currNode: HashNode;
-        var tableObj: Table;
+        //var tableObj: Table;
 
-        tableObj = new Table("Symbol Table");
+        this.table = new Table("Symbol Table");
 
         while (queue.length > 0) {
             currNode = queue.shift();
@@ -253,7 +255,7 @@ class SemanticAnalyzer extends Component {
             table.forEach(entry => {
                 if (typeof entry !== undefined) {
                     //this.info(entry.getID() + " " + entry.getType() + " " + entry.getLine() + " " + entry.getScope())
-                    tableObj.addEntry(entry);
+                    this.table.addEntry(entry);
                     if (!entry.getInit()) {
                         this.warn("ID \"" + entry.getID() + "\" was declared but never initialized");
                         this.warnings++;
@@ -266,7 +268,7 @@ class SemanticAnalyzer extends Component {
         });
 
         if (this.errors < 1) {
-            tableObj.printTable();
+            this.table.printTable();
         }
     }
 

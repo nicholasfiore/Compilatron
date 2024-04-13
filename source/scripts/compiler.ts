@@ -15,7 +15,7 @@ class Compiler extends Component {
     private _Lexer : Lexer;
     private _Parser : Parser;
     private _Analyzer : SemanticAnalyzer;
-
+    private _Generator : Generator;
 
     constructor(source: string, enableDebug: boolean) {
         super("Compiler", enableDebug);
@@ -83,6 +83,7 @@ class Compiler extends Component {
 
                 this.info("Syntactic Analysis for program " + this.currentProgram);
                 var analyzeOut = this._Analyzer.analyze();
+                
                 if (analyzeOut.errors > 0) {
                     this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings")
                     this.caughtError = true;
@@ -95,6 +96,9 @@ class Compiler extends Component {
 
 
             /* Code Generation */
+            if (!this.caughtError) {
+                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
+            }
 
             //Reset for next program
             this.reset();
