@@ -136,6 +136,10 @@ class HashTree {
         this.currNode = node;
     }
 
+    public findID(id: string, scope: string) {
+        
+    }
+
     public moveUp() {
         this.currNode = this.currNode.getParent();
     }

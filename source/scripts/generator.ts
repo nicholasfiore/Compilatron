@@ -19,7 +19,7 @@ class Generator extends Component {
         this.symbolTable = symbolTable;
 
         this.currByte = 0;
-        this.currTableEntry = 0;
+        this.currTableEntry = -1;
         
         this.memory = Array(Generator.MAX_BYTES_MEMORY).fill("00");
     }
@@ -32,14 +32,15 @@ class Generator extends Component {
         node.getChildren().forEach(child => {
             switch(child.getName()) {
                 case "VarDecl": {
-                    let currEntry =  this.symbolTable.getTable()[this.currTableEntry];
+                    this.currTableEntry++;
+                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
                     
                     let label1 = "T" + this.currTableEntry;
                     let label2 = "XX";
                     let id = currEntry.getID();
                     let scope = currEntry.getScope();
 
-                    this.staticData.push(new StaticEntry(label1, label1, id, scope))
+                    this.staticData.push(new StaticEntry(label1, label2, id, scope))
 
                     this.memory[this.currByte] = "A9";
                     this.currByte++;
@@ -47,6 +48,11 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "8D";
                     this.currByte++;
+                }
+                case "AssignmentStatement": {
+                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+
+
                 }
             }
         });
@@ -78,6 +84,10 @@ class StaticEntry {
         this.label2 = label2;
         this.id = id;
         this.scope = scope;
+    }
+
+    findEntry() {
+        
     }
 }
 
