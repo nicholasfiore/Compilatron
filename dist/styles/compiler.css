@@ -28,36 +28,67 @@ h2
 	font-style: normal;	
 }
 */
-h1{
+body {
+	background-color: #696969;
+}
+
+h1 {
 	font-weight: bold;
 	text-align: center;
 }
 #btnCompile{
-	width:200px;
+	width:15%;
 	text-align: center;
+}
+#btnClear{
+	width: 10%;
+}
+.output, .source {
+	width:48%;
+	
+	
+}
+.buttons {
+	text-align: left;
+	padding-left: 1%;
+	/* float: right; */
+	/* width: 15%;
+	height: 400px; */
+	/* vertical-align: middle; */
+	/* padding-right: 4%; */
+}
+.code {
+
 }
 .output{
 	float:right;
-	/* margin:; */
 
+	padding-right: 2%;	
+	/* margin:; */
 }
 .source{
 	float:left;
-	display: inline-block;
-	width:100%;
+	padding-left: 2%;
 }
 #taSourceCode, #taOutput, #codeOut{
 	background-color: black;
 	color: #00ff41;
-	width:48%;
+	font-family: 'Courier New', Courier, monospace;
 	margin: 10px;
-	height: 400px;
 }
+
+#taSourceCode, #taOutput {
+	height: 400px;
+	width:100%;
+}
+
 #taOutput, #codeOut{
 	float:right;
 }
 
 #codeOut{
 	height: 100px;
+	overflow-y: scroll;
+	width: 1570px;
 	resize: none;
 }

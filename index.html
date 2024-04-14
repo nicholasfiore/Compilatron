@@ -22,27 +22,35 @@
 	<script src="dist/scripts/run.js"></script>
 </head>
 <body>
-    <h1>Project Zero Compiler</h1>
+    <h1>Compilatron</h1>
     <hr>
-    <p>. . . <em>a simple parser for a simple grammar</em>:</p>
+    <!-- <p>. . . <em>a simple parser for a simple grammar</em>:</p> -->
 
-	 <pre>
+	 <!-- <pre>
 G ::== E
 E ::== D O E | D
 D ::== 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
 O ::== + | -
-	 </pre>
+	 </pre> -->
 
     <div style="text-align:center;">
-        <input type="button" id="btnCompile" value="Compile">
+        
     </div>
 
     <div>
         <div class="source">
             <textarea id="taSourceCode"></textarea>
-            <textarea id="taOutput" readonly style="font-family: 'Courier New', Courier, monospace;"></textarea>
-            <textarea id="codeOut" style="font-family: 'Courier New', Courier, monospace;"></textarea>
-        </div>        
+            <div class="buttons">
+                <input type="button" id="btnCompile" value="Compile" class="btn btn-primary">
+                <input type="button" id="btnClear" value="Clear" class="btn btn-danger">
+            </div>
+        </div>
+        
+        <div class="output">
+            <textarea id="taOutput" readonly></textarea>
+            <textarea id="codeOut"></textarea>
+        </div>
+        
     </div>
 
     <div>
@@ -62,6 +70,12 @@ O ::== + | -
             document.getElementById('codeOut').value = "";
             initializeCompiler();
 		})
+
+        document.getElementById("btnClear").addEventListener("click", function() {
+			document.getElementById('taOutput').value = "";
+            document.getElementById('codeOut').value = "";
+		})
+        
 	</script>
 </body>
 </html>
