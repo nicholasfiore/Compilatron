@@ -33,8 +33,7 @@ class Generator extends Component {
 
     public generate() {
         this.initializeCode(this.AST.getRoot());
-        this.memory[this.currByte] == "00";
-        this.currByte++;
+        this.memory[this.currByte] = "00";
         this.lastCodeByte = this.currByte;
 
         this.backPatch();
@@ -65,6 +64,7 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "XX";
                     this.currByte++;
+                    break;
                 }
                 case "AssignmentStatement": {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
@@ -80,6 +80,7 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "XX";      
                     this.currByte++;
+                    break;
                 }
                 case "PrintStatement": {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
@@ -98,6 +99,7 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "FF";
                     this.currByte++;
+                    break;
                 }
                 case "Block": {
                     this.initializeCode(child);
