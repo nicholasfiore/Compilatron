@@ -152,9 +152,6 @@ class SemanticAnalyzer extends Component {
     private determineType(val: TreeNode) {
         let child1 = val.getChildren()[0];
         let child2 = val.getChildren()[1];
-        console.log(val.getName());
-        console.log(child1)
-        console.log(child2)
         if (val.getName() === "SYM_ADD") {
             if (child2.getName() === "ID") {
                 if (!this.findID(child2).getInit()) {
@@ -206,8 +203,6 @@ class SemanticAnalyzer extends Component {
 
     //looks for the ID in scope recursively
     private findID(id: TreeNode) {
-        console.log(this.scopeTree.getRoot());
-        console.log(id);
         let scope = this.currScope;
         var retVal;
 
