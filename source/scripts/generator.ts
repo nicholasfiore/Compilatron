@@ -7,6 +7,9 @@ class Generator extends Component {
     private currByte: number;
     private currTableEntry: number;
 
+    private lastCodeByte: number; //the last byte of code (the break)
+    private lastStackByte: number; //the last byte used for stack memory
+
     private memory: string[];
 
     private staticData: StaticEntry[];
@@ -30,6 +33,9 @@ class Generator extends Component {
 
     public generate() {
         this.initializeCode(this.AST.getRoot());
+        this.lastCodeByte = this.currByte;
+
+        this.backPatch();
 
         this.printCode();
     }
@@ -89,7 +95,21 @@ class Generator extends Component {
     }
 
     private backPatch() {
+        let stackByte = this.lastCodeByte + 1;
+        //replace static data labels
+        this.staticData.forEach(entry => {
+            for (let i = 0; i < this.memory.length; i++) {
+                if (entry.getLabel() === this.memory[i]) {
+                    this.memory[i] = stackByte.toString(16);
+                    stackByte++;
+                    this.memory[i + 1] = "00";//little endian with 256 available bytes means this is always 00
+                    i++; //since we're also replacing the next byte, increment i an additional time
+                }
+            }
+        });
+        this.lastStackByte = stackByte;
 
+        //replace jump labels
     }
 
     private printCode() {
