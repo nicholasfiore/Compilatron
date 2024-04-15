@@ -68,11 +68,19 @@ class Generator extends Component {
                 }
                 case "AssignmentStatement": {
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope())
+                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope());
+                    let valNode = child.getChildren()[1];
+                    let val;
+                    if (valNode.getName() === "DIGIT") {
+                        val = parseInt(valNode.getValue(), 16) + "";
+                        if (val < 10) {
+                            val = "0" + val;
+                        }
+                    }
 
                     this.memory[this.currByte] = "A9";
                     this.currByte++;
-                    this.memory[this.currByte] = "05";
+                    this.memory[this.currByte] = val;
                     this.currByte++;
                     this.memory[this.currByte] = "8D";
                     this.currByte++;
