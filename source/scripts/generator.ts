@@ -33,6 +33,8 @@ class Generator extends Component {
 
     public generate() {
         this.initializeCode(this.AST.getRoot());
+        this.memory[this.currByte] == "00";
+        this.currByte++;
         this.lastCodeByte = this.currByte;
 
         this.backPatch();
@@ -79,6 +81,24 @@ class Generator extends Component {
                     this.memory[this.currByte] = "XX";      
                     this.currByte++;
                 }
+                case "PrintStatement": {
+                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope())
+
+                    //code for digits
+                    this.memory[this.currByte] = "AC";
+                    this.currByte++;
+                    this.memory[this.currByte] = tempStatic.getLabel();
+                    this.currByte++;
+                    this.memory[this.currByte] = "XX";
+                    this.currByte++;
+                    this.memory[this.currByte] = "A2";
+                    this.currByte++;
+                    this.memory[this.currByte] = "01";
+                    this.currByte++;
+                    this.memory[this.currByte] = "FF";
+                    this.currByte++;
+                }
                 case "Block": {
                     this.initializeCode(child);
                 }
@@ -101,11 +121,11 @@ class Generator extends Component {
             for (let i = 0; i < this.memory.length; i++) {
                 if (entry.getLabel() === this.memory[i]) {
                     this.memory[i] = stackByte.toString(16);
-                    stackByte++;
                     this.memory[i + 1] = "00";//little endian with 256 available bytes means this is always 00
                     i++; //since we're also replacing the next byte, increment i an additional time
                 }
             }
+            stackByte++;
         });
         this.lastStackByte = stackByte;
 
