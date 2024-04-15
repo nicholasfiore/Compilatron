@@ -12,6 +12,7 @@ class Generator extends Component {
     private staticData: StaticEntry[];
     private jumps: JumpEntry[];
 
+    private validHex = new RegExp('[0-9A-F]')
 
     constructor(AST: Tree, symbolTable: Table, debug: boolean) {
         super("Code Generator", debug);
@@ -39,13 +40,12 @@ class Generator extends Component {
                 case "VarDecl": {
                     this.currTableEntry++;
                     let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+                    let label = "T" + this.currTableEntry;
                     
-                    let label1 = "T" + this.currTableEntry;
-                    let label2 = "XX";
                     let id = currEntry.getID();
                     let scope = currEntry.getScope();
 
-                    this.staticData.push(new StaticEntry(label1, label2, id, scope))
+                    this.staticData.push(new StaticEntry(label, id, scope))
 
                     this.memory[this.currByte] = "A9";
                     this.currByte++;
@@ -53,9 +53,9 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "8D";
                     this.currByte++;
-                    this.memory[this.currByte] = label1;
+                    this.memory[this.currByte] = label;
                     this.currByte++;
-                    this.memory[this.currByte] = label2;
+                    this.memory[this.currByte] = "XX";
                     this.currByte++;
                 }
                 case "AssignmentStatement": {
@@ -68,9 +68,9 @@ class Generator extends Component {
                     this.currByte++;
                     this.memory[this.currByte] = "8D";
                     this.currByte++;
-                    this.memory[this.currByte] = tempStatic.getLabel1();
+                    this.memory[this.currByte] = tempStatic.getLabel();
                     this.currByte++;
-                    this.memory[this.currByte] = tempStatic.getLabel2();
+                    this.memory[this.currByte] = "XX";      
                     this.currByte++;
                 }
                 case "Block": {
@@ -93,7 +93,6 @@ class Generator extends Component {
     }
 
     private printCode() {
-        console.log("here");
         (<HTMLInputElement>document.getElementById('codeOut')).value += this.memory.join(" ");
     }
 
@@ -106,17 +105,27 @@ class Generator extends Component {
         }
         return null;
     }
+
+    //ensures the code are all hex codes before sending it to be printed. Useful for bugtesting.
+    private checkHexValidity(arr:string[]) {
+        let invalidFlag = false;
+        arr.forEach(byte => {
+            if (!this.validHex.test(byte)) {
+                invalidFlag = true;
+            }
+        });
+        return !invalidFlag; //return true if the hex is valid, false if it invalid
+    }
 }
 
 class StaticEntry {
-    private label1: string;
-    private label2: string;
+    private label: string;
+
     private id: string;
     private scope: string;
 
-    constructor(label1:string, label2:string, id:string, scope:string) {
-        this.label1 = label1;
-        this.label2 = label2;
+    constructor(label:string, id:string, scope:string) {
+        this.label = label;
         this.id = id;
         this.scope = scope;
     }
@@ -129,12 +138,8 @@ class StaticEntry {
         return this.scope;
     }
 
-    public getLabel1() {
-        return this.label1;
-    }
-
-    public getLabel2() {
-        return this.label2;
+    public getLabel() {
+        return this.label;
     }
 }
 
