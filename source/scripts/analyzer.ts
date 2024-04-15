@@ -152,6 +152,9 @@ class SemanticAnalyzer extends Component {
     private determineType(val: TreeNode) {
         let child1 = val.getChildren()[0];
         let child2 = val.getChildren()[1];
+        console.log(val.getName());
+        console.log(child1)
+        console.log(child2)
         if (val.getName() === "SYM_ADD") {
             if (child2.getName() === "ID") {
                 if (!this.findID(child2).getInit()) {
@@ -163,6 +166,7 @@ class SemanticAnalyzer extends Component {
             }
             return this.checkAddChain(child1, child2);
         } else if (val.getName() === "SYM_IS_EQUAL" || val.getName() === "SYM_IS_NOT_EQUAL") {
+            console.log("here1")
             if (child1.getName() === "ID") {
                 if (!this.findID(child1).getInit()) {
                     this.err("Uninitialized value: ID \"" + child1.getValue() + "\" at line " + child1.getLine() + " was used before being initialized")
@@ -202,6 +206,9 @@ class SemanticAnalyzer extends Component {
 
     //looks for the ID in scope recursively
     private findID(id: TreeNode) {
+        console.log(this.scopeTree.getRoot());
+        console.log(id);
+        let scope = this.currScope;
         var retVal;
 
         var entry = this.currScope.getTable().get(id.getValue());
@@ -217,6 +224,7 @@ class SemanticAnalyzer extends Component {
                 retVal = null;
             }
         }
+        this.currScope = scope;
         return retVal;
     }
 
