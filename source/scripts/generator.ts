@@ -10,7 +10,11 @@ class Generator extends Component {
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
 
+    private currHeapLoc: number = 255;
+
     private memory: string[];
+
+    private errors;
 
     private staticData: StaticEntry[];
     private jumps: JumpEntry[];
@@ -120,7 +124,26 @@ class Generator extends Component {
 
     }
 
-    private allocateHeap() {
+    //allocates a string into heap memory
+    //if there is an error, returns false. Otherwise, returns true
+    private allocateHeap(charlist: string) {
+        this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
+
+        if (this.currHeapLoc <= this.lastStackByte) {
+            this.err("Cannot generate code: out of memory (heap)");
+            this.errors++;
+            return false;
+        } else {
+            let i;
+            for (i = 0; i < charlist.length; i++) {
+                this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16);
+            }
+            this.memory[this.currHeapLoc + i + 1] = "00";
+            return true;
+        }
+
+        
+
 
     }
 
