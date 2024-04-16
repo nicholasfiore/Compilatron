@@ -29,12 +29,13 @@ h2
 }
 */
 body {
-	background-color: #696969;
+	background: #1F1F1F !important;
 }
 
 h1 {
 	font-weight: bold;
 	text-align: center;
+	color: #00ff41 !important;
 }
 #btnCompile{
 	width:15%;
