@@ -77,12 +77,8 @@ class Generator extends Component {
                     let val;
                     if (valNode.getName() === "DIGIT") {
                         val = parseInt(valNode.getValue());
-                        let constant = parseInt(val).toString(16);
-                        if (val < 16) {
-                            constant = "0" + val;
-                        } else {
-                            constant = val;
-                        }
+                        let constant = this.toHexStr(val);
+
                         this.memory[this.currByte] = "A9";
                         this.currByte++;
                         this.memory[this.currByte] = constant;
@@ -94,14 +90,11 @@ class Generator extends Component {
                         this.memory[this.currByte] = "XX";      
                         this.currByte++;
                     } else if (valNode.getName() === "ID") {
-
+                        
                     } else {
                         val = this.allocateHeap(child.getChildren()[1].getValue())
+                        let address = this.toHexStr(val);
 
-                        let address = val.toString(16);
-                        if (val < 16) {
-                            address = "0" + address;
-                        }
                         this.memory[this.currByte] = "A9";
                         this.currByte++;
                         this.memory[this.currByte] = address;

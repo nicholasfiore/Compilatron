@@ -38,4 +38,15 @@ class Component {
     public err(args: string) {
         this.log("ERROR " + this.name + ": " + args);
     }
+
+    //takes a decimal number and converts it to hex as a string, adding a leading zero if necessary
+    public toHexStr(val) {
+        let retVal;
+        if (val < 16) {
+            retVal = "0" + val.toString(16);
+        } else {
+            retVal = val.toString(16)
+        }
+        return retVal;
+    }
 }
