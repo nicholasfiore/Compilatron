@@ -104,11 +104,15 @@ class Generator extends Component {
                         }
                         this.memory[this.currByte] = "A9";
                         this.currByte++;
-                        this.memory[this.currByte] = address.toString(16);
+                        this.memory[this.currByte] = address;
+                        this.currByte++;
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = tempStatic.getLabel();
+                        this.currByte++;
+                        this.memory[this.currByte] = "XX";      
                         this.currByte++;
                     }
-
-                    
                     break;
                 }
                 case "PrintStatement": {
@@ -155,7 +159,7 @@ class Generator extends Component {
             for (i = 0; i < charlist.length; i++) {
                 this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16);
             }
-            this.memory[this.currHeapLoc + i + 1] = "00";
+            this.memory[this.currHeapLoc + i] = "00";
             return this.currHeapLoc;
         }
 
