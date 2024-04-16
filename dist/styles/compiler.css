@@ -28,13 +28,21 @@ h2
 	font-style: normal;	
 }
 */
+
+@font-face {
+	font-family: Pixel;
+	src: url('../fonts/slkscr.ttf')
+}
+
 body {
 	background: #1F1F1F !important;
 }
 
 h1 {
 	font-weight: bold;
+	font-family: Pixel !important;
 	text-align: center;
+	font-size: 500% !important;
 	color: #00ff41 !important;
 }
 #btnCompile{
