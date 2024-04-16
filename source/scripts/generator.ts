@@ -10,7 +10,7 @@ class Generator extends Component {
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
 
-    private currHeapLoc: number = 255;
+    private currHeapLoc: number = 256;
 
     private memory: string[];
 
@@ -76,22 +76,39 @@ class Generator extends Component {
                     let valNode = child.getChildren()[1];
                     let val;
                     if (valNode.getName() === "DIGIT") {
-                        val = parseInt(valNode.getValue(), 16) + "";
-                        if (val < 10) {
-                            val = "0" + val;
+                        val = parseInt(valNode.getValue());
+                        let constant = parseInt(val).toString(16);
+                        if (val < 16) {
+                            constant = "0" + val;
+                        } else {
+                            constant = val;
                         }
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
+                        this.memory[this.currByte] = constant;
+                        this.currByte++;
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = tempStatic.getLabel();
+                        this.currByte++;
+                        this.memory[this.currByte] = "XX";      
+                        this.currByte++;
+                    } else if (valNode.getName() === "ID") {
+
+                    } else {
+                        val = this.allocateHeap(child.getChildren()[1].getValue())
+
+                        let address = val.toString(16);
+                        if (val < 16) {
+                            address = "0" + address;
+                        }
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
+                        this.memory[this.currByte] = address.toString(16);
+                        this.currByte++;
                     }
 
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
-                    this.memory[this.currByte] = val;
-                    this.currByte++;
-                    this.memory[this.currByte] = "8D";
-                    this.currByte++;
-                    this.memory[this.currByte] = tempStatic.getLabel();
-                    this.currByte++;
-                    this.memory[this.currByte] = "XX";      
-                    this.currByte++;
+                    
                     break;
                 }
                 case "PrintStatement": {
@@ -125,21 +142,21 @@ class Generator extends Component {
     }
 
     //allocates a string into heap memory
-    //if there is an error, returns false. Otherwise, returns true
+    //if there is an error, returns -1. Otherwise, returns the memory location of the first character
     private allocateHeap(charlist: string) {
         this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
 
         if (this.currHeapLoc <= this.lastStackByte) {
             this.err("Cannot generate code: out of memory (heap)");
             this.errors++;
-            return false;
+            return -1;
         } else {
             let i;
             for (i = 0; i < charlist.length; i++) {
                 this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16);
             }
             this.memory[this.currHeapLoc + i + 1] = "00";
-            return true;
+            return this.currHeapLoc;
         }
 
         

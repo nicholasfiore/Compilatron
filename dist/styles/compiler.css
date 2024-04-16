@@ -98,6 +98,6 @@ h1 {
 #codeOut{
 	height: 100px;
 	overflow-y: scroll;
-	width: 1570px;
+	width: 100%;
 	resize: none;
 }

@@ -182,8 +182,8 @@ class Tree extends Component {
         var queue = [];
         this.condenseString(node.getChildren()[1], queue);
         var str = queue.join("");
-        var retVal = new TreeNode(str, node.getLine());
-
+        var retVal = new TreeNode("CharList", node.getLine(), str);
+        
         return retVal;
     }
 
