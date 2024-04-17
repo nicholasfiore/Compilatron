@@ -11,6 +11,7 @@ class SemanticAnalyzer extends Component {
     private scopeTree: HashTree;
     private currDepth: number = -1;
     private currScope: HashNode;
+    private currScopeLabel: string;
 
     private repeatScope: string[] = new Array<string>;
 
@@ -51,6 +52,7 @@ class SemanticAnalyzer extends Component {
 
         if (this.currDepth < 0) {
             this.currDepth++;
+            this.repeatScope[0] = "";
             this.scopeTree.addNode(new HashTable(this.currDepth + ""));
             this.currScope = this.scopeTree.getCurrent();
             this.buildSymbolTable(node);
@@ -59,7 +61,8 @@ class SemanticAnalyzer extends Component {
                 switch (child.getName()) {
                     case "Block": {
                         this.currDepth++;
-                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.scopeTree.addNode(new HashTable(this.currScopeLabel));
                         this.currScope = this.scopeTree.getCurrent();
                         this.buildSymbolTable(child);
                         break;
@@ -68,7 +71,7 @@ class SemanticAnalyzer extends Component {
                         let type = child.getChildren()[0];
                         let id = child.getChildren()[1];
 
-                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
+                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currScopeLabel)) {
                             this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
                             this.errors++;
                         }
@@ -115,21 +118,26 @@ class SemanticAnalyzer extends Component {
     }
 
     private labelScope(depth:number) {
-        let letter;
-        if (this.repeatScope.length < depth) {
+        let currSubLabel;
+        if (this.repeatScope.length-1 < depth) {
             this.repeatScope.push("a");
+            currSubLabel = this.repeatScope[depth];
+        } else {
+            currSubLabel = this.repeatScope[depth];
+            let temp = currSubLabel.charCodeAt(0);
+            currSubLabel = String.fromCharCode(temp + 1);
+            this.repeatScope[depth] = currSubLabel;
         }
-        let currSubLabel = this.repeatScope[depth];
         
-        for (let i = currSubLabel.length-1; i > 0; i--) {
-            if (currSubLabel.charCodeAt(currSubLabel.length-1) >= 90) {
-                //increments to the next letter
-                let temp = currSubLabel.charCodeAt(i);
-                let currLetter = String.fromCharCode(temp + 1);
-                currSubLabel = this.replaceChar(currSubLabel, currLetter, i);
-            }
-        }
-        return currSubLabel;
+        // for (let i = currSubLabel.length-1; i > 0; i--) {
+        //     if (currSubLabel.charCodeAt(currSubLabel.length-1) >= 90) {
+        //         //increments to the next letter
+        //         let temp = currSubLabel.charCodeAt(i);
+        //         let currLetter = String.fromCharCode(temp + 1);
+        //         currSubLabel = this.replaceChar(currSubLabel, currLetter, i);
+        //     }
+        // }
+        return depth + currSubLabel;
         // let temp = currLetter.charCodeAt(currLetter.length - 1) + 1;
         // currLetter = String.fromCharCode(temp);
         
