@@ -26,7 +26,12 @@ class Component {
             span.style.color = color;
         }
         div.appendChild(span);
-        div.appendChild(document.createElement('br'))
+        div.appendChild(document.createElement('br'));
+    }
+
+    //inserts a <br> element
+    public break() {
+        document.getElementById('taOutput').appendChild(document.createElement('br'))
     }
     
     public info(args: string) {
@@ -35,7 +40,7 @@ class Component {
 
     public debug(args: string) {
         if (this.debugMode) {
-            this.log("DEBUG " + this.name + ": " + args);
+            this.log("DEBUG " + this.name + ": " + args, 'blue');
         }
     }
 

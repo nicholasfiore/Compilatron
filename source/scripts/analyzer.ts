@@ -346,7 +346,7 @@ class Table extends Component {
         var lineHeaderSpacing = "";
         var initSpacing;
 
-        
+        this.log("ID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?");
 
         //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {
@@ -364,17 +364,18 @@ class Table extends Component {
             }
 
             output += entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
-            + "    | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed() + "\n"
+            + "    | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed()
             
             typeSpacing = "";
+            this.log(output);
         });
 
-        var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
-        output = header + output;
-        //only bother printing the table if there are any variables, otherwise skip
-        if (this.table.length > 0) {
-            this.info(output);
-        }
+        // var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
+        // output = header + output;
+        // //only bother printing the table if there are any variables, otherwise skip
+        // if (this.table.length > 0) {
+        //     this.info(output);
+        // }
         return this.table;
     }
 }

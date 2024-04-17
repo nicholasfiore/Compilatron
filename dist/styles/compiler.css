@@ -45,6 +45,13 @@ h1 {
 	font-size: 500% !important;
 	color: #00ff41 !important;
 }
+
+textarea{
+	resize: none;
+	border: none;
+	outline: none;
+}
+
 #btnCompile{
 	width:15%;
 	text-align: center;
