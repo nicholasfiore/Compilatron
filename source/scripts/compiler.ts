@@ -35,17 +35,17 @@ class Compiler extends Component {
 
             /* Lexer */
             this.info("Lexing program " + this.currentProgram);
-            this.break();
+            //this.break();
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
             
             if (lexOut.errors > 0) {
                 this.info("Lexer failed with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
-                this.break();
+                //this.break();
                 this.caughtError = true;
             } else {
                 this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
-                this.break();
+                //this.break();
             }
             if (lexOut.EOF) {
                 this.reachedEOF = true;
@@ -63,11 +63,11 @@ class Compiler extends Component {
                 
                 if (parseOut.errors > 0) {
                     this.info("Parsing failed with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
-                    this.break();
+                    //this.break();
                     this.caughtError = true;
                 } else {
                     this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
-                    this.break();
+                    //this.break();
                 }
 
                 //CST printing
@@ -76,7 +76,7 @@ class Compiler extends Component {
                     this.info("Concrete Syntax Tree:");
                     CST.printTree(CST.getRoot());
                     this.info("End CST\n");
-                    this.break();
+                    //this.break();
                 }
 
             } else {
@@ -92,11 +92,11 @@ class Compiler extends Component {
                 
                 if (analyzeOut.errors > 0) {
                     this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings\n")
-                    this.break();
+                    //this.break();
                     this.caughtError = true;
                 } else {
                     this.info("Syntactic Analysis finished with " + analyzeOut.warnings + " warnings\n")
-                    this.break();
+                    //this.break();
                 }
             } else {
                 this.err("Semantic analysis skipped due to parser error.")

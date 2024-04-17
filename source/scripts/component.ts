@@ -30,9 +30,9 @@ class Component {
     }
 
     //inserts a <br> element
-    public break() {
-        document.getElementById('taOutput').appendChild(document.createElement('br'))
-    }
+    // public break() {
+    //     document.getElementById('taOutput').appendChild(document.createElement('br'))
+    // }
     
     public info(args: string) {
         this.log("INFO " + this.name + ": " + args);
