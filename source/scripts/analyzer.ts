@@ -41,7 +41,7 @@ class SemanticAnalyzer extends Component {
 
         var table = this.printSymbolTable();
 
-        return {AST: this.AST, symbolTable: this.table, errors: this.errors, warnings: this.warnings}
+        return {AST: this.AST, symbolTable: this.table, symbolTree: this.scopeTree, errors: this.errors, warnings: this.warnings}
     }
 
     public buildSymbolTable(node: TreeNode) {
@@ -339,7 +339,7 @@ class Table extends Component {
 
     public findID(id: string, scope: string) {
         for (let i = 0; i < this.table.length; i++) {
-            if (this.table[i].getScope() === scope &&this.table[i].getID() === id) {
+            if (this.table[i].getScope() === scope && this.table[i].getID() === id) {
                 return this.table[i];
             }
         }

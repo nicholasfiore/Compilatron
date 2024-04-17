@@ -105,8 +105,9 @@ class Compiler extends Component {
 
             /* Code Generation */
             if (!this.caughtError) {
-                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
-                
+                //this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
+                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTree, this.debugMode)
+
                 this.info("Generating code...");
                 this._Generator.generate();
             }

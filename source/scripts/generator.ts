@@ -1,6 +1,7 @@
 class Generator extends Component {
     private AST: Tree;
-    private symbolTable: Table;
+    //private symbolTable: Table;
+    private symbolTable: HashTree;
     
     private static readonly MAX_BYTES_MEMORY: number = 256;
 
@@ -15,7 +16,7 @@ class Generator extends Component {
     private memory: string[];
 
     private currDepth: number = -1;
-    private currScope: string;
+    private currScope: HashNode;
     private repeatScope: string[] = new Array<string>;
 
     private errors;
@@ -25,13 +26,16 @@ class Generator extends Component {
 
     private validHex = new RegExp('[0-9A-F]')
 
-    constructor(AST: Tree, symbolTable: Table, debug: boolean) {
+    constructor(AST: Tree, symbolTable: HashTree, debug: boolean) {
         super("Code Generator", debug);
         this.AST = AST;
+        //this.symbolTable = symbolTable;
         this.symbolTable = symbolTable;
 
         this.currByte = 0;
         this.currTableEntry = -1;
+
+        this.currScope = symbolTable.getRoot();
 
         this.staticData = [];
         this.jumps = [];
@@ -40,7 +44,7 @@ class Generator extends Component {
     }
 
     public generate() {
-        this.initializeCode(this.AST.getRoot(), "");
+        this.initializeCode(this.AST.getRoot());
         this.memory[this.currByte] = "00"; //ensures the last byte of code is a break
         this.lastCodeByte = this.currByte;
 
@@ -49,13 +53,12 @@ class Generator extends Component {
         this.printCode();
     }
 
-    private initializeCode(node:TreeNode, prevScope: string) {
+    private initializeCode(node:TreeNode) {
         
         if (this.currDepth < 0) {
             this.currDepth++;
             this.repeatScope[0] = "";
-            this.currScope = "0 ";
-            this.initializeCode(node, "");
+            this.initializeCode(node);
         } else {
             node.getChildren().forEach(child => {
                 let subChild1 = child.getChildren()[0];
@@ -85,7 +88,7 @@ class Generator extends Component {
                     }
                     case "AssignmentStatement": {
                         //let currEntry = this.symbolTable.findID(subChild1.getValue(), this.currScope);
-                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope);
+                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
                         let valNode = child.getChildren()[1];
                         let val;
                         if (valNode.getName() === "DIGIT") {
@@ -103,7 +106,7 @@ class Generator extends Component {
                             this.memory[this.currByte] = "XX";      
                             this.currByte++;
                         } else if (valNode.getName() === "ID") {
-                            
+                            val = this.findStaticEntry(subChild2.getValue(), this.symbolTable.findID(subChild2.getValue(), this.currScope).getScope())
                         } else {
                             val = this.allocateHeap(child.getChildren()[1].getValue())
                             let address = this.toHexStr(val);
@@ -123,7 +126,7 @@ class Generator extends Component {
                     }
                     case "PrintStatement": {
                         //let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope);
+                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
 
                         //code for digits
                         this.memory[this.currByte] = "AC";
@@ -142,14 +145,13 @@ class Generator extends Component {
                     }
                     case "Block": {
                         this.currDepth++;
-                        let prevScope = this.currScope;
-                        this.currScope = this.labelScope(this.currDepth);
-                        this.initializeCode(child, prevScope);
+                        this.initializeCode(child);
                     }
                 }
             });
             this.currDepth--;
-            this.currScope = prevScope;
+            this.symbolTable.moveUp();
+            this.currScope = this.symbolTable.getCurrent();
         }
     }
 
@@ -166,6 +168,10 @@ class Generator extends Component {
         }
         return depth + currSubLabel;
     }
+
+    // public findID(id: string, scope: string, currScope: HashNode) {
+    //     let thisScope 
+    // }
 
     private allocateStack() {
 

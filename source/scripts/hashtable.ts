@@ -15,6 +15,10 @@ class HashTable {
         return hash;
     }
 
+    public getName() {
+        return this.name;
+    }
+
     //puts an entry into the hash table
     //returns true if successful, false if there is a collision
     public put(key: string, type: string, line: number, scope: string) {
@@ -133,6 +137,37 @@ class HashTree {
             node.getParent().addChild(node);
         }
         this.currNode = node;
+    }
+
+    public findID(id: string, scope: HashNode): HashEntry{
+        var retVal;
+
+        var entry = scope.getTable().get(id);
+        if (entry) {
+            retVal = entry;
+        } else {
+            scope = scope.getParent();
+            this.findID(id, scope);
+        }
+
+        return retVal;
+    }
+
+    public findScope(label:string, node: HashNode) {
+        var retVal;
+        if (node.getChildren().length === 0) {
+            if (node.getTable().getName() === label) {
+                retVal = node;
+            }
+            return retVal;
+        }
+
+        node.getChildren().forEach(child => {
+            if (child.getTable().getName() === label) {
+                retVal = child;
+            }
+        });
+        return retVal;
     }
 
     public moveUp() {
