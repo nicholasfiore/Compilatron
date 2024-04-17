@@ -345,7 +345,7 @@ class Table extends Component {
         var lineSpacing;
         var lineHeaderSpacing = "";
         var initSpacing;
-
+        this.info("");
         this.log("ID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?");
 
         //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")

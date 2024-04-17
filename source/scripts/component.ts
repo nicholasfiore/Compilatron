@@ -26,7 +26,7 @@ class Component {
             span.style.color = color;
         }
         div.appendChild(span);
-        div.appendChild(document.createElement('br'));
+        //div.appendChild(document.createElement('br'));
     }
 
     //inserts a <br> element

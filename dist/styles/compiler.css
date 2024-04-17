@@ -97,15 +97,18 @@ textarea{
 	width:100%;
 }
 
+#taOutput {
+	overflow-y: scroll;
+	white-space: pre-wrap;
+}
+
 #taOutput, #codeOut{
 	float:right;
-	overflow-y:scroll;
 	color: #00ff41;
 }
 
 #codeOut{
 	height: 100px;
-	overflow-y: scroll;
 	width: 100%;
 	resize: none;
 }
