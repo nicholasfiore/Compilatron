@@ -12,10 +12,12 @@ class SemanticAnalyzer extends Component {
     private currDepth: number = -1;
     private currScope: HashNode;
 
+    private repeatScope: string[] = new Array<string>;
+
     private validInt = new RegExp('^[0-9]$');
     private validString = new RegExp('[a-z]');
     private validBoolVal = new RegExp('^true$|^false$');
-
+    
     private table;
 
     constructor(ConcreteSyntaxTree: Tree, enableDebug: boolean) {
@@ -53,67 +55,94 @@ class SemanticAnalyzer extends Component {
             this.currScope = this.scopeTree.getCurrent();
             this.buildSymbolTable(node);
         } else {
-        node.getChildren().forEach(child => {
-            switch (child.getName()) {
-                case "Block": {
-                    this.currDepth++;
-                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
-                    this.currScope = this.scopeTree.getCurrent();
-                    this.buildSymbolTable(child);
-                    break;
-                }
-                case "VarDecl": {
-                    let type = child.getChildren()[0];
-                    let id = child.getChildren()[1];
-
-                    if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
-                        this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
-                        this.errors++;
+            node.getChildren().forEach(child => {
+                switch (child.getName()) {
+                    case "Block": {
+                        this.currDepth++;
+                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScope = this.scopeTree.getCurrent();
+                        this.buildSymbolTable(child);
+                        break;
                     }
+                    case "VarDecl": {
+                        let type = child.getChildren()[0];
+                        let id = child.getChildren()[1];
 
-                    break;
-                }
-                case "AssignmentStatement": {
-                    let id = child.getChildren()[0];
-                    let value = child.getChildren()[1];
+                        if (!this.currScope.getTable().put(id.getValue(), type.getValue(), id.getLine(), this.currDepth)) {
+                            this.err("Cannot declare the same ID twice: attempted to redeclare \"" + id.getValue() + "\" on line " + id.getLine() + " when it was already declared.");
+                            this.errors++;
+                        }
 
-                    if (!this.checkType(id, value)) {
-                        this.err("Type mismatch, line " + id.getLine() + " : cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
-                        this.errors++;
-                    } else {
-                        this.findID(id).flipIsInit();
+                        break;
                     }
-                    break;
-                }
-                case "IfStatement": {}
-                case "WhileStatement": {
-                    let keyword = child.getChildren()[0];
+                    case "AssignmentStatement": {
+                        let id = child.getChildren()[0];
+                        let value = child.getChildren()[1];
 
-                    this.determineType(keyword) //ensures the keyword is proper boolean
-                    //block code
-                    this.currDepth++;
-                    this.scopeTree.addNode(new HashTable(this.currDepth + ""));
-                    this.currScope = this.scopeTree.getCurrent();
-                    this.buildSymbolTable(child);
-                    break;
-                }
-                case "PrintStatement": {
-                    let printVal = child.getChildren()[0];
-                    this.determineType(printVal);
-                    if (printVal.getName() === "ID") {
-                        this.findID(printVal).flipBeenUsed();
+                        if (!this.checkType(id, value)) {
+                            this.err("Type mismatch, line " + id.getLine() + " : cannot assign [" + this.determineType(value) + "] to [" + this.determineType(id) + "]")
+                            this.errors++;
+                        } else {
+                            this.findID(id).flipIsInit();
+                        }
+                        break;
                     }
-                    break;
+                    case "IfStatement": {}
+                    case "WhileStatement": {
+                        let keyword = child.getChildren()[0];
+
+                        this.determineType(keyword) //ensures the keyword is proper boolean
+                        //block code
+                        this.currDepth++;
+                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScope = this.scopeTree.getCurrent();
+                        this.buildSymbolTable(child);
+                        break;
+                    }
+                    case "PrintStatement": {
+                        let printVal = child.getChildren()[0];
+                        this.determineType(printVal);
+                        if (printVal.getName() === "ID") {
+                            this.findID(printVal).flipBeenUsed();
+                        }
+                        break;
+                    }
                 }
-            }
-        });
+            });
         this.currDepth--;
         this.moveUp();
+        }
     }
-    
-    return;
-}
 
+    private labelScope(depth:number) {
+        let letter;
+        if (this.repeatScope.length < depth) {
+            this.repeatScope.push("a");
+        }
+        let currSubLabel = this.repeatScope[depth];
+        
+        for (let i = currSubLabel.length-1; i > 0; i--) {
+            if (currSubLabel.charCodeAt(currSubLabel.length-1) >= 90) {
+                //increments to the next letter
+                let temp = currSubLabel.charCodeAt(i);
+                let currLetter = String.fromCharCode(temp + 1);
+                currSubLabel = this.replaceChar(currSubLabel, currLetter, i);
+            }
+        }
+        return currSubLabel;
+        // let temp = currLetter.charCodeAt(currLetter.length - 1) + 1;
+        // currLetter = String.fromCharCode(temp);
+        
+    }
+
+    //Taken from https://www.geeksforgeeks.org/how-to-replace-a-character-at-a-particular-index-in-javascript/
+    private replaceChar(origString, replaceChar, index) {
+        let firstPart = origString.substr(0, index);
+        let lastPart = origString.substr(index + 1);
+          
+        let newString = firstPart + replaceChar + lastPart;
+        return newString;
+    }
 
     private evaluateBoolean(value1: TreeNode, value2: TreeNode) {
         if (!this.checkType(value1, value2)) {
