@@ -43,8 +43,15 @@ h1 {
 	font-family: Pixel !important;
 	text-align: center;
 	font-size: 500% !important;
-	color: #00ff41 !important;
+	color: white !important;
 }
+
+textarea{
+	resize: none;
+	border: none;
+	outline: none;
+}
+
 #btnCompile{
 	width:15%;
 	text-align: center;
@@ -71,7 +78,7 @@ h1 {
 }
 .output{
 	float:right;
-
+	
 	padding-right: 2%;	
 	/* margin:; */
 }
@@ -81,7 +88,6 @@ h1 {
 }
 #taSourceCode, #taOutput, #codeOut{
 	background-color: black;
-	color: #00ff41;
 	font-family: 'Courier New', Courier, monospace;
 	margin: 10px;
 }
@@ -91,13 +97,22 @@ h1 {
 	width:100%;
 }
 
+#taOutput {
+	overflow-y: scroll;
+	white-space: pre-wrap;
+}
+
 #taOutput, #codeOut{
 	float:right;
+	color: #00ff41;
 }
 
 #codeOut{
 	height: 100px;
-	overflow-y: scroll;
 	width: 100%;
 	resize: none;
+}
+
+#taSourceCode {
+	color: white;
 }

@@ -53,7 +53,8 @@ class SemanticAnalyzer extends Component {
         if (this.currDepth < 0) {
             this.currDepth++;
             this.repeatScope[0] = "";
-            this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+            this.currScopeLabel = "0 "
+            this.scopeTree.addNode(new HashTable(this.currScopeLabel));
             this.currScope = this.scopeTree.getCurrent();
             this.buildSymbolTable(node);
         } else {
@@ -353,6 +354,8 @@ class Table extends Component {
         var lineSpacing;
         var lineHeaderSpacing = "";
         var initSpacing;
+        this.info("");
+        this.log("ID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?");
 
         //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {
@@ -369,18 +372,19 @@ class Table extends Component {
                 initSpacing = "  ";
             }
 
-            output += entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
-            + "     | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed() + "\n"
+            output = entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
+            + "    | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed()
             
             typeSpacing = "";
+            this.log(output);
         });
 
-        var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
-        output = header + output;
-        //only bother printing the table if there are any variables, otherwise skip
-        if (this.table.length > 0) {
-            this.info(output);
-        }
+        // var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
+        // output = header + output;
+        // //only bother printing the table if there are any variables, otherwise skip
+        // if (this.table.length > 0) {
+        //     this.info(output);
+        // }
         return this.table;
     }
 }

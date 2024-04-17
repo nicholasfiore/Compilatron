@@ -22,7 +22,7 @@
 	<script src="dist/scripts/run.js"></script>
 </head>
 <body>
-    <h1>COMPILATRON</h1>
+    <h1>COMPILA<span style="color: #00ff41;">TRON</span></h1>
     
     <!-- <p>. . . <em>a simple parser for a simple grammar</em>:</p> -->
 
@@ -47,8 +47,8 @@ O ::== + | -
         </div>
         
         <div class="output">
-            <textarea id="taOutput" readonly></textarea>
-            <textarea id="codeOut"></textarea>
+            <div id="taOutput"></div>
+            <div id="codeOut"></div>
         </div>
         
     </div>
@@ -61,19 +61,19 @@ O ::== + | -
 
     <script>
         window.onload = function () {
-            document.getElementById('taOutput').value = "";
-            document.getElementById('codeOut').value = "";
+            document.getElementById('taOutput').innerHTML = "";
+            document.getElementById('codeOut').innerHTML = "";
         }
 
 		document.getElementById("btnCompile").addEventListener("click", function() {
-			document.getElementById('taOutput').value = "";
-            document.getElementById('codeOut').value = "";
+			document.getElementById('taOutput').innerHTML = "";
+            document.getElementById('codeOut').innerHTML = "";
             initializeCompiler();
 		})
 
         document.getElementById("btnClear").addEventListener("click", function() {
-			document.getElementById('taOutput').value = "";
-            document.getElementById('codeOut').value = "";
+			document.getElementById('taOutput').innerHTML = "";
+            document.getElementById('codeOut').innerHTML = "";
 		})
         
 	</script>
