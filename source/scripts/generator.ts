@@ -14,6 +14,8 @@ class Generator extends Component {
 
     private memory: string[];
 
+    private currScope: string;
+
     private errors;
 
     private staticData: StaticEntry[];
@@ -50,7 +52,7 @@ class Generator extends Component {
             switch(child.getName()) {
                 case "VarDecl": {
                     this.currTableEntry++;
-                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+                    let currEntry = this.symbolTable.findID();
                     let label = "T" + this.currTableEntry;
                     
                     let id = currEntry.getID();

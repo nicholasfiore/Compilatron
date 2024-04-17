@@ -336,6 +336,15 @@ class Table extends Component {
         this.table.push(entry);
     }
 
+    public findID(id: string, scope: string) {
+        for (let i = 0; i < this.table.length; i++) {
+            if (this.table[i].getID() === id && this.table[i].getScope() + scope) {
+                return this.table[i];
+            }
+        }
+        return null;
+    }
+
     public printTable() {
         console.table(this.table)
         var output = "";
@@ -344,8 +353,6 @@ class Table extends Component {
         var lineSpacing;
         var lineHeaderSpacing = "";
         var initSpacing;
-
-        
 
         //this.info("ID | Type | Scope | Line | IsInit | BeenUsed")
         this.table.forEach(entry => {

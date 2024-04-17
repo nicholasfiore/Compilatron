@@ -121,7 +121,6 @@ class HashTree {
 
     constructor(name: string) {
         //super(name, false);
-
     }
 
     public addNode(table: HashTable) {
@@ -134,10 +133,6 @@ class HashTree {
             node.getParent().addChild(node);
         }
         this.currNode = node;
-    }
-
-    public findID(id: string, scope: string) {
-        
     }
 
     public moveUp() {
