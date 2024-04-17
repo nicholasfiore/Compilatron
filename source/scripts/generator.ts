@@ -97,10 +97,12 @@ class Generator extends Component {
                             val = parseInt(valNode.getValue());
                             let constant = this.toHexStr(val);
 
+                            //load constant
                             this.memory[this.currByte] = "A9";
                             this.currByte++;
                             this.memory[this.currByte] = constant;
                             this.currByte++;
+                            //store to variable being assigned
                             this.memory[this.currByte] = "8D";
                             this.currByte++;
                             this.memory[this.currByte] = tempStatic.getLabel();
@@ -109,14 +111,33 @@ class Generator extends Component {
                             this.currByte++;
                         } else if (valNode.getName() === "ID") {
                             val = this.findStaticEntry(subChild2.getValue(), this.symbolTable.findID(subChild2.getValue(), this.currScope).getScope())
+                            let varAddress : StaticEntry = val;
+                            
+                            //load the value stored in the variable to the accumulator
+                            this.memory[this.currByte] = "AD";
+                            this.currByte++;
+                            this.memory[this.currByte] = varAddress.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";
+                            this.currByte++;
+                            //store the data in the accumulator to the variable being assigned
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";      
+                            this.currByte++;
+
                         } else {
                             val = this.allocateHeap(child.getChildren()[1].getValue())
                             let address = this.toHexStr(val);
 
+                            //load address as a constant
                             this.memory[this.currByte] = "A9";
                             this.currByte++;
                             this.memory[this.currByte] = address;
                             this.currByte++;
+                            //store to variable being assigned
                             this.memory[this.currByte] = "8D";
                             this.currByte++;
                             this.memory[this.currByte] = tempStatic.getLabel();
