@@ -43,7 +43,7 @@ h1 {
 	font-family: Pixel !important;
 	text-align: center;
 	font-size: 500% !important;
-	color: #00ff41 !important;
+	color: white !important;
 }
 
 textarea{
@@ -88,7 +88,6 @@ textarea{
 }
 #taSourceCode, #taOutput, #codeOut{
 	background-color: black;
-	color: #00ff41;
 	font-family: 'Courier New', Courier, monospace;
 	margin: 10px;
 }
@@ -101,6 +100,7 @@ textarea{
 #taOutput, #codeOut{
 	float:right;
 	overflow-y:scroll;
+	color: #00ff41;
 }
 
 #codeOut{
@@ -108,4 +108,8 @@ textarea{
 	overflow-y: scroll;
 	width: 100%;
 	resize: none;
+}
+
+#taSourceCode {
+	color: white;
 }

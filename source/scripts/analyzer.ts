@@ -363,7 +363,7 @@ class Table extends Component {
                 initSpacing = "  ";
             }
 
-            output += entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
+            output = entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
             + "    | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed()
             
             typeSpacing = "";
