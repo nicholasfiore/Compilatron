@@ -14,7 +14,9 @@ class Generator extends Component {
 
     private memory: string[];
 
+    private currDepth: number = -1;
     private currScope: string;
+    private repeatScope: string[] = new Array<string>;
 
     private errors;
 
@@ -38,7 +40,7 @@ class Generator extends Component {
     }
 
     public generate() {
-        this.initializeCode(this.AST.getRoot());
+        this.initializeCode(this.AST.getRoot(), "");
         this.memory[this.currByte] = "00"; //ensures the last byte of code is a break
         this.lastCodeByte = this.currByte;
 
@@ -47,93 +49,122 @@ class Generator extends Component {
         this.printCode();
     }
 
-    private initializeCode(node:TreeNode) {
-        node.getChildren().forEach(child => {
-            switch(child.getName()) {
-                case "VarDecl": {
-                    this.currTableEntry++;
-                    let currEntry = this.symbolTable.findID();
-                    let label = "T" + this.currTableEntry;
-                    
-                    let id = currEntry.getID();
-                    let scope = currEntry.getScope();
-
-                    this.staticData.push(new StaticEntry(label, id, scope))
-
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
-                    this.memory[this.currByte] = "00";
-                    this.currByte++;
-                    this.memory[this.currByte] = "8D";
-                    this.currByte++;
-                    this.memory[this.currByte] = label;
-                    this.currByte++;
-                    this.memory[this.currByte] = "XX";
-                    this.currByte++;
-                    break;
-                }
-                case "AssignmentStatement": {
-                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope());
-                    let valNode = child.getChildren()[1];
-                    let val;
-                    if (valNode.getName() === "DIGIT") {
-                        val = parseInt(valNode.getValue());
-                        let constant = this.toHexStr(val);
-
-                        this.memory[this.currByte] = "A9";
-                        this.currByte++;
-                        this.memory[this.currByte] = constant;
-                        this.currByte++;
-                        this.memory[this.currByte] = "8D";
-                        this.currByte++;
-                        this.memory[this.currByte] = tempStatic.getLabel();
-                        this.currByte++;
-                        this.memory[this.currByte] = "XX";      
-                        this.currByte++;
-                    } else if (valNode.getName() === "ID") {
+    private initializeCode(node:TreeNode, prevScope: string) {
+        
+        if (this.currDepth < 0) {
+            this.currDepth++;
+            this.repeatScope[0] = "";
+            this.currScope = "0 ";
+            this.initializeCode(node, "");
+        } else {
+            node.getChildren().forEach(child => {
+                let subChild1 = child.getChildren()[0];
+                let subChild2 = child.getChildren()[1];
+                switch(child.getName()) {
+                    case "VarDecl": {
+                        this.currTableEntry++;
+                        let currEntry = this.symbolTable.findID(subChild2.getValue(), this.currScope);
+                        let label = "T" + this.currTableEntry;
                         
-                    } else {
-                        val = this.allocateHeap(child.getChildren()[1].getValue())
-                        let address = this.toHexStr(val);
+                        let id = currEntry.getID();
+                        let scope = currEntry.getScope();
+
+                        this.staticData.push(new StaticEntry(label, id, scope))
 
                         this.memory[this.currByte] = "A9";
                         this.currByte++;
-                        this.memory[this.currByte] = address;
+                        this.memory[this.currByte] = "00";
                         this.currByte++;
                         this.memory[this.currByte] = "8D";
                         this.currByte++;
+                        this.memory[this.currByte] = label;
+                        this.currByte++;
+                        this.memory[this.currByte] = "XX";
+                        this.currByte++;
+                        break;
+                    }
+                    case "AssignmentStatement": {
+                        //let currEntry = this.symbolTable.findID(subChild1.getValue(), this.currScope);
+                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope);
+                        let valNode = child.getChildren()[1];
+                        let val;
+                        if (valNode.getName() === "DIGIT") {
+                            val = parseInt(valNode.getValue());
+                            let constant = this.toHexStr(val);
+
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = constant;
+                            this.currByte++;
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";      
+                            this.currByte++;
+                        } else if (valNode.getName() === "ID") {
+                            
+                        } else {
+                            val = this.allocateHeap(child.getChildren()[1].getValue())
+                            let address = this.toHexStr(val);
+
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = address;
+                            this.currByte++;
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";      
+                            this.currByte++;
+                        }
+                        break;
+                    }
+                    case "PrintStatement": {
+                        //let currEntry = this.symbolTable.getTable()[this.currTableEntry];
+                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope);
+
+                        //code for digits
+                        this.memory[this.currByte] = "AC";
+                        this.currByte++;
                         this.memory[this.currByte] = tempStatic.getLabel();
                         this.currByte++;
-                        this.memory[this.currByte] = "XX";      
+                        this.memory[this.currByte] = "XX";
                         this.currByte++;
+                        this.memory[this.currByte] = "A2";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        break;
                     }
-                    break;
+                    case "Block": {
+                        this.currDepth++;
+                        let prevScope = this.currScope;
+                        this.currScope = this.labelScope(this.currDepth);
+                        this.initializeCode(child, prevScope);
+                    }
                 }
-                case "PrintStatement": {
-                    let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                    let tempStatic = this.findStaticEntry(currEntry.getID(), currEntry.getScope())
+            });
+            this.currDepth--;
+            this.currScope = prevScope;
+        }
+    }
 
-                    //code for digits
-                    this.memory[this.currByte] = "AC";
-                    this.currByte++;
-                    this.memory[this.currByte] = tempStatic.getLabel();
-                    this.currByte++;
-                    this.memory[this.currByte] = "XX";
-                    this.currByte++;
-                    this.memory[this.currByte] = "A2";
-                    this.currByte++;
-                    this.memory[this.currByte] = "01";
-                    this.currByte++;
-                    this.memory[this.currByte] = "FF";
-                    this.currByte++;
-                    break;
-                }
-                case "Block": {
-                    this.initializeCode(child);
-                }
-            }
-        });
+    private labelScope(depth:number) {
+        let currSubLabel;
+        if (this.repeatScope.length-1 < depth) {
+            this.repeatScope.push("a");
+            currSubLabel = this.repeatScope[depth];
+        } else {
+            currSubLabel = this.repeatScope[depth];
+            let temp = currSubLabel.charCodeAt(0);
+            currSubLabel = String.fromCharCode(temp + 1);
+            this.repeatScope[depth] = currSubLabel;
+        }
+        return depth + currSubLabel;
     }
 
     private allocateStack() {

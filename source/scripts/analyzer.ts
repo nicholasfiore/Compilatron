@@ -129,7 +129,7 @@ class SemanticAnalyzer extends Component {
             currSubLabel = String.fromCharCode(temp + 1);
             this.repeatScope[depth] = currSubLabel;
         }
-        
+        return depth + currSubLabel;
         // for (let i = currSubLabel.length-1; i > 0; i--) {
         //     if (currSubLabel.charCodeAt(currSubLabel.length-1) >= 90) {
         //         //increments to the next letter
@@ -138,7 +138,7 @@ class SemanticAnalyzer extends Component {
         //         currSubLabel = this.replaceChar(currSubLabel, currLetter, i);
         //     }
         // }
-        return depth + currSubLabel;
+
         // let temp = currLetter.charCodeAt(currLetter.length - 1) + 1;
         // currLetter = String.fromCharCode(temp);
         
