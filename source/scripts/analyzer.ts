@@ -339,7 +339,7 @@ class Table extends Component {
 
     public findID(id: string, scope: string) {
         for (let i = 0; i < this.table.length; i++) {
-            if (this.table[i].getID() === id && this.table[i].getScope() + scope) {
+            if (this.table[i].getScope() === scope &&this.table[i].getID() === id) {
                 return this.table[i];
             }
         }
