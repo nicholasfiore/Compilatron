@@ -93,9 +93,18 @@ class Generator extends Component {
                         let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
                         let valNode = child.getChildren()[1];
                         let val;
-                        if (valNode.getName() === "DIGIT") {
-                            val = parseInt(valNode.getValue());
-                            let constant = this.toHexStr(val);
+                        if (valNode.getName() === "DIGIT" || valNode.getName() === "TRUE" || valNode.getName() === "FALSE") {
+                            let constant;
+                            if (valNode.getName() === "DIGIT") {
+                                val = parseInt(valNode.getValue());
+                                constant = this.toHexStr(val);
+                            } else {
+                                if (valNode.getName() === "TRUE") {
+                                    constant = this.toHexStr(1);
+                                } else {
+                                    constant = this.toHexStr(0);
+                                }
+                            }
 
                             //load constant
                             this.memory[this.currByte] = "A9";
@@ -103,12 +112,12 @@ class Generator extends Component {
                             this.memory[this.currByte] = constant;
                             this.currByte++;
                             //store to variable being assigned
-                            this.memory[this.currByte] = "8D";
-                            this.currByte++;
-                            this.memory[this.currByte] = tempStatic.getLabel();
-                            this.currByte++;
-                            this.memory[this.currByte] = "XX";      
-                            this.currByte++;
+                            // this.memory[this.currByte] = "8D";
+                            // this.currByte++;
+                            // this.memory[this.currByte] = tempStatic.getLabel();
+                            // this.currByte++;
+                            // this.memory[this.currByte] = "XX";      
+                            // this.currByte++;
                         } else if (valNode.getName() === "ID") {
                             val = this.findStaticEntry(subChild2.getValue(), this.symbolTable.findID(subChild2.getValue(), this.currScope).getScope())
                             let varAddress : StaticEntry = val;
@@ -121,12 +130,12 @@ class Generator extends Component {
                             this.memory[this.currByte] = "XX";
                             this.currByte++;
                             //store the data in the accumulator to the variable being assigned
-                            this.memory[this.currByte] = "8D";
-                            this.currByte++;
-                            this.memory[this.currByte] = tempStatic.getLabel();
-                            this.currByte++;
-                            this.memory[this.currByte] = "XX";      
-                            this.currByte++;
+                            // this.memory[this.currByte] = "8D";
+                            // this.currByte++;
+                            // this.memory[this.currByte] = tempStatic.getLabel();
+                            // this.currByte++;
+                            // this.memory[this.currByte] = "XX";      
+                            // this.currByte++;
 
                         } else {
                             val = this.allocateHeap(child.getChildren()[1].getValue())
@@ -137,14 +146,15 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = address;
                             this.currByte++;
-                            //store to variable being assigned
-                            this.memory[this.currByte] = "8D";
-                            this.currByte++;
-                            this.memory[this.currByte] = tempStatic.getLabel();
-                            this.currByte++;
-                            this.memory[this.currByte] = "XX";      
-                            this.currByte++;
+                            
                         }
+                        //store to variable being assigned
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = tempStatic.getLabel();
+                        this.currByte++;
+                        this.memory[this.currByte] = "XX";      
+                        this.currByte++;
                         break;
                     }
                     case "PrintStatement": {
