@@ -37,7 +37,7 @@ class Generator extends Component {
 
     public generate() {
         this.initializeCode(this.AST.getRoot());
-        this.memory[this.currByte] = "00";
+        this.memory[this.currByte] = "00"; //ensures the last byte of code is a break
         this.lastCodeByte = this.currByte;
 
         this.backPatch();

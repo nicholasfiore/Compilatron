@@ -47,7 +47,7 @@ O ::== + | -
         </div>
         
         <div class="output">
-            <textarea id="taOutput" readonly></textarea>
+            <div id="taOutput"></div>
             <textarea id="codeOut"></textarea>
         </div>
         
@@ -61,18 +61,18 @@ O ::== + | -
 
     <script>
         window.onload = function () {
-            document.getElementById('taOutput').value = "";
+            document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
         }
 
 		document.getElementById("btnCompile").addEventListener("click", function() {
-			document.getElementById('taOutput').value = "";
+			document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
             initializeCompiler();
 		})
 
         document.getElementById("btnClear").addEventListener("click", function() {
-			document.getElementById('taOutput').value = "";
+			document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
 		})
         

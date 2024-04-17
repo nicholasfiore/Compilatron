@@ -71,7 +71,7 @@ h1 {
 }
 .output{
 	float:right;
-
+	
 	padding-right: 2%;	
 	/* margin:; */
 }
@@ -93,6 +93,7 @@ h1 {
 
 #taOutput, #codeOut{
 	float:right;
+	overflow-y:scroll;
 }
 
 #codeOut{

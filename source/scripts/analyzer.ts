@@ -53,7 +53,8 @@ class SemanticAnalyzer extends Component {
         if (this.currDepth < 0) {
             this.currDepth++;
             this.repeatScope[0] = "";
-            this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+            this.currScopeLabel = "0 "
+            this.scopeTree.addNode(new HashTable(this.currScopeLabel));
             this.currScope = this.scopeTree.getCurrent();
             this.buildSymbolTable(node);
         } else {
@@ -363,7 +364,7 @@ class Table extends Component {
             }
 
             output += entry.getID() + "  | " + entry.getType() + typeSpacing + " | " + entry.getScope()
-            + "     | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed() + "\n"
+            + "    | " + entry.getLine() + "    | " + entry.getInit() + initSpacing + " | " + entry.getBeenUsed() + "\n"
             
             typeSpacing = "";
         });
