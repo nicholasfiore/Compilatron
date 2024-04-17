@@ -155,12 +155,12 @@ class HashTree {
 
     public findScope(label:string, node: HashNode) {
         var retVal;
-        if (node.getChildren().length === 0) {
-            if (node.getTable().getName() === label) {
-                retVal = node;
-            }
-            return retVal;
-        }
+        // if (node.getChildren().length === 0) {
+        //     if (node.getTable().getName() === label) {
+        //         retVal = node;
+        //     }
+        //     return retVal;
+        // }
 
         node.getChildren().forEach(child => {
             if (child.getTable().getName() === label) {

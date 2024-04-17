@@ -17,6 +17,7 @@ class Generator extends Component {
 
     private currDepth: number = -1;
     private currScope: HashNode;
+    private currScopeLabel: string;
     private repeatScope: string[] = new Array<string>;
 
     private errors;
@@ -58,6 +59,7 @@ class Generator extends Component {
         if (this.currDepth < 0) {
             this.currDepth++;
             this.repeatScope[0] = "";
+            this.currScopeLabel = "0 ";
             this.initializeCode(node);
         } else {
             node.getChildren().forEach(child => {
@@ -145,13 +147,14 @@ class Generator extends Component {
                     }
                     case "Block": {
                         this.currDepth++;
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
                         this.initializeCode(child);
                     }
                 }
             });
             this.currDepth--;
-            this.symbolTable.moveUp();
-            this.currScope = this.symbolTable.getCurrent();
+            this.currScope = this.currScope.getParent();
         }
     }
 
