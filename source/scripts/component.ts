@@ -54,12 +54,13 @@ class Component {
 
     //takes a decimal number and converts it to hex as a string, adding a leading zero if necessary
     public toHexStr(val) {
-        let retVal;
+        let retVal: string;
         if (val < 16) {
             retVal = "0" + val.toString(16);
         } else {
             retVal = val.toString(16)
         }
+        retVal = retVal.toUpperCase();
         return retVal;
     }
 }

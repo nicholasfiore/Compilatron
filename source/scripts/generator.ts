@@ -154,8 +154,6 @@ class Generator extends Component {
                     case "PrintStatement": {
                         //let currEntry = this.symbolTable.getTable()[this.currTableEntry];
 
-
-                        let printVal;
                         if (subChild1.getName() === "ID") {
                             let variable = this.findStaticEntry(subChild1.getValue(), this.symbolTable.findID(subChild1.getValue(), this.currScope).getScope())
                             let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
@@ -253,9 +251,18 @@ class Generator extends Component {
 
     private addWithCarry(node: TreeNode) {
         let child1 = node.getChildren()[0];
-        let child2 = node.getChildren()[1]
+        let child2 = node.getChildren()[1];
 
-        
+
+
+        if (child2.getName() === "SYM_ADD") {
+
+        } else if (child2.getName() === "ID") {
+
+        } else {
+            //has to be a digit if it's not the other two
+
+        }
     }
 
     // public findID(id: string, scope: string, currScope: HashNode) {
@@ -278,7 +285,7 @@ class Generator extends Component {
         } else {
             let i;
             for (i = 0; i < charlist.length; i++) {
-                this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16);
+                this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16).toUpperCase();
             }
             this.memory[this.currHeapLoc + i] = "00";
             return this.currHeapLoc;
