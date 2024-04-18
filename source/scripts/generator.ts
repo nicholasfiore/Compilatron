@@ -73,8 +73,9 @@ class Generator extends Component {
                         
                         let id = currEntry.getID();
                         let scope = currEntry.getScope();
+                        let type = currEntry.getType();
 
-                        this.staticData.push(new StaticEntry(label, id, scope))
+                        this.staticData.push(new StaticEntry(label, id, scope, type))
 
                         this.memory[this.currByte] = "A9";
                         this.currByte++;
@@ -152,11 +153,39 @@ class Generator extends Component {
                     }
                     case "PrintStatement": {
                         //let currEntry = this.symbolTable.getTable()[this.currTableEntry];
-                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
+
 
                         let printVal;
                         if (subChild1.getName() === "ID") {
                             let variable = this.findStaticEntry(subChild1.getValue(), this.symbolTable.findID(subChild1.getValue(), this.currScope).getScope())
+                            let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
+
+                            //all IDs must first load the value stored at their memory location into
+                            //the Y register
+                            this.memory[this.currByte] = "AC";
+                            this.currByte++;
+                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";
+                            this.currByte++;
+
+                            if (variable.getType() == "string") {
+                                //strings print differently than digits or booleans
+                                //and require a different system call    
+                                this.memory[this.currByte] = "A2";
+                                this.currByte++;
+                                this.memory[this.currByte] = "02";
+                                this.currByte++;
+                                this.memory[this.currByte] = "FF";
+                                this.currByte++;
+                            } else {
+                                this.memory[this.currByte] = "A2";
+                                this.currByte++;
+                                this.memory[this.currByte] = "01";
+                                this.currByte++;
+                                this.memory[this.currByte] = "FF";
+                                this.currByte++;
+                            }
                         } else if (subChild1.getName() === "CharList") {
                             //allocates the new string literal on the heap
                             let address = this.toHexStr(this.allocateHeap(subChild1.getValue()))
@@ -174,12 +203,11 @@ class Generator extends Component {
                         }
 
                         if (subChild1.getName() === "DIGIT") {
+                            let value = this.toHexStr(subChild1.getValue())
                             //code for digits
-                            this.memory[this.currByte] = "AC";
+                            this.memory[this.currByte] = "A0";
                             this.currByte++;
-                            this.memory[this.currByte] = tempStatic.getLabel();
-                            this.currByte++;
-                            this.memory[this.currByte] = "XX";
+                            this.memory[this.currByte] = value;
                             this.currByte++;
                             this.memory[this.currByte] = "A2";
                             this.currByte++;
@@ -300,14 +328,15 @@ class Generator extends Component {
 
 class StaticEntry {
     private label: string;
-
+    private type: string;
     private id: string;
     private scope: string;
 
-    constructor(label:string, id:string, scope:string) {
+    constructor(label:string, id:string, scope:string, type:string) {
         this.label = label;
         this.id = id;
         this.scope = scope;
+        this.type = type;
     }
 
     public getID() {
@@ -320,6 +349,10 @@ class StaticEntry {
 
     public getLabel() {
         return this.label;
+    }
+
+    public getType() {
+        return this.type;
     }
 }
 
