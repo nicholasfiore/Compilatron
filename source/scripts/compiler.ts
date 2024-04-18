@@ -91,10 +91,12 @@ class Compiler extends Component {
                 var analyzeOut = this._Analyzer.analyze();
                 
                 if (analyzeOut.errors > 0) {
+                    this.break();
                     this.info("Syntactic Analysis failed with " + analyzeOut.errors + " errors and " + analyzeOut.warnings + " warnings\n")
                     //this.break();
                     this.caughtError = true;
                 } else {
+                    this.break();
                     this.info("Syntactic Analysis finished with " + analyzeOut.warnings + " warnings\n")
                     //this.break();
                 }

@@ -129,13 +129,6 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = "XX";
                             this.currByte++;
-                            //store the data in the accumulator to the variable being assigned
-                            // this.memory[this.currByte] = "8D";
-                            // this.currByte++;
-                            // this.memory[this.currByte] = tempStatic.getLabel();
-                            // this.currByte++;
-                            // this.memory[this.currByte] = "XX";      
-                            // this.currByte++;
 
                         } else {
                             val = this.allocateHeap(child.getChildren()[1].getValue())
@@ -161,19 +154,46 @@ class Generator extends Component {
                         //let currEntry = this.symbolTable.getTable()[this.currTableEntry];
                         let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
 
-                        //code for digits
-                        this.memory[this.currByte] = "AC";
-                        this.currByte++;
-                        this.memory[this.currByte] = tempStatic.getLabel();
-                        this.currByte++;
-                        this.memory[this.currByte] = "XX";
-                        this.currByte++;
-                        this.memory[this.currByte] = "A2";
-                        this.currByte++;
-                        this.memory[this.currByte] = "01";
-                        this.currByte++;
-                        this.memory[this.currByte] = "FF";
-                        this.currByte++;
+                        let printVal;
+                        if (subChild1.getName() === "ID") {
+                            let variable = this.findStaticEntry(subChild1.getValue(), this.symbolTable.findID(subChild1.getValue(), this.currScope).getScope())
+                        } else if (subChild1.getName() === "CharList") {
+                            //allocates the new string literal on the heap
+                            let address = this.toHexStr(this.allocateHeap(subChild1.getValue()))
+
+                            this.memory[this.currByte] = "A0";
+                            this.currByte++;
+                            this.memory[this.currByte] = address;
+                            this.currByte++;
+                            this.memory[this.currByte] = "A2";
+                            this.currByte++;
+                            this.memory[this.currByte] = "02";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                        }
+
+                        if (subChild1.getName() === "DIGIT") {
+                            //code for digits
+                            this.memory[this.currByte] = "AC";
+                            this.currByte++;
+                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";
+                            this.currByte++;
+                            this.memory[this.currByte] = "A2";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                        //} else if (subChild1.getName() === "ID") {
+
+                        } else {
+                            
+                        }
+
+                        
                         break;
                     }
                     case "Block": {
