@@ -200,9 +200,11 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
-                        }
+                        } else if (subChild1.getName() === "SYM_ADD") {
 
-                        if (subChild1.getName() === "DIGIT") {
+                        } else if (subChild1.getName() === "SYM_L_PAREN") {
+
+                        } else {
                             let value = this.toHexStr(subChild1.getValue())
                             //code for digits
                             this.memory[this.currByte] = "A0";
@@ -216,10 +218,7 @@ class Generator extends Component {
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
                         //} else if (subChild1.getName() === "ID") {
-
-                        } else {
-                            
-                        }
+                        } 
 
                         
                         break;
@@ -249,6 +248,14 @@ class Generator extends Component {
             this.repeatScope[depth] = currSubLabel;
         }
         return depth + currSubLabel;
+    }
+
+
+    private addWithCarry(node: TreeNode) {
+        let child1 = node.getChildren()[0];
+        let child2 = node.getChildren()[1]
+
+        
     }
 
     // public findID(id: string, scope: string, currScope: HashNode) {
