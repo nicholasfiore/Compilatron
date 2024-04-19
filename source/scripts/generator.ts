@@ -252,12 +252,49 @@ class Generator extends Component {
         let child1 = node.getChildren()[0];
         let child2 = node.getChildren()[1];
 
+        if (child2.getName() == "SYM_ADD") {
+            this.addWithCarry(child2);
+            //stores the result into 0xFF
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
 
+            //load child 1 now
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = this.toHexStr(child1.getValue());
+            this.currByte++;
+            // this.memory[this.currByte] = "6D";
+            // this.currByte++;
+            // this.memory[this.currByte] = "FF";
+            // this.currByte++;
+            // this.memory[this.currByte] = "00";
+            // this.currByte++;
+        } else if (child2.getName() == "ID") {
+            let val = this.toHexStr(child1.getValue());
+            let tempStatic = this.findStaticEntry(child2.getValue(), this.currScope.getTable().getName());
 
-        if (child2.getName() === "SYM_ADD") {
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = val;
+            this.currByte++;
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
 
-        } else if (child2.getName() === "ID") {
-
+            //load the value stored in the variable to the accumulator
+            this.memory[this.currByte] = "AD";
+            this.currByte++;
+            this.memory[this.currByte] = tempStatic.getLabel();
+            this.currByte++;
+            this.memory[this.currByte] = "XX";
+            this.currByte++;
         } else {
             //has to be a digit if it's not the other two
             //load first value into ACC, then store it at 0xFF
@@ -278,13 +315,21 @@ class Generator extends Component {
             this.currByte++;
             this.memory[this.currByte] = val2;
             this.currByte++;
-            this.memory[this.currByte] = "6D";
-            this.currByte++;
-            this.memory[this.currByte] = "FF";
-            this.currByte++;
-            this.memory[this.currByte] = "00";
-            this.currByte++;
+            // this.memory[this.currByte] = "6D";
+            // this.currByte++;
+            // this.memory[this.currByte] = "FF";
+            // this.currByte++;
+            // this.memory[this.currByte] = "00";
+            // this.currByte++;
         }
+
+        //add from address 0xFF
+        this.memory[this.currByte] = "6D";
+        this.currByte++;
+        this.memory[this.currByte] = "FF";
+        this.currByte++;
+        this.memory[this.currByte] = "00";
+        this.currByte++;
     }
 
     // public findID(id: string, scope: string, currScope: HashNode) {
