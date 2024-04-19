@@ -364,6 +364,8 @@ class Table extends Component {
                 typeSpacing = "    ";
             } else if (entry.getType() === "string") {
                 typeSpacing = " ";
+            } else {
+                typeSpacing = "";
             }
 
             if (entry.getInit() === "true") {

@@ -223,8 +223,8 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
-                        } else if (subChild1.getName() === "SYM_L_PAREN") {
-
+                        } else if (subChild1.getName() == "SYM_IS_EQUAL" || subChild1.getName() == "SYM_IS_NOT_EQUAL") {
+                            
                         } else {
                             let value = this.toHexStr(subChild1.getValue())
                             //code for digits
@@ -271,6 +271,9 @@ class Generator extends Component {
         return depth + currSubLabel;
     }
 
+    private expandBoolExpr(node: TreeNode) {
+
+    }
 
     private addWithCarry(node: TreeNode) {
         let child1 = node.getChildren()[0];
