@@ -197,8 +197,32 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
-                        } else if (subChild1.getName() === "SYM_ADD") {
+                        } else if (subChild1.getName() == "SYM_ADD") {
+                            this.addWithCarry(subChild1);
 
+                            //store ACC in 0xFF
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+
+                            //store 0xFF into the Y reg
+                            this.memory[this.currByte] = "AC";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                            
+                            //print value in Y reg
+                            this.memory[this.currByte] = "A2";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
                         } else if (subChild1.getName() === "SYM_L_PAREN") {
 
                         } else {
