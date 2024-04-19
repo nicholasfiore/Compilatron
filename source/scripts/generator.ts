@@ -11,7 +11,7 @@ class Generator extends Component {
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
 
-    private currHeapLoc: number = 256;
+    private currHeapLoc: number = 255;
 
     private memory: string[];
 
@@ -94,7 +94,35 @@ class Generator extends Component {
                         let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
                         let valNode = child.getChildren()[1];
                         let val;
-                        if (valNode.getName() === "DIGIT" || valNode.getName() === "TRUE" || valNode.getName() === "FALSE") {
+
+                        if (valNode.getName() === "SYM_ADD") {
+                            //result is stored in accumulator
+                            this.addWithCarry(valNode);
+                        } else if (valNode.getName() === "CharList") {
+                            val = this.allocateHeap(child.getChildren()[1].getValue())
+                            let address = this.toHexStr(val);
+
+                            //load address as a constant
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = address;
+                            this.currByte++;
+                        }
+                        else if (valNode.getName() === "ID") {
+                            val = this.findStaticEntry(subChild2.getValue(), this.symbolTable.findID(subChild2.getValue(), this.currScope).getScope())
+                            let varAddress : StaticEntry = val;
+                            
+                            //load the value stored in the variable to the accumulator
+                            this.memory[this.currByte] = "AD";
+                            this.currByte++;
+                            this.memory[this.currByte] = varAddress.getLabel();
+                            this.currByte++;
+                            this.memory[this.currByte] = "XX";
+                            this.currByte++;
+
+                        } 
+                        
+                        else {
                             let constant;
                             if (valNode.getName() === "DIGIT") {
                                 val = parseInt(valNode.getValue());
@@ -112,35 +140,6 @@ class Generator extends Component {
                             this.currByte++;
                             this.memory[this.currByte] = constant;
                             this.currByte++;
-                            //store to variable being assigned
-                            // this.memory[this.currByte] = "8D";
-                            // this.currByte++;
-                            // this.memory[this.currByte] = tempStatic.getLabel();
-                            // this.currByte++;
-                            // this.memory[this.currByte] = "XX";      
-                            // this.currByte++;
-                        } else if (valNode.getName() === "ID") {
-                            val = this.findStaticEntry(subChild2.getValue(), this.symbolTable.findID(subChild2.getValue(), this.currScope).getScope())
-                            let varAddress : StaticEntry = val;
-                            
-                            //load the value stored in the variable to the accumulator
-                            this.memory[this.currByte] = "AD";
-                            this.currByte++;
-                            this.memory[this.currByte] = varAddress.getLabel();
-                            this.currByte++;
-                            this.memory[this.currByte] = "XX";
-                            this.currByte++;
-
-                        } else {
-                            val = this.allocateHeap(child.getChildren()[1].getValue())
-                            let address = this.toHexStr(val);
-
-                            //load address as a constant
-                            this.memory[this.currByte] = "A9";
-                            this.currByte++;
-                            this.memory[this.currByte] = address;
-                            this.currByte++;
-                            
                         }
                         //store to variable being assigned
                         this.memory[this.currByte] = "8D";
@@ -261,7 +260,30 @@ class Generator extends Component {
 
         } else {
             //has to be a digit if it's not the other two
+            //load first value into ACC, then store it at 0xFF
+            let val1 = this.toHexStr(child1.getValue());
+            let val2 = this.toHexStr(child2.getValue());
 
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = val1;
+            this.currByte++;
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = val2;
+            this.currByte++;
+            this.memory[this.currByte] = "6D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
         }
     }
 
