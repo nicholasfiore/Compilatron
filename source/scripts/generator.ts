@@ -224,7 +224,7 @@ class Generator extends Component {
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
                         } else if (subChild1.getName() == "SYM_IS_EQUAL" || subChild1.getName() == "SYM_IS_NOT_EQUAL") {
-                            
+
                         } else {
                             let value = this.toHexStr(subChild1.getValue())
                             //code for digits
@@ -272,7 +272,86 @@ class Generator extends Component {
     }
 
     private expandBoolExpr(node: TreeNode) {
+        let child1 = node.getChildren()[0];
+        let child2 = node.getChildren()[1];
 
+        let addr1;
+        let addr2;
+
+        if (child1.getName() == "SYM_ADD") {
+            
+        } else {
+            if (child1.getName() == "TRUE") {
+                this.memory[this.currByte] = "A9";
+                this.currByte++;
+                this.memory[this.currByte] = "01"; //0x01 represents true
+                this.currByte++;
+                // this.memory[this.currByte] = "8D";
+                // this.currByte++;
+                // this.memory[this.currByte] = "FF";
+                // this.currByte++;
+                // this.memory[this.currByte] = "00";
+                // this.currByte++;
+                // this.memory[this.currByte] = "AE";
+                // this.currByte++;
+                // this.memory[this.currByte] = "FF";
+                // this.currByte++;
+                // this.memory[this.currByte] = "00";
+                // this.currByte++;
+            } else {
+                this.memory[this.currByte] = "A9";
+                this.currByte++;
+                this.memory[this.currByte] = "01"; //0x00 represents false
+                this.currByte++;
+            }
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            this.memory[this.currByte] = "AE";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+        }
+
+        if (child2.getName() == "SYM_ADD") {
+            
+        } else {
+            if (child2.getName() == "TRUE") {
+                this.memory[this.currByte] = "A9";
+                this.currByte++;
+                this.memory[this.currByte] = "01"; //0x01 represents true
+                this.currByte++;
+                this.memory[this.currByte] = "8D";
+                this.currByte++;
+                this.memory[this.currByte] = "FF";
+                this.currByte++;
+                this.memory[this.currByte] = "00";
+                this.currByte++;
+            } else {
+                this.memory[this.currByte] = "A9";
+                this.currByte++;
+                this.memory[this.currByte] = "01"; //0x00 represents false
+                this.currByte++;
+                this.memory[this.currByte] = "8D";
+                this.currByte++;
+                this.memory[this.currByte] = "FF";
+                this.currByte++;
+                this.memory[this.currByte] = "00";
+                this.currByte++;
+            }
+            //compare X reg to 
+            this.memory[this.currByte] = "EC";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+        }
     }
 
     private addWithCarry(node: TreeNode) {
