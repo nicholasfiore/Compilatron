@@ -319,92 +319,99 @@ class Generator extends Component {
                 this.memory[this.currByte] = "00";
                 this.currByte++;
             }
-
-
             
-
-            if (child2.getName() == "SYM_ADD") {
-                
-            } else {
-                this.memory[this.currByte] = "A9";
+            if (child2.getName() == "ID") {
+                //if its an ID, comparison can happen directly to X reg
+                let addr = this.findStaticEntry(child2.getValue(), this.symbolTable.findID(child2.getValue(), this.currScope).getScope())
+                this.memory[this.currByte] = "EC";
                 this.currByte++;
-                if (child2.getName() == "TRUE") {
-                    this.memory[this.currByte] = "01"; //0x01 represents true
-                    this.currByte++;
+                this.memory[this.currByte] = addr.getLabel();
+                this.currByte++;
+                this.memory[this.currByte] = "XX";
+                this.currByte++;
+            } else {
+                if (child2.getName() == "SYM_ADD") {
+                
                 } else {
-                    this.memory[this.currByte] = "00"; //0x00 represents false
+                    this.memory[this.currByte] = "A9";
+                    this.currByte++;
+                    if (child2.getName() == "TRUE") {
+                        this.memory[this.currByte] = "01"; //0x01 represents true
+                        this.currByte++;
+                    } else {
+                        this.memory[this.currByte] = "00"; //0x00 represents false
+                        this.currByte++;
+                    }
+                    //store in 0xFF
+                    this.memory[this.currByte] = "8D";
+                    this.currByte++;
+                    this.memory[this.currByte] = "FF";
+                    this.currByte++;
+                    this.memory[this.currByte] = "00";
+                    this.currByte++;
+    
+                    //compare X reg to 0xFF
+                    this.memory[this.currByte] = "EC";
+                    this.currByte++;
+                    this.memory[this.currByte] = "FF";
+                    this.currByte++;
+                    this.memory[this.currByte] = "00";
                     this.currByte++;
                 }
-                //store in 0xFF
-                this.memory[this.currByte] = "8D";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-
-                //compare X reg to 0xFF
-                this.memory[this.currByte] = "EC";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-
-                //branch on not equal
-                this.memory[this.currByte] = "D0";
-                this.currByte++;
-                this.memory[this.currByte] = "0C";
-                this.currByte++;
-
-                //if z-flag = 1, add 0x01 to the ACC and temporarily store in 0xFF
-                this.memory[this.currByte] = "A9";
-                this.currByte++;
-                this.memory[this.currByte] = "01";
-                this.currByte++;
-                this.memory[this.currByte] = "8D";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-                //put 0x00 in the X reg and compare
-                this.memory[this.currByte] = "A2";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-                this.memory[this.currByte] = "EC";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-                //branch past not-equal logic
-                this.memory[this.currByte] = "D0";
-                this.currByte++;
-                this.memory[this.currByte] = "05";
-                this.currByte++;
-
-                //if z-flag = 0, add 0x00 to the ACC and temporarily store it in 0xFF
-                this.memory[this.currByte] = "A9";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-                this.memory[this.currByte] = "8D";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
-
-                //after value is stored, return it to the ACC
-                this.memory[this.currByte] = "AD";
-                this.currByte++;
-                this.memory[this.currByte] = "FF";
-                this.currByte++;
-                this.memory[this.currByte] = "00";
-                this.currByte++;
             }
+            //branch on not equal
+            this.memory[this.currByte] = "D0";
+            this.currByte++;
+            this.memory[this.currByte] = "0C";
+            this.currByte++;
+
+            //if z-flag = 1, add 0x01 to the ACC and temporarily store in 0xFF
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = "01";
+            this.currByte++;
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            //put 0x00 in the X reg and compare
+            this.memory[this.currByte] = "A2";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            this.memory[this.currByte] = "EC";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            //branch past not-equal logic
+            this.memory[this.currByte] = "D0";
+            this.currByte++;
+            this.memory[this.currByte] = "05";
+            this.currByte++;
+
+            //if z-flag = 0, add 0x00 to the ACC and temporarily store it in 0xFF
+            this.memory[this.currByte] = "A9";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+            this.memory[this.currByte] = "8D";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
+
+            //after value is stored, return it to the ACC
+            this.memory[this.currByte] = "AD";
+            this.currByte++;
+            this.memory[this.currByte] = "FF";
+            this.currByte++;
+            this.memory[this.currByte] = "00";
+            this.currByte++;
         } else {
             //not-equal logic
             if (child1.getName() == "SYM_ADD") {
