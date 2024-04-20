@@ -39,3 +39,13 @@ a=1+b
 }
 }
 }$
+
+{
+int a
+int b
+boolean c
+a = 3
+b = 3
+c = (a == b)
+print(c)
+}$
