@@ -164,7 +164,7 @@ class Generator extends Component {
                             //the Y register
                             this.memory[this.currByte] = "AC";
                             this.currByte++;
-                            this.memory[this.currByte] = tempStatic.getLabel();
+                            this.memory[this.currByte] = variable.getLabel();
                             this.currByte++;
                             this.memory[this.currByte] = "XX";
                             this.currByte++;
@@ -281,31 +281,30 @@ class Generator extends Component {
         var addr1;
         var addr2;
         if (node.getName() == "SYM_IS_EQUAL") {
-            if (child1.getName() == "SYM_ADD") {
-                
+            if (child1.getName() == "ID") {
+                let addr = this.findStaticEntry(child1.getValue(), this.symbolTable.findID(child1.getValue(), this.currScope).getScope())
+                //can be stored directly into the X reg
+                this.memory[this.currByte] = "AE";
+                this.currByte++;
+                this.memory[this.currByte] = addr.getLabel();
+                this.currByte++;
+                this.memory[this.currByte] = "XX";
+                this.currByte++;
             } else {
-                if (child1.getName() == "TRUE") {
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
-                    this.memory[this.currByte] = "01"; //0x01 represents true
-                    this.currByte++;
-                    // this.memory[this.currByte] = "8D";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "FF";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "00";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "AE";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "FF";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "00";
-                    // this.currByte++;
+                if (child1.getName() == "SYM_ADD") {
+                
                 } else {
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
-                    this.memory[this.currByte] = "00"; //0x00 represents false
-                    this.currByte++;
+                    if (child1.getName() == "TRUE") {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01"; //0x01 represents true
+                        this.currByte++;
+                    } else {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00"; //0x00 represents false
+                        this.currByte++;
+                    }
                 }
                 this.memory[this.currByte] = "8D";
                 this.currByte++;
@@ -321,6 +320,9 @@ class Generator extends Component {
                 this.currByte++;
             }
 
+
+            
+
             if (child2.getName() == "SYM_ADD") {
                 
             } else {
@@ -330,16 +332,8 @@ class Generator extends Component {
                     this.memory[this.currByte] = "01"; //0x01 represents true
                     this.currByte++;
                 } else {
-                    // this.memory[this.currByte] = "A9";
-                    // this.currByte++;
                     this.memory[this.currByte] = "00"; //0x00 represents false
                     this.currByte++;
-                    // this.memory[this.currByte] = "8D";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "FF";
-                    // this.currByte++;
-                    // this.memory[this.currByte] = "00";
-                    // this.currByte++;
                 }
                 //store in 0xFF
                 this.memory[this.currByte] = "8D";
@@ -593,12 +587,6 @@ class Generator extends Component {
             this.currByte++;
             this.memory[this.currByte] = val2;
             this.currByte++;
-            // this.memory[this.currByte] = "6D";
-            // this.currByte++;
-            // this.memory[this.currByte] = "FF";
-            // this.currByte++;
-            // this.memory[this.currByte] = "00";
-            // this.currByte++;
         }
 
         //add from address 0xFF
