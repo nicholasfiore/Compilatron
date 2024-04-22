@@ -41,6 +41,7 @@ class Generator extends Component {
 
         this.staticData = [];
         this.jumps = [];
+        this.heapObjects = [];
         
         this.memory = Array(Generator.MAX_BYTES_MEMORY).fill("00");
     }
@@ -660,7 +661,7 @@ class Generator extends Component {
     //if there is an error, returns -1. Otherwise, returns the memory location of the first character
     private allocateHeap(charlist: string) {
         let entry: HeapEntry;
-        for (let i; i < this.heapObjects.length; i++) {
+        for (let i = 0; i < this.heapObjects.length; i++) {
             if (this.heapObjects[i].getValue() == charlist) {
                 entry = this.heapObjects[i];
             }
