@@ -49,3 +49,14 @@ b = 3
 c = (a == b)
 print(c)
 }$
+
+/* testing string allocation (identical strings are assigned the same pointer to save memory) */
+{
+string a
+string b
+a = "bee"
+b = "tee"
+print("bee")
+string c
+c = "see"
+}

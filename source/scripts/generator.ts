@@ -255,18 +255,35 @@ class Generator extends Component {
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
                         } else {
-                            let value = this.toHexStr(subChild1.getValue())
-                            //code for digits
-                            this.memory[this.currByte] = "A0";
-                            this.currByte++;
-                            this.memory[this.currByte] = value;
-                            this.currByte++;
+                            let value;
+                            if (subChild1.getName() === "DIGIT") {
+                                value = this.toHexStr(subChild1.getValue())
+                                //code for digits
+                                this.memory[this.currByte] = "A0";
+                                this.currByte++;
+                                this.memory[this.currByte] = value;
+                                this.currByte++;
+                            } else {
+                                if (subChild1.getName() === "TRUE") {
+                                    this.memory[this.currByte] = "A0";
+                                    this.currByte++;
+                                    this.memory[this.currByte] = "01";
+                                    this.currByte++;
+                                } else {
+                                    this.memory[this.currByte] = "A0";
+                                    this.currByte++;
+                                    this.memory[this.currByte] = "00";
+                                    this.currByte++;
+                                }
+                            }
+                            //print value in y reg
                             this.memory[this.currByte] = "A2";
                             this.currByte++;
                             this.memory[this.currByte] = "01";
                             this.currByte++;
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
+                            
                         //} else if (subChild1.getName() === "ID") {
                         } 
 
