@@ -333,20 +333,26 @@ class Generator extends Component {
 
                         //add temporary jump label
                         this.jumps.push(new JumpEntry("J" + this.currJump));
-                        
+                        let jumpEntry = this.findJump("J" + this.currJump);
+
+                        //place BNE and jump label
+                        this.memory[this.currByte] = "D0";
+                        this.currByte++;
+                        this.memory[this.currByte] = jumpEntry.getLabel();
+                        this.currByte++;
                         
                         //mark the current byte and enter a new block
                         let startByte = this.currByte;
-                        this.currDepth++;
-                        this.currScopeLabel = this.labelScope(this.currDepth);
-                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
-                        this.initializeCode(child);
+                        // this.currDepth++;
+                        // this.currScopeLabel = this.labelScope(this.currDepth);
+                        // this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
+                        this.initializeCode(subChild2);
 
                         //once breaking the recursion, use the current byte subtracted from the start byte as the jump distance
                         let distance = this.currByte - startByte;
 
                         //set the correct label with the new distance
-                        
+                        jumpEntry.setDistance(distance);
 
                         this.currJump++;
                         break;
@@ -782,16 +788,23 @@ class Generator extends Component {
         this.staticData.forEach(entry => {
             for (let i = 0; i < this.memory.length; i++) {
                 if (entry.getLabel() === this.memory[i]) {
-                    this.memory[i] = stackByte.toString(16);
+                    this.memory[i] = this.toHexStr(stackByte);
                     this.memory[i + 1] = "00";//little endian with 256 available bytes means this is always 00
                     i++; //since we're also replacing the next byte, increment i an additional time
                 }
             }
             stackByte++;
         });
-        this.lastStackByte = stackByte;
-
         //replace jump labels
+        this.jumps.forEach(entry => {
+            for (let i = 0; i < this.memory.length; i++) {
+                if (entry.getLabel() === this.memory[i]) {
+                    this.memory[i] = this.toHexStr(entry.getDistance);
+                }
+            }
+        });
+
+        this.lastStackByte = stackByte;
     }
 
     private printCode() {
@@ -803,6 +816,15 @@ class Generator extends Component {
             let entry = this.staticData[i];
             if (entry.getID() === id && entry.getScope() === scope) {
                 return entry;
+            }
+        }
+        return null;
+    }
+
+    private findJump(label:string) {
+        for (let i = 0; i < this.jumps.length; i++) {
+            if (this.jumps[i].getLabel() === label) {
+                return this.jumps[i];
             }
         }
         return null;
