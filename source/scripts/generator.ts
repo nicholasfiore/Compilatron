@@ -7,6 +7,7 @@ class Generator extends Component {
 
     private currByte: number;
     private currTableEntry: number;
+    private currJump: number;
 
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
@@ -36,6 +37,7 @@ class Generator extends Component {
 
         this.currByte = 0;
         this.currTableEntry = -1;
+        this.currJump = 0;
 
         this.currScope = symbolTable.getRoot();
 
@@ -290,11 +292,71 @@ class Generator extends Component {
                         
                         break;
                     }
+                    case "IfStatement": {
+
+                        if (subChild1.getName() === "TRUE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                        } else if (subChild1.getName() === "FALSE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                        } else {
+                            //evaluate the boolean expression, stored in the ACC
+                            this.expandBoolExpr(subChild1);
+                        }
+
+                        //store ACC result in 0xFF
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //add 0x01 to the X reg
+                        this.memory[this.currByte] = "A2";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01";
+                        this.currByte++;
+
+                        //compare to value in 0xFF
+                        this.memory[this.currByte] = "EC";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //add temporary jump label
+                        this.jumps.push(new JumpEntry("J" + this.currJump));
+                        
+                        
+                        //mark the current byte and enter a new block
+                        let startByte = this.currByte;
+                        this.currDepth++;
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
+                        this.initializeCode(child);
+
+                        //once breaking the recursion, use the current byte subtracted from the start byte as the jump distance
+                        let distance = this.currByte - startByte;
+
+                        //set the correct label with the new distance
+                        
+
+                        this.currJump++;
+                        break;
+                    }
                     case "Block": {
                         this.currDepth++;
                         this.currScopeLabel = this.labelScope(this.currDepth);
                         this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
                         this.initializeCode(child);
+                        break;
                     }
                 }
             });
@@ -346,7 +408,7 @@ class Generator extends Component {
                 //anything else must be store in the ACC first and then into a temporary address
                 //before finally into the X reg
                 if (child1.getName() == "SYM_ADD") {
-                
+                    
                 } else {
                     if (child1.getName() == "TRUE") {
                         this.memory[this.currByte] = "A9";
@@ -791,6 +853,22 @@ class StaticEntry {
 class JumpEntry {
     private label: string;
     private distance: number;
+
+    constructor(lab: string) {
+        this.label = lab;
+    }
+
+    public getLabel() {
+        return this.label;
+    }
+
+    public getDistance() {
+        return this.distance;
+    }
+
+    public setDistance(dist:number) {
+        this.distance = dist;
+    }
 }
 
 class HeapEntry {
