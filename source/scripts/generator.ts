@@ -24,6 +24,7 @@ class Generator extends Component {
 
     private staticData: StaticEntry[];
     private jumps: JumpEntry[];
+    private heapObjects: HeapEntry[];
 
     private validHex = new RegExp('[0-9A-F]')
 
@@ -227,7 +228,31 @@ class Generator extends Component {
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
                         } else if (subChild1.getName() == "SYM_IS_EQUAL" || subChild1.getName() == "SYM_IS_NOT_EQUAL") {
+                            this.expandBoolExpr(subChild1);
+                            
+                            //store ACC in 0xFF
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
 
+                            //store 0xFF into the Y reg
+                            this.memory[this.currByte] = "AC";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                            
+                            //print value in Y reg
+                            this.memory[this.currByte] = "A2";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
                         } else {
                             let value = this.toHexStr(subChild1.getValue())
                             //code for digits
@@ -634,20 +659,37 @@ class Generator extends Component {
     //allocates a string into heap memory
     //if there is an error, returns -1. Otherwise, returns the memory location of the first character
     private allocateHeap(charlist: string) {
-        this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
-
-        if (this.currHeapLoc <= this.lastStackByte) {
-            this.err("Cannot generate code: out of memory (heap)");
-            this.errors++;
-            return -1;
-        } else {
-            let i;
-            for (i = 0; i < charlist.length; i++) {
-                this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16).toUpperCase();
+        let entry: HeapEntry;
+        for (let i; i < this.heapObjects.length; i++) {
+            if (this.heapObjects[i].getValue() == charlist) {
+                entry = this.heapObjects[i];
             }
-            this.memory[this.currHeapLoc + i] = "00";
-            return this.currHeapLoc;
         }
+
+        if (entry) {
+            //an identical string exists in the heap, so assign the same pointer
+            return entry.getStartLocation();
+        } else {
+            //if the string doesn't already exist in the heap, add it
+            this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
+
+            this.heapObjects.push(new HeapEntry(this.currHeapLoc, charlist))
+
+            if (this.currHeapLoc <= this.lastStackByte) {
+                this.err("Cannot generate code: out of memory (heap)");
+                this.errors++;
+                return -1;
+            } else {
+                let i;
+                for (i = 0; i < charlist.length; i++) {
+                    this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16).toUpperCase();
+                }
+                this.memory[this.currHeapLoc + i] = "00";
+                return this.currHeapLoc;
+            }
+        }
+
+        
 
         
 
@@ -731,4 +773,22 @@ class StaticEntry {
 class JumpEntry {
     private label: string;
     private distance: number;
+}
+
+class HeapEntry {
+    private startLoc: number;
+    private value: string;
+
+    constructor(start: number, val: string) {
+        this.startLoc = start;
+        this.value = val;
+    }
+
+    getStartLocation() {
+        return this.startLoc;
+    }
+
+    getValue() {
+        return this.value;
+    }
 }
