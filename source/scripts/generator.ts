@@ -343,9 +343,9 @@ class Generator extends Component {
                         
                         //mark the current byte and enter a new block
                         let startByte = this.currByte;
-                        // this.currDepth++;
-                        // this.currScopeLabel = this.labelScope(this.currDepth);
-                        // this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
+                        this.currDepth++;
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
                         this.initializeCode(subChild2);
 
                         //once breaking the recursion, use the current byte subtracted from the start byte as the jump distance
@@ -799,7 +799,7 @@ class Generator extends Component {
         this.jumps.forEach(entry => {
             for (let i = 0; i < this.memory.length; i++) {
                 if (entry.getLabel() === this.memory[i]) {
-                    this.memory[i] = this.toHexStr(entry.getDistance);
+                    this.memory[i] = this.toHexStr(entry.getDistance());
                 }
             }
         });
