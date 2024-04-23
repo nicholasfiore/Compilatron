@@ -81,16 +81,16 @@ class Generator extends Component {
 
                         this.staticData.push(new StaticEntry(label, id, scope, type))
 
-                        this.memory[this.currByte] = "A9";
-                        this.currByte++;
-                        this.memory[this.currByte] = "00";
-                        this.currByte++;
-                        this.memory[this.currByte] = "8D";
-                        this.currByte++;
-                        this.memory[this.currByte] = label;
-                        this.currByte++;
-                        this.memory[this.currByte] = "XX";
-                        this.currByte++;
+                        // this.memory[this.currByte] = "A9";
+                        // this.currByte++;
+                        // this.memory[this.currByte] = "00";
+                        // this.currByte++;
+                        // this.memory[this.currByte] = "8D";
+                        // this.currByte++;
+                        // this.memory[this.currByte] = label;
+                        // this.currByte++;
+                        // this.memory[this.currByte] = "XX";
+                        // this.currByte++;
                         break;
                     }
                     case "AssignmentStatement": {
@@ -417,10 +417,6 @@ class Generator extends Component {
                         this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
                         this.initializeCode(subChild2);
 
-                        let endBlock = this.currByte;
-                        let dist1 = endBlock - branchByte;
-                        jumpEntry1.setDistance(dist1);
-
                         //add another temporary jump label
                         this.jumps.push(new JumpEntry("J" + this.currJump));
                         let jumpEntry2 = this.findJump("J" + this.currJump);
@@ -455,6 +451,10 @@ class Generator extends Component {
                         this.currByte++;
                         this.memory[this.currByte] = jumpEntry2.getLabel();
                         this.currByte++;
+
+                        let endBlock = this.currByte;
+                        let dist1 = endBlock - branchByte;
+                        jumpEntry1.setDistance(dist1);
 
                         let returnToCondition = this.currByte;
 
@@ -793,7 +793,7 @@ class Generator extends Component {
             // this.currByte++;
         } else if (child2.getName() == "ID") {
             let val = this.toHexStr(child1.getValue());
-            let tempStatic = this.findStaticEntry(child2.getValue(), this.currScope.getTable().getName());
+            let tempStatic = this.findStaticEntry(child2.getValue(), this.symbolTable.findID(child2.getValue(), this.currScope).getScope())
 
             this.memory[this.currByte] = "A9";
             this.currByte++;
