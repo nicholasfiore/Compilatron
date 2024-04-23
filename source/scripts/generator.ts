@@ -373,7 +373,7 @@ class Generator extends Component {
                             this.memory[this.currByte] = "00";
                             this.currByte++;
                         } else {
-                            //evaluate the boolean expression, stored in the ACC
+                            //evaluate the boolean expression, store in the ACC
                             this.expandBoolExpr(subChild1);
                         }
 
@@ -401,12 +401,13 @@ class Generator extends Component {
 
                         //add temporary jump label
                         this.jumps.push(new JumpEntry("J" + this.currJump));
-                        let jumpEntry = this.findJump("J" + this.currJump);
+                        let jumpEntry1 = this.findJump("J" + this.currJump);
+                        this.currJump++;
 
                         //place BNE and jump label, marking the byte that the branch occurs on
                         this.memory[this.currByte] = "D0";
                         this.currByte++;
-                        this.memory[this.currByte] = jumpEntry.getLabel();
+                        this.memory[this.currByte] = jumpEntry1.getLabel();
                         this.currByte++;
                         let branchByte = this.currByte;
 
@@ -416,14 +417,54 @@ class Generator extends Component {
                         this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
                         this.initializeCode(subChild2);
 
+                        let endBlock = this.currByte;
+                        let dist1 = endBlock - branchByte;
+                        jumpEntry1.setDistance(dist1);
+
+                        //add another temporary jump label
+                        this.jumps.push(new JumpEntry("J" + this.currJump));
+                        let jumpEntry2 = this.findJump("J" + this.currJump);
+                        this.currJump++;
+
+                        /* unconditional branch back to top of loop */
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        this.memory[this.currByte] = "A2";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01";
+                        this.currByte++;
+
+                        this.memory[this.currByte] = "EC";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        this.memory[this.currByte] = "D0";
+                        this.currByte++;
+                        this.memory[this.currByte] = jumpEntry2.getLabel();
+                        this.currByte++;
+
+                        let returnToCondition = this.currByte;
+
                         //set distance using the branch byte and the start byte
-                        let distance = startByte + 255;
-                        distance = distance - branchByte;
+                        let dist2 = startByte + 256;
+                        dist2 = dist2 - returnToCondition;
 
                         //set the correct label with the new distance
-                        jumpEntry.setDistance(distance);
+                        jumpEntry2.setDistance(dist2);
 
-                        this.currJump++;
                         break;
                     }
                     case "Block": {
