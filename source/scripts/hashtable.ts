@@ -147,7 +147,7 @@ class HashTree {
             retVal = entry;
         } else {
             scope = scope.getParent();
-            this.findID(id, scope);
+            retVal = this.findID(id, scope);
         }
 
         return retVal;

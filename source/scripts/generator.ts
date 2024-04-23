@@ -95,7 +95,7 @@ class Generator extends Component {
                     }
                     case "AssignmentStatement": {
                         //let currEntry = this.symbolTable.findID(subChild1.getValue(), this.currScope);
-                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.currScope.getTable().getName());
+                        let tempStatic = this.findStaticEntry(subChild1.getValue(), this.symbolTable.findID(subChild1.getValue(), this.currScope).getScope());
                         let valNode = child.getChildren()[1];
                         let val;
 
