@@ -49,3 +49,10 @@ b = 3
 c = (a == b)
 print(c)
 }$
+
+{
+boolean a
+a = (1==2)
+print(a)
+}$
+
