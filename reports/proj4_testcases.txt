@@ -76,3 +76,13 @@ print(a)
 a=5
 print(a)
 }$
+
+{
+int a
+a = 1
+while (a!=5){
+print(a)
+a = 1 + a
+}
+print("done")
+}

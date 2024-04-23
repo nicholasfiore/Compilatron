@@ -115,14 +115,20 @@ class SemanticAnalyzer extends Component {
                     }
                 }
             });
-        this.currDepth--;
-        this.moveUp();
+            this.currDepth--;
+            this.moveUp();
+            if (this.currScope) {
+                this.currScopeLabel = this.currScope.getTable().getName();
+            }
         }
     }
 
     private labelScope(depth:number) {
         let currSubLabel;
-        if (this.repeatScope.length-1 < depth) {
+        if (depth == 0) {
+            currSubLabel = " "
+        }
+        else if (this.repeatScope.length-1 < depth) {
             this.repeatScope.push("a");
             currSubLabel = this.repeatScope[depth];
         } else {
