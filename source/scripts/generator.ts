@@ -358,6 +358,10 @@ class Generator extends Component {
                         break;
                     }
                     case "WhileStatement": {
+                        //mark start byte. It needs to happen before the condition since while
+                        //will loop back and check the condition each iteration
+                        let startByte = this.currByte;
+
                         if (subChild1.getName() === "TRUE") {
                             this.memory[this.currByte] = "A9";
                             this.currByte++;
@@ -381,10 +385,6 @@ class Generator extends Component {
                         this.memory[this.currByte] = "00";
                         this.currByte++;
 
-                        //mark start byte. It needs to happen before the condition since while
-                        //will loop back and check the condition each iteration
-                        let startByte = this.currByte;
-
                         //add 0x01 to the X reg
                         this.memory[this.currByte] = "A2";
                         this.currByte++;
@@ -403,11 +403,12 @@ class Generator extends Component {
                         this.jumps.push(new JumpEntry("J" + this.currJump));
                         let jumpEntry = this.findJump("J" + this.currJump);
 
-                        //place BNE and jump label
+                        //place BNE and jump label, marking the byte that the branch occurs on
                         this.memory[this.currByte] = "D0";
                         this.currByte++;
                         this.memory[this.currByte] = jumpEntry.getLabel();
                         this.currByte++;
+                        let branchByte = this.currByte;
 
                         //enter block
                         this.currDepth++;
@@ -415,7 +416,12 @@ class Generator extends Component {
                         this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
                         this.initializeCode(subChild2);
 
-                        //set distance using current byte and the start byte
+                        //set distance using the branch byte and the start byte
+                        let distance = startByte + 255;
+                        distance = distance - branchByte;
+
+                        //set the correct label with the new distance
+                        jumpEntry.setDistance(distance);
 
                         this.currJump++;
                         break;
