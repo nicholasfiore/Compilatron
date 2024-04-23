@@ -358,7 +358,67 @@ class Generator extends Component {
                         break;
                     }
                     case "WhileStatement": {
-                        
+                        if (subChild1.getName() === "TRUE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                        } else if (subChild1.getName() === "FALSE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                        } else {
+                            //evaluate the boolean expression, stored in the ACC
+                            this.expandBoolExpr(subChild1);
+                        }
+
+                        //store ACC result in 0xFF
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //mark start byte. It needs to happen before the condition since while
+                        //will loop back and check the condition each iteration
+                        let startByte = this.currByte;
+
+                        //add 0x01 to the X reg
+                        this.memory[this.currByte] = "A2";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01";
+                        this.currByte++;
+
+                        //compare to value in 0xFF
+                        this.memory[this.currByte] = "EC";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //add temporary jump label
+                        this.jumps.push(new JumpEntry("J" + this.currJump));
+                        let jumpEntry = this.findJump("J" + this.currJump);
+
+                        //place BNE and jump label
+                        this.memory[this.currByte] = "D0";
+                        this.currByte++;
+                        this.memory[this.currByte] = jumpEntry.getLabel();
+                        this.currByte++;
+
+                        //enter block
+                        this.currDepth++;
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
+                        this.initializeCode(subChild2);
+
+                        //set distance using current byte and the start byte
+
+                        this.currJump++;
+                        break;
                     }
                     case "Block": {
                         this.currDepth++;
