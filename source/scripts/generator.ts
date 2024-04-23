@@ -7,6 +7,7 @@ class Generator extends Component {
 
     private currByte: number;
     private currTableEntry: number;
+    private currJump: number;
 
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
@@ -24,6 +25,7 @@ class Generator extends Component {
 
     private staticData: StaticEntry[];
     private jumps: JumpEntry[];
+    private heapObjects: HeapEntry[];
 
     private validHex = new RegExp('[0-9A-F]')
 
@@ -35,11 +37,13 @@ class Generator extends Component {
 
         this.currByte = 0;
         this.currTableEntry = -1;
+        this.currJump = 0;
 
         this.currScope = symbolTable.getRoot();
 
         this.staticData = [];
         this.jumps = [];
+        this.heapObjects = [];
         
         this.memory = Array(Generator.MAX_BYTES_MEMORY).fill("00");
     }
@@ -227,31 +231,141 @@ class Generator extends Component {
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
                         } else if (subChild1.getName() == "SYM_IS_EQUAL" || subChild1.getName() == "SYM_IS_NOT_EQUAL") {
+                            this.expandBoolExpr(subChild1);
+                            
+                            //store ACC in 0xFF
+                            this.memory[this.currByte] = "8D";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
 
-                        } else {
-                            let value = this.toHexStr(subChild1.getValue())
-                            //code for digits
-                            this.memory[this.currByte] = "A0";
+                            //store 0xFF into the Y reg
+                            this.memory[this.currByte] = "AC";
                             this.currByte++;
-                            this.memory[this.currByte] = value;
+                            this.memory[this.currByte] = "FF";
                             this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                            
+                            //print value in Y reg
                             this.memory[this.currByte] = "A2";
                             this.currByte++;
                             this.memory[this.currByte] = "01";
                             this.currByte++;
                             this.memory[this.currByte] = "FF";
                             this.currByte++;
+                        } else {
+                            let value;
+                            if (subChild1.getName() === "DIGIT") {
+                                value = this.toHexStr(subChild1.getValue())
+                                //code for digits
+                                this.memory[this.currByte] = "A0";
+                                this.currByte++;
+                                this.memory[this.currByte] = value;
+                                this.currByte++;
+                            } else {
+                                if (subChild1.getName() === "TRUE") {
+                                    this.memory[this.currByte] = "A0";
+                                    this.currByte++;
+                                    this.memory[this.currByte] = "01";
+                                    this.currByte++;
+                                } else {
+                                    this.memory[this.currByte] = "A0";
+                                    this.currByte++;
+                                    this.memory[this.currByte] = "00";
+                                    this.currByte++;
+                                }
+                            }
+                            //print value in y reg
+                            this.memory[this.currByte] = "A2";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                            this.memory[this.currByte] = "FF";
+                            this.currByte++;
+                            
                         //} else if (subChild1.getName() === "ID") {
                         } 
 
                         
                         break;
                     }
+                    case "IfStatement": {
+
+                        if (subChild1.getName() === "TRUE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "01";
+                            this.currByte++;
+                        } else if (subChild1.getName() === "FALSE") {
+                            this.memory[this.currByte] = "A9";
+                            this.currByte++;
+                            this.memory[this.currByte] = "00";
+                            this.currByte++;
+                        } else {
+                            //evaluate the boolean expression, stored in the ACC
+                            this.expandBoolExpr(subChild1);
+                        }
+
+                        //store ACC result in 0xFF
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //add 0x01 to the X reg
+                        this.memory[this.currByte] = "A2";
+                        this.currByte++;
+                        this.memory[this.currByte] = "01";
+                        this.currByte++;
+
+                        //compare to value in 0xFF
+                        this.memory[this.currByte] = "EC";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FF";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+
+                        //add temporary jump label
+                        this.jumps.push(new JumpEntry("J" + this.currJump));
+                        let jumpEntry = this.findJump("J" + this.currJump);
+
+                        //place BNE and jump label
+                        this.memory[this.currByte] = "D0";
+                        this.currByte++;
+                        this.memory[this.currByte] = jumpEntry.getLabel();
+                        this.currByte++;
+                        
+                        //mark the current byte and enter a new block
+                        let startByte = this.currByte;
+                        this.currDepth++;
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope);
+                        this.initializeCode(subChild2);
+
+                        //once breaking the recursion, use the current byte subtracted from the start byte as the jump distance
+                        let distance = this.currByte - startByte;
+
+                        //set the correct label with the new distance
+                        jumpEntry.setDistance(distance);
+
+                        this.currJump++;
+                        break;
+                    }
+                    case "WhileStatement": {
+                        
+                    }
                     case "Block": {
                         this.currDepth++;
                         this.currScopeLabel = this.labelScope(this.currDepth);
                         this.currScope = this.symbolTable.findScope(this.currScopeLabel, this.currScope)
                         this.initializeCode(child);
+                        break;
                     }
                 }
             });
@@ -303,7 +417,7 @@ class Generator extends Component {
                 //anything else must be store in the ACC first and then into a temporary address
                 //before finally into the X reg
                 if (child1.getName() == "SYM_ADD") {
-                
+                    
                 } else {
                     if (child1.getName() == "TRUE") {
                         this.memory[this.currByte] = "A9";
@@ -634,24 +748,35 @@ class Generator extends Component {
     //allocates a string into heap memory
     //if there is an error, returns -1. Otherwise, returns the memory location of the first character
     private allocateHeap(charlist: string) {
-        this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
-
-        if (this.currHeapLoc <= this.lastStackByte) {
-            this.err("Cannot generate code: out of memory (heap)");
-            this.errors++;
-            return -1;
-        } else {
-            let i;
-            for (i = 0; i < charlist.length; i++) {
-                this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16).toUpperCase();
+        let entry: HeapEntry;
+        for (let i = 0; i < this.heapObjects.length; i++) {
+            if (this.heapObjects[i].getValue() == charlist) {
+                entry = this.heapObjects[i];
             }
-            this.memory[this.currHeapLoc + i] = "00";
-            return this.currHeapLoc;
         }
 
-        
+        if (entry) {
+            //an identical string exists in the heap, so assign the same pointer
+            return entry.getStartLocation();
+        } else {
+            //if the string doesn't already exist in the heap, add it
+            this.currHeapLoc = this.currHeapLoc - (charlist.length + 1);
 
+            this.heapObjects.push(new HeapEntry(this.currHeapLoc, charlist))
 
+            if (this.currHeapLoc <= this.lastStackByte) {
+                this.err("Cannot generate code: out of memory (heap)");
+                this.errors++;
+                return -1;
+            } else {
+                let i;
+                for (i = 0; i < charlist.length; i++) {
+                    this.memory[this.currHeapLoc + i] = charlist.charCodeAt(i).toString(16).toUpperCase();
+                }
+                this.memory[this.currHeapLoc + i] = "00";
+                return this.currHeapLoc;
+            }
+        }
     }
 
     private backPatch() {
@@ -660,16 +785,23 @@ class Generator extends Component {
         this.staticData.forEach(entry => {
             for (let i = 0; i < this.memory.length; i++) {
                 if (entry.getLabel() === this.memory[i]) {
-                    this.memory[i] = stackByte.toString(16);
+                    this.memory[i] = this.toHexStr(stackByte);
                     this.memory[i + 1] = "00";//little endian with 256 available bytes means this is always 00
                     i++; //since we're also replacing the next byte, increment i an additional time
                 }
             }
             stackByte++;
         });
-        this.lastStackByte = stackByte;
-
         //replace jump labels
+        this.jumps.forEach(entry => {
+            for (let i = 0; i < this.memory.length; i++) {
+                if (entry.getLabel() === this.memory[i]) {
+                    this.memory[i] = this.toHexStr(entry.getDistance());
+                }
+            }
+        });
+
+        this.lastStackByte = stackByte;
     }
 
     private printCode() {
@@ -681,6 +813,15 @@ class Generator extends Component {
             let entry = this.staticData[i];
             if (entry.getID() === id && entry.getScope() === scope) {
                 return entry;
+            }
+        }
+        return null;
+    }
+
+    private findJump(label:string) {
+        for (let i = 0; i < this.jumps.length; i++) {
+            if (this.jumps[i].getLabel() === label) {
+                return this.jumps[i];
             }
         }
         return null;
@@ -731,4 +872,38 @@ class StaticEntry {
 class JumpEntry {
     private label: string;
     private distance: number;
+
+    constructor(lab: string) {
+        this.label = lab;
+    }
+
+    public getLabel() {
+        return this.label;
+    }
+
+    public getDistance() {
+        return this.distance;
+    }
+
+    public setDistance(dist:number) {
+        this.distance = dist;
+    }
+}
+
+class HeapEntry {
+    private startLoc: number;
+    private value: string;
+
+    constructor(start: number, val: string) {
+        this.startLoc = start;
+        this.value = val;
+    }
+
+    getStartLocation() {
+        return this.startLoc;
+    }
+
+    getValue() {
+        return this.value;
+    }
 }

@@ -94,13 +94,15 @@ class SemanticAnalyzer extends Component {
                     case "IfStatement": {}
                     case "WhileStatement": {
                         let keyword = child.getChildren()[0];
+                        let block = child.getChildren()[1];
 
-                        this.determineType(keyword) //ensures the keyword is proper boolean
+                        this.determineType(keyword); //ensures the keyword is proper boolean
                         //block code
                         this.currDepth++;
-                        this.scopeTree.addNode(new HashTable(this.currDepth + ""));
+                        this.currScopeLabel = this.labelScope(this.currDepth);
+                        this.scopeTree.addNode(new HashTable(this.currScopeLabel));
                         this.currScope = this.scopeTree.getCurrent();
-                        this.buildSymbolTable(child);
+                        this.buildSymbolTable(block);
                         break;
                     }
                     case "PrintStatement": {
