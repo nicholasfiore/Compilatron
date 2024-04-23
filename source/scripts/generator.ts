@@ -357,6 +357,9 @@ class Generator extends Component {
                         this.currJump++;
                         break;
                     }
+                    case "WhileStatement": {
+                        
+                    }
                     case "Block": {
                         this.currDepth++;
                         this.currScopeLabel = this.labelScope(this.currDepth);
@@ -774,12 +777,6 @@ class Generator extends Component {
                 return this.currHeapLoc;
             }
         }
-
-        
-
-        
-
-
     }
 
     private backPatch() {
