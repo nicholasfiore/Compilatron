@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
-<html>
+<html data-bs-theme="dark">
 <head>
     <title>Compilatron</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="dist/styles/compiler.css" />
     <!-- <link rel="stylesheet" href="dist/styles/bootstrap.min.css"> -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
 
 	
 	<!-- Classes -->
@@ -24,58 +25,49 @@
 	<script src="dist/scripts/run.js"></script>
 </head>
 <body>
-    <div id="navigation" class="navbar navbar-dark bg-dark navbar-fixed-top">
+    <div id="navigation" class="navbar navbar-dark navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <span id="brand" class="navbar-brand">
-                    Compila<strong>TRON</strong>
+                    Compila<strong style="color: #00ff41;">TRON</strong>
                 </span>
             </div>
             <div id="controls" class="btn-group nav navbar-form navbar-right">
-                <button id="btnCompile" value="Compile" class="btn btn-primary">
-
+                <button id="btnCompile" class="btn btn-primary">
+                    Compile
                 </button>
-                <button id="btnClear" value="Clear" class="btn btn-danger">
+                <button id="btnClear" class="btn btn-danger">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="content" class="container" style="display: block;">
+        <div class="row">
+            <div id="input" class="col-6">
+                <textarea id="taSourceCode" spellcheck="false"></textarea>
+            </div>
+            <div id="console" class="col-6">
+                <!-- <div id="display-container" class="card card-body"> -->
+                    <div class="row">
+                        <div id="taOutput"></div>
+                    </div>
+                    <div class="row">
+                        <textarea id="codeOut" spellcheck="false"></textarea>
+                    </div>
                     
-                </button>
+                <!-- </div> -->
             </div>
+            
         </div>
-    </div>
-    
-    
-    <!-- <p>. . . <em>a simple parser for a simple grammar</em>:</p> -->
 
-	 <!-- <pre>
-G ::== E
-E ::== D O E | D
-D ::== 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
-O ::== + | -
-	 </pre> -->
-
-    <div style="text-align:center;">
-        
     </div>
 
-    <div>
-        <div class="source">
-            <textarea id="taSourceCode" spellcheck="false"></textarea>
-            <div class="buttons">
-                
-            </div>
-        </div>
-        
-        <div class="output">
-            <div id="taOutput"></div>
-            <textarea id="codeOut" spellcheck="false"></textarea>
-        </div>
-        
-    </div>
-
-    <div>
-        <!-- <img style="display:block; margin-left:auto; margin-right:auto;"
+    <!-- <div>
+        <img style="display:block; margin-left:auto; margin-right:auto;"
 		       src="dist/images/CompilerPhases.png" 
-				 alt="Compiler Phases" /> -->
-    </div>   
+				 alt="Compiler Phases" />
+    </div>    -->
 
     <script>
         window.onload = function () {
@@ -96,7 +88,7 @@ O ::== + | -
         
 	</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script> -->
 </body>
 </html>

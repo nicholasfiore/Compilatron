@@ -34,9 +34,10 @@ h2
 	src: url('../fonts/slkscr.ttf')
 }
 
-/* body {
-	background: #0F0F0F !important;
+body {
+	background: #151515;
 }
+
 
 h1 {
 	font-weight: bold;
@@ -52,13 +53,14 @@ textarea{
 	outline: none;
 }
 
-#btnCompile{
+/* #btnCompile{
 	width:15%;
 	text-align: center;
 }
 #btnClear{
 	width: 10%;
-}
+} */
+
 .output, .source {
 	width:48%;
 	
@@ -109,4 +111,17 @@ textarea{
 
 #taSourceCode {
 	color: white;
+}
+
+#navigation {
+	background-color: #1F1F1F;
+}
+
+.navbar-brand {
+	font-family: Pixel;
+	font-size:2.5em;
+}
+
+/* #taOutput {
+	height:1000px;
 } */
