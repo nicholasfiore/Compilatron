@@ -66,6 +66,11 @@ class SemanticAnalyzer extends Component {
                         this.scopeTree.addNode(new HashTable(this.currScopeLabel));
                         this.currScope = this.scopeTree.getCurrent();
                         this.buildSymbolTable(child);
+                        this.currDepth--;
+                        this.moveUp();
+                        if (this.currScope) {
+                            this.currScopeLabel = this.currScope.getTable().getName();
+                        }
                         break;
                     }
                     case "VarDecl": {
@@ -103,6 +108,11 @@ class SemanticAnalyzer extends Component {
                         this.scopeTree.addNode(new HashTable(this.currScopeLabel));
                         this.currScope = this.scopeTree.getCurrent();
                         this.buildSymbolTable(block);
+                        this.currDepth--;
+                        this.moveUp();
+                        if (this.currScope) {
+                            this.currScopeLabel = this.currScope.getTable().getName();
+                        }
                         break;
                     }
                     case "PrintStatement": {
@@ -115,11 +125,7 @@ class SemanticAnalyzer extends Component {
                     }
                 }
             });
-            this.currDepth--;
-            this.moveUp();
-            if (this.currScope) {
-                this.currScopeLabel = this.currScope.getTable().getName();
-            }
+            
         }
     }
 

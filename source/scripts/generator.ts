@@ -72,7 +72,7 @@ class Generator extends Component {
                 switch(child.getName()) {
                     case "VarDecl": {
                         this.currTableEntry++;
-                        let currEntry = this.symbolTable.findID(subChild2.getValue(), this.currScope);
+                        let currEntry = this.currScope.getTable().get(subChild2.getValue());
                         let label = "T" + this.currTableEntry;
                         
                         let id = currEntry.getID();
