@@ -1,3 +1,4 @@
+/* too big to actually generate code, but works well enough when taking off the 256 byte limit in testing */
 {
 int a
 a = 0
