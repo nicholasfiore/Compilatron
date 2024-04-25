@@ -126,6 +126,7 @@
             copyText.select();
             copyText.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(copyText.value);
+            clearSelection();
 
             //taken from https://stackoverflow.com/a/73493874
             const tooltipInstance = bootstrap.Tooltip.getInstance('#btnCopy');
@@ -136,6 +137,28 @@
             //ditto to above
             const tooltipInstance = bootstrap.Tooltip.getInstance('#btnCopy');
             tooltipInstance.setContent({ '.tooltip-inner': 'Copy to clipboard'});
+        }
+
+        //from https://stackoverflow.com/a/14788286
+        function clearSelection()
+        {
+            var sel;
+            if ( (sel = document.selection) && sel.empty ) {
+                sel.empty();
+            } else {
+                if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                }
+                var activeEl = document.activeElement;
+                if (activeEl) {
+                    var tagName = activeEl.nodeName.toLowerCase();
+                    if ( tagName == "textarea" ||
+                            (tagName == "input" && activeEl.type == "text") ) {
+                        // Collapse the selection to the end
+                        activeEl.selectionStart = activeEl.selectionEnd;
+                    }
+                }
+            }
         }
         
 	</script>
