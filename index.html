@@ -42,6 +42,7 @@
             </div>
         </div>
     </div>
+    <hr>
     <div id="content" class="container" style="display: block;">
         <div class="row">
             <div id="input" class="col-md-6">
@@ -60,12 +61,22 @@
                         <!-- </div> -->
                         
                     </div>
-                    <div id="codeOut2" class="row card">
+                    <div id="machineCode" class="row card">
                         <div class="card-header">
                             Machine Code
-                            <button id="btnCopy" class="btn btn-success">Copy</button>
+                                <button id="btnCopy" class="btn btn-success" 
+                                data-bs-toggle="tooltip" data-bs-title="Copied!" data-bs-trigger="click"
+                                onclick="copyCode()">
+                                    <!-- <span class="tooltiptext" id="copyToolTip">Copy to clipboard</span> -->
+                                    <!-- Copy Code -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                                    </svg>
+                                </button>
+                            
                         </div>
-                        <textarea id="codeOut" spellcheck="false" class="card-body"></textarea>
+                        <textarea id="codeOut" spellcheck="false" class="card-body" readonly></textarea>
                     </div>
                     
                 <!-- </div> -->
@@ -81,7 +92,13 @@
 				 alt="Compiler Phases" />
     </div>    -->
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
         window.onload = function () {
             document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
@@ -98,20 +115,27 @@
             document.getElementById('codeOut').value = "";
 		})
 
-        document.getElementById("btnCopy").addEventListener("click", function() {
-            var code = document.getElementById("codeOut");
 
-            code.select();
-            code.setSelectionRange(0, 99999);
+        function updateToolTip() {
+            
+        }
 
-            navigator.clipboard.writeText(code.value)
+        //modified from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
+        function copyCode() {
+            var copyText = document.getElementById("codeOut");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+        }
 
-            alert("Copied to clipboard")
-        })
+        // function outFunc() {
+        //     let button = document.getElementById('btnCopy')
+        //     let tooltip = bootstrap.Tooltip.getInstance(button); 
+        //     tooltip._config.title = 'Copy to clipboard'; 
+        //     tooltip.update();
+        // }
         
 	</script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script> -->
+    
 </body>
 </html>
