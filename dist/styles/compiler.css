@@ -154,3 +154,7 @@ textarea {
 /* #taOutput {
 	height:1000px;
 } */
+
+.no-tooltips {
+	pointer-events: none;
+}
