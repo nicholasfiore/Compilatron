@@ -65,8 +65,8 @@
                         <div class="card-header">
                             Machine Code
                                 <button id="btnCopy" class="btn btn-success" 
-                                data-bs-toggle="tooltip" data-bs-title="Copied!" data-bs-trigger="click"
-                                onclick="copyCode()">
+                                data-bs-toggle="tooltip" data-bs-title="Copy to clipboard" data-bs-trigger="hover"
+                                onclick="copyCode()" onmouseout="outFunc()">
                                     <!-- <span class="tooltiptext" id="copyToolTip">Copy to clipboard</span> -->
                                     <!-- Copy Code -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
@@ -126,14 +126,17 @@
             copyText.select();
             copyText.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(copyText.value);
+
+            //taken from https://stackoverflow.com/a/73493874
+            const tooltipInstance = bootstrap.Tooltip.getInstance('#btnCopy');
+            tooltipInstance.setContent({ '.tooltip-inner': 'Copied!'});
         }
 
-        // function outFunc() {
-        //     let button = document.getElementById('btnCopy')
-        //     let tooltip = bootstrap.Tooltip.getInstance(button); 
-        //     tooltip._config.title = 'Copy to clipboard'; 
-        //     tooltip.update();
-        // }
+        function outFunc() {
+            //ditto to above
+            const tooltipInstance = bootstrap.Tooltip.getInstance('#btnCopy');
+            tooltipInstance.setContent({ '.tooltip-inner': 'Copy to clipboard'});
+        }
         
 	</script>
     
