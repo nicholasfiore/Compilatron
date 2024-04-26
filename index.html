@@ -178,13 +178,16 @@
             
 
             let currTable = document.getElementById('symbolTable');
+            let currCode = document.getElementById('codeOut');
             
             let newProg = document.getElementById(`program${program}`);
             let newTable = newProg.querySelector('#table');
-            let newCode;
+            let newCode = newProg.querySelector('#code')
+            let newText = newCode.querySelector('textarea');
 
-            currTable.innerHTML = newTable.innerHTML
-            
+
+            currTable.innerHTML = newTable.innerHTML;
+            currCode.value = newText.value;
         }
 
         //modified from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp

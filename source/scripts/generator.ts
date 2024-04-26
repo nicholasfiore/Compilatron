@@ -985,7 +985,11 @@ class Generator extends Component {
     }
 
     private printCode() {
-        (<HTMLInputElement>document.getElementById('codeOut')).value += this.memory.join(" ");
+        let currProg = document.getElementById(`program${this.currProgram}`);
+        let code = currProg.querySelector('#code');
+        let textarea = code.querySelector('textarea');
+        textarea.value = this.memory.join(" ");
+        console.log(textarea.value);
     }
 
     private findStaticEntry(id:string, scope:string) {

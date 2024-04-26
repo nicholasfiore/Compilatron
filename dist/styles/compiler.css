@@ -126,15 +126,23 @@ table, td {
 
 #symbolTable > div > div {
 	border: 1px solid #00ff41;
+	border-style: dashed;
 }
 
 #machineCode {
 	width: 30.5rem;
-	height: 29.6rem;
+}
+
+#machineCode > textarea {
+	height: 26rem;
 }
 
 #taSourceCode {
 	color: white;
+}
+
+#tabbar {
+	margin-bottom: 1rem;
 }
 
 #navigation {
