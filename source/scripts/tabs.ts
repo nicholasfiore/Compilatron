@@ -18,5 +18,8 @@ class Tabs {
         //generate divs for the content
         let tabContent = document.getElementById('tabs');
         let currTabContent = document.createElement('div')
+        currTabContent.setAttribute('id', `program${program}`)
+
+        let tableDiv
     }
 }

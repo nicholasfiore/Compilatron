@@ -123,15 +123,16 @@
             let tabBar = document.getElementById('tabbar');
             tabBar.innerHTML = "";
             initializeCompiler();
-            let tabs = tabBar.children;
-            for (var i = 0; i < tabs.length; i++) {
-                tabs[i].addEventListener('click', function() {
-                    console.log(i);
-                    event.stopPropagation();
-                    enterTab(i + 1);
-                })
-            }
-		})
+            var tabs = document.querySelectorAll('.nav-link');
+            console.log(tabs)
+
+            var i = 1;
+            tabs.forEach((item) => {
+                item.addEventListener('click', enterTab, false);
+                item.param = i;
+                i++;
+		    })
+        })
 
         document.getElementById("btnClear").addEventListener("click", function() {
 			document.getElementById('taOutput').innerHTML = "";
@@ -139,8 +140,9 @@
             document.getElementById('tabbar').innerHTML = "";
 		})
 
-        function enterTab(program) {
-            console.log("success " + program);
+        function enterTab(evt) {
+            let program = evt.currentTarget.param;
+            
         }
 
         //modified from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
