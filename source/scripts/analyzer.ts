@@ -462,6 +462,8 @@ class Table extends Component {
             init.textContent = entry.getInit()
             used = document.createElement('td')
             used.textContent = entry.getBeenUsed();
+            
+            row = document.createElement('tr');
 
             row.appendChild(id);
             row.appendChild(type);
