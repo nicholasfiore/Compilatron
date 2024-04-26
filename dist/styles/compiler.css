@@ -61,6 +61,8 @@ table, td {
 }
 
 .card-body {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
 	overflow-y: auto;
 }
 
@@ -95,8 +97,9 @@ table, td {
 	border-color: #1F1F1F;
 }
 
+
 #taSourceCode, #taOutput {
-	height: 400px;
+	height: 30rem;
 	width:100%;
 }
 
@@ -111,12 +114,12 @@ table, td {
 }
 
 #codeOut{
-	height: 100px;
+	height: 25rem;
 	resize: none;
 }
 
 #symbolTableDisplay > #symbolTable {
-	height: 27rem;
+	height: 25.9rem;
 	overflow-y: auto;
 }
 
@@ -131,10 +134,6 @@ table, td {
 
 #machineCode {
 	width: 30.5rem;
-}
-
-#machineCode > textarea {
-	height: 26rem;
 }
 
 #taSourceCode {
