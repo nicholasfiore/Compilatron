@@ -25,13 +25,14 @@ class Compiler extends Component {
         
         this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
-        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode);
+        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode, this.currentProgram);
     }
 
     public compile() {
-        var infiniteProtection = 0;
-        while (!this.reachedEOF && infiniteProtection < 10) {
+        while (!this.reachedEOF) {
             this.currentProgram++;
+
+            Tabs.generateTabContent(this.currentProgram);
 
             /* Lexer */
             this.info("Lexing program " + this.currentProgram);
@@ -54,7 +55,7 @@ class Compiler extends Component {
             /* Parser */
             if (!this.caughtError) {
                 //console.log("here");
-                this._Parser = new Parser(tokens, this.inDebugMode);
+                this._Parser = new Parser(tokens, this.inDebugMode, 1);
                 
                 this.info("Parsing program " + this.currentProgram);
                 
@@ -85,7 +86,7 @@ class Compiler extends Component {
 
             /* Semantic Analysis */
             if (!this.caughtError) {
-                this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode);
+                this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode, 1);
 
                 this.info("Syntactic Analysis for program " + this.currentProgram);
                 var analyzeOut = this._Analyzer.analyze();
@@ -108,15 +109,16 @@ class Compiler extends Component {
             /* Code Generation */
             if (!this.caughtError) {
                 //this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
-                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTree, this.debugMode)
+                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTree, this.debugMode, 1)
 
                 this.info("Generating code...");
                 this._Generator.generate();
+            } else {
+                this.err("Code generation skipped due to semantic error.")
             }
 
             //Reset for next program
             this.reset();
-            infiniteProtection++;
         }
     }
 
@@ -124,4 +126,6 @@ class Compiler extends Component {
         this._Lexer.reset();
         this.caughtError = false;
     }
+
+    
 }

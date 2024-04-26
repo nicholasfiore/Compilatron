@@ -3,6 +3,7 @@
 //lexer returns the token stream
 class Lexer extends Component {
 	private sourceCode: string;
+	private currProgram: number;
 
 	private lastValidToken: string;
 	private lastValidKind: string;
@@ -53,8 +54,10 @@ class Lexer extends Component {
 	private digitRegEx = new RegExp('^[0-9]$');
 	//char goes here, but it's already accounted for
 
-	public constructor(source: string, enableDebug: boolean) {
+	public constructor(source: string, enableDebug: boolean, program: number) {
 		super("Lexer", enableDebug);
+
+		this.currProgram = program;
 
 		this.sourceCode = Utils.trim(source);
 

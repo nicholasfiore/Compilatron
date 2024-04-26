@@ -2,6 +2,7 @@
 
 class Parser extends Component {
     private tokens: Array<Token>;
+    private currProgram;
 
     private CST: Tree;
 
@@ -14,8 +15,10 @@ class Parser extends Component {
     private alphabet = new RegExp('^[a-z]$');
     private digits = new RegExp('^[0-9]$');
 
-    public constructor(tokenStream: Array<Token>, enableDebug: boolean) {
+    public constructor(tokenStream: Array<Token>, enableDebug: boolean, program: number) {
         super("Parser", enableDebug);
+
+        this.currProgram = program;
 
         this.tokens = tokenStream;
 
