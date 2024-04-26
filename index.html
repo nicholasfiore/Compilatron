@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <div id="content" class="container" style="display: block;">
+    <div id="preContent" class="container" style="display: block;">
         <div class="row">
             <div id="input" class="col-md-6">
                 <div class="row card">
@@ -61,6 +61,12 @@
             </div>    
         </div>
 
+        
+
+        
+    </div>
+
+    <div id="postContent" class="container" style="display: block;">
         <div class="row">
             <div id="tabbar" class="nav nav-tabs" role="tablist">
                 <!-- <button class="nav-link active" id="progtab1" data-bs-toggle="tab">Program 1</button>
@@ -75,7 +81,9 @@
                         Symbol Table
                     </div>
                     <div class="card-body">
-
+                        <table class="table table-borderless">
+                            
+                        </table>
                     </div>
                 </div>
             </div>
@@ -118,10 +126,7 @@
         }
 
 		document.getElementById("btnCompile").addEventListener("click", function() {
-			document.getElementById('taOutput').innerHTML = "";
-            document.getElementById('codeOut').value = "";
-            let tabBar = document.getElementById('tabbar');
-            tabBar.innerHTML = "";
+			clear();
             initializeCompiler();
             var tabs = document.querySelectorAll('.nav-link');
             console.log(tabs)
@@ -132,17 +137,23 @@
                 item.param = i;
                 i++;
 		    })
+            document.getElementById('postContent').style.visibility = "visible"
         })
 
-        document.getElementById("btnClear").addEventListener("click", function() {
-			document.getElementById('taOutput').innerHTML = "";
+        document.getElementById("btnClear").addEventListener("click", clear)
+
+        function clear() {
+            document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
             document.getElementById('tabbar').innerHTML = "";
-		})
+            document.getElementById('postContent').style.visibility = "hidden"
+        }
 
+        //place the correct content inside of its correct place
         function enterTab(evt) {
             let program = evt.currentTarget.param;
             
+
         }
 
         //modified from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp

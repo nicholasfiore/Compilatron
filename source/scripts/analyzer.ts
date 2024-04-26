@@ -398,6 +398,8 @@ class Table extends Component {
             
             typeSpacing = "";
             this.log(output);
+
+
         });
 
         // var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
@@ -407,5 +409,9 @@ class Table extends Component {
         //     this.info(output);
         // }
         return this.table;
+    }
+    //stores the table in HTML
+    public storeTable() {
+        
     }
 }

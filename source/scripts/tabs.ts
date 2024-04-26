@@ -17,9 +17,18 @@ class Tabs {
 
         //generate divs for the content
         let tabContent = document.getElementById('tabs');
-        let currTabContent = document.createElement('div')
-        currTabContent.setAttribute('id', `program${program}`)
+        let currTabContent = document.createElement('div');
+        currTabContent.setAttribute('id', `program${program}`);
 
-        let tableDiv
+        let tableDiv = document.createElement('div');
+        tableDiv.setAttribute('id', 'table');
+
+        let codeDiv = document.createElement('div');
+        codeDiv.setAttribute('id', 'code');
+
+        currTabContent.appendChild(tableDiv);
+        currTabContent.appendChild(codeDiv);
+
+        tabContent.appendChild(currTabContent);
     }
 }

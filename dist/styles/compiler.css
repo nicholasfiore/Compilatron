@@ -38,6 +38,18 @@ body {
 	background: #151515;
 }
 
+#postContent {
+	visibility: hidden;
+}
+
+.tabbable .nav-tabs {
+	overflow-x: auto;
+	overflow-y:hidden;
+	flex-wrap: nowrap;
+ }
+ .tabbable .nav-tabs .nav-link {
+   white-space: nowrap;
+ }
 
 /* h1 {
 	font-weight: bold;
