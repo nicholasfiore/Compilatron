@@ -81,8 +81,15 @@
                         Symbol Table
                     </div>
                     <div class="card-body">
-                        <table class="table table-borderless">
-                            
+                        <table>
+                            <tr id="header">
+                                <th>ID</th>
+                                <th>TYPE</th>
+                                <th>SCOPE</th>
+                                <th>LINE</th>
+                                <th>IsINIT?</th>
+                                <th>BeenUSED?</th>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -129,7 +136,6 @@
 			clear();
             initializeCompiler();
             var tabs = document.querySelectorAll('.nav-link');
-            console.log(tabs)
 
             var i = 1;
             tabs.forEach((item) => {
@@ -152,8 +158,15 @@
         //place the correct content inside of its correct place
         function enterTab(evt) {
             let program = evt.currentTarget.param;
-            
 
+            let currTable = document.getElementById('symbolTable').querySelector('.card-body')
+            
+            let newProg = document.getElementById(`program${program}`);
+            let newTable = newProg.querySelector('table');
+            let newCode;
+
+            currTable.innerHTML = newTable.innerHTML
+            
         }
 
         //modified from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp

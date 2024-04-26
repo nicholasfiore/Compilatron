@@ -295,7 +295,7 @@ class SemanticAnalyzer extends Component {
         var currNode: HashNode;
         //var tableObj: Table;
 
-        this.table = new Table("Symbol Table");
+        this.table = new Table("Symbol Table", this.currProgram);
 
         while (queue.length > 0) {
             currNode = queue.shift();
@@ -342,9 +342,11 @@ class SemanticAnalyzer extends Component {
 class Table extends Component {
 
     private table: Array<HashEntry>;
+    private currProgram:number;
 
-    constructor(name: string) {
+    constructor(name: string, program:number) {
         super(name, false)
+        this.currProgram = program;
         this.table = new Array<HashEntry>;
     }
 
@@ -399,9 +401,9 @@ class Table extends Component {
             typeSpacing = "";
             this.log(output);
 
-
+            
         });
-
+        this.storeTable();
         // var header = "\nID | TYPE    | SCOPE | LINE | IsINIT? | BeenUSED?\n";
         // output = header + output;
         // //only bother printing the table if there are any variables, otherwise skip
@@ -412,6 +414,63 @@ class Table extends Component {
     }
     //stores the table in HTML
     public storeTable() {
-        
+        let currProg = document.getElementById(`program${this.currProgram}`);
+        let table = currProg.querySelector('table')
+
+        let id;
+        let type;
+        let scope;
+        let line;
+        let init;
+        let used;
+
+        let row = document.createElement('tr')
+
+        id = document.createElement('th')
+        id.textContent = "ID"
+        type = document.createElement('th')
+        type.textContent = "TYPE"
+        scope = document.createElement('th')
+        scope.textContent = "SCOPE"
+        line = document.createElement('th')
+        line.textContent = "LINE"
+        init = document.createElement('th')
+        init.textContent = "IsINIT"
+        used = document.createElement('th')
+        used.textContent = "BeenUSED"
+
+        row.appendChild(id);
+        row.appendChild(type);
+        row.appendChild(scope);
+        row.appendChild(line);
+        row.appendChild(init);
+        row.appendChild(used);
+
+        table.appendChild(row);
+
+        this.table.forEach(entry => {
+
+            id = document.createElement('td')
+            id.textContent = entry.getID();
+            type = document.createElement('td')
+            type.textContent = entry.getType();
+            scope = document.createElement('td')
+            scope.textContent = entry.getScope();
+            line = document.createElement('td')
+            line.textContent = entry.getLine();
+            init = document.createElement('td')
+            init.textContent = entry.getInit()
+            used = document.createElement('td')
+            used.textContent = entry.getBeenUsed();
+
+            row.appendChild(id);
+            row.appendChild(type);
+            row.appendChild(scope);
+            row.appendChild(line);
+            row.appendChild(init);
+            row.appendChild(used);
+
+            table.appendChild(row);
+        })
     }
 }

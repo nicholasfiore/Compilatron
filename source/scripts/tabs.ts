@@ -1,8 +1,8 @@
 class Tabs {
     public static generateTabContent(program: number) {
         //generate the tab
-        let tab = document.getElementById('tabbar');
-        let button = document.createElement('button');
+        var tab = document.getElementById('tabbar');
+        var button = document.createElement('button');
         if (program === 1) {
             button.setAttribute('class', 'nav-link active');
         } else {
@@ -16,15 +16,19 @@ class Tabs {
         tab.appendChild(button);
 
         //generate divs for the content
-        let tabContent = document.getElementById('tabs');
-        let currTabContent = document.createElement('div');
+        var tabContent = document.getElementById('tabs');
+        var currTabContent = document.createElement('div');
         currTabContent.setAttribute('id', `program${program}`);
 
-        let tableDiv = document.createElement('div');
+        var tableDiv = document.createElement('div');
         tableDiv.setAttribute('id', 'table');
+        var table = document.createElement('table');
+        tableDiv.appendChild(table);
 
-        let codeDiv = document.createElement('div');
+        var codeDiv = document.createElement('div');
         codeDiv.setAttribute('id', 'code');
+        var textarea = document.createElement('textarea');
+        codeDiv.appendChild(textarea);
 
         currTabContent.appendChild(tableDiv);
         currTabContent.appendChild(codeDiv);

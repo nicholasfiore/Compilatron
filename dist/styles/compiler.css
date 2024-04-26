@@ -38,19 +38,6 @@ body {
 	background: #151515;
 }
 
-#postContent {
-	visibility: hidden;
-}
-
-.tabbable .nav-tabs {
-	overflow-x: auto;
-	overflow-y:hidden;
-	flex-wrap: nowrap;
- }
- .tabbable .nav-tabs .nav-link {
-   white-space: nowrap;
- }
-
 /* h1 {
 	font-weight: bold;
 	font-family: Pixel !important;
@@ -101,11 +88,10 @@ textarea{
 	padding-left: 2%;
 }
 
-
-
 .card {
 	background-color: black;
 	font-family: 'Courier New', Courier, monospace;
+	border-color: #1F1F1F;
 	margin: 0.5em;
 }
 
@@ -162,6 +148,10 @@ textarea {
 	margin-bottom: 1em;
 }
 
+#postContent {
+	visibility: hidden;
+}
+
 .navbar-brand {
 	font-family: Pixel;
 	font-size:2.5em;
@@ -171,6 +161,34 @@ textarea {
 	height:1000px;
 } */
 
+
+table {
+	width: 100%;
+	color:#00ff41
+}
+
 .no-tooltips {
 	pointer-events: none;
+}
+
+.nav-tabs {
+	overflow-x: auto;
+	overflow-y: hidden;
+	flex-wrap: nowrap;
+}
+
+.nav-link {
+	font-family: 'Courier New', Courier, monospace;
+	max-width: 110px;
+	color: #555;	
+}
+
+.nav-link:hover {
+	color: #ccc;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	color: #00ff41!important;
+	background-color: #1F1F1F;
+	border-color: #1F1F1F;
 }
