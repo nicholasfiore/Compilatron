@@ -22,7 +22,8 @@ class Tabs {
 
         var tableDiv = document.createElement('div');
         tableDiv.setAttribute('id', 'table');
-        var table = document.createElement('table');
+        var table = document.createElement('div');
+        table.setAttribute('id', 'table');
         tableDiv.appendChild(table);
 
         var codeDiv = document.createElement('div');

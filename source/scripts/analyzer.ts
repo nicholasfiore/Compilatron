@@ -415,7 +415,7 @@ class Table extends Component {
     //stores the table in HTML
     public storeTable() {
         let currProg = document.getElementById(`program${this.currProgram}`);
-        let table = currProg.querySelector('table')
+        let table = currProg.querySelector('#table')
 
         let id;
         let type;
@@ -424,19 +424,26 @@ class Table extends Component {
         let init;
         let used;
 
-        let row = document.createElement('tr')
+        let row = document.createElement('div')
+        row.setAttribute('class', 'row')
 
-        id = document.createElement('th')
+        id = document.createElement('div')
+        id.setAttribute('class', 'col-1');
         id.textContent = "ID"
-        type = document.createElement('th')
+        type = document.createElement('div')
+        type.setAttribute('class', 'col');
         type.textContent = "TYPE"
-        scope = document.createElement('th')
+        scope = document.createElement('div')
+        scope.setAttribute('class', 'col');
         scope.textContent = "SCOPE"
-        line = document.createElement('th')
+        line = document.createElement('div')
+        line.setAttribute('class', 'col');
         line.textContent = "LINE"
-        init = document.createElement('th')
+        init = document.createElement('div')
+        init.setAttribute('class', 'col');
         init.textContent = "IsINIT"
-        used = document.createElement('th')
+        used = document.createElement('div')
+        used.setAttribute('class', 'col');
         used.textContent = "BeenUSED"
 
         row.appendChild(id);
@@ -450,20 +457,27 @@ class Table extends Component {
 
         this.table.forEach(entry => {
 
-            id = document.createElement('td')
+            id = document.createElement('div')
+            id.setAttribute('class', 'col-1');
             id.textContent = entry.getID();
-            type = document.createElement('td')
+            type = document.createElement('div')
+            type.setAttribute('class', 'col');
             type.textContent = entry.getType();
-            scope = document.createElement('td')
+            scope = document.createElement('div')
+            scope.setAttribute('class', 'col');
             scope.textContent = entry.getScope();
-            line = document.createElement('td')
+            line = document.createElement('div')
+            line.setAttribute('class', 'col');
             line.textContent = entry.getLine();
-            init = document.createElement('td')
+            init = document.createElement('div')
+            init.setAttribute('class', 'col');
             init.textContent = entry.getInit()
-            used = document.createElement('td')
+            used = document.createElement('div')
+            used.setAttribute('class', 'col');
             used.textContent = entry.getBeenUsed();
             
-            row = document.createElement('tr');
+            row = document.createElement('div');
+            row.setAttribute('class', 'row');
 
             row.appendChild(id);
             row.appendChild(type);

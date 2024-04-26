@@ -76,12 +76,20 @@
 
         <div class="row">
             <div class="col-md-6">
-                <div id="symbolTable" class="row card">
+                <div id="symbolTableDisplay" class="row card">
                     <div class="card-header">
                         Symbol Table
                     </div>
-                    <div class="card-body">
-                        <table>
+                    <div id ="symbolTable" class="card-body container" style="display: block;">
+                        <div class="row">
+                            <div class="col-1">ID</div>
+                            <div class="col">TYPE</div>
+                            <div class="col">SCOPE</div>
+                            <div class="col">LINE</div>
+                            <div class="col">IsINIT</div>
+                            <div class="col">BeenUSED</div>
+                        </div>
+                        <!-- <table>
                             <tr id="header">
                                 <th>ID</th>
                                 <th>TYPE</th>
@@ -90,7 +98,7 @@
                                 <th>IsINIT?</th>
                                 <th>BeenUSED?</th>
                             </tr>
-                        </table>
+                        </table> -->
                     </div>
                 </div>
             </div>
@@ -144,6 +152,8 @@
                 i++;
 		    })
             document.getElementById('postContent').style.visibility = "visible"
+            enterTab(1);//default tab is always the first program
+
         })
 
         document.getElementById("btnClear").addEventListener("click", clear)
@@ -152,14 +162,22 @@
             document.getElementById('taOutput').innerHTML = "";
             document.getElementById('codeOut').value = "";
             document.getElementById('tabbar').innerHTML = "";
+            document.getElementById('symbolTable').innerHTML = "";
+            document.getElementById('tabs').innerHTML = "";
             document.getElementById('postContent').style.visibility = "hidden"
         }
 
         //place the correct content inside of its correct place
         function enterTab(evt) {
-            let program = evt.currentTarget.param;
+            let program;
+            if (typeof(evt) == "number") {
+                program = evt;
+            } else {
+                program = evt.currentTarget.param;
+            }
+            
 
-            let currTable = document.getElementById('symbolTable').querySelector('.card-body')
+            let currTable = document.getElementById('symbolTable');
             
             let newProg = document.getElementById(`program${program}`);
             let newTable = newProg.querySelector('#table');
