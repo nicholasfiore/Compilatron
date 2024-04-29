@@ -124,7 +124,12 @@ class SemanticAnalyzer extends Component {
                         let printVal = child.getChildren()[0];
                         this.determineType(printVal);
                         if (printVal.getName() === "ID") {
-                            this.findID(printVal).flipBeenUsed();
+                            if (!this.findID(printVal).getInit()) {
+                                this.err("Uninitialized value: ID \"" + printVal.getValue() + "\" at line " + printVal.getLine() + " was used before being initialized")
+                                this.errors++;
+                            } else {
+                                this.findID(printVal).flipBeenUsed();
+                            }
                         }
                         break;
                     }
