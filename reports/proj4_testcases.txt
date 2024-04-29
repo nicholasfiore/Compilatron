@@ -163,3 +163,26 @@ print(a)
 print(b)
 print(c)
 }$
+
+/*  Complex variable assignment with literals  */
+{
+int a
+boolean b
+
+a = 2+3+4
+b = (2 == 2)
+/*output: 9 true)*/
+print(a)
+print(b)
+}$
+
+/*  Variable comparisons (also in complex expressions)  pt 1*/
+{
+int a 
+a = 2
+/*output: 7 true false */
+print(2+3+a)
+print((2+a == 3+1))
+print((1+a == 2+a))
+}$
+
