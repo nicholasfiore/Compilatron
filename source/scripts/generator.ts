@@ -544,7 +544,7 @@ class Generator extends Component {
                     this.currByte++;
                 }
             } else if (child1.getName() === "CharList") {
-                let addr = this.allocateHeap(child1.getChildren()[0].getValue());
+                let addr = this.allocateHeap(child1.getValue());
                 this.memory[this.currByte] = "A2";
                 this.currByte++;
                 this.memory[this.currByte] = this.toHexStr(addr);
@@ -590,9 +590,9 @@ class Generator extends Component {
                     this.currByte++;
                 }
                 else if (child2.getName() == "SYM_ADD") {
-                    this.addWithCarry(child1);
-                } else if (child1.getName() === "CharList") {
-                    let addr = this.allocateHeap(child1.getChildren()[0].getValue());
+                    this.addWithCarry(child2);
+                } else if (child2.getName() === "CharList") {
+                    let addr = this.allocateHeap(child2.getValue());
                     this.memory[this.currByte] = "A9";
                     this.currByte++;
                     this.memory[this.currByte] = this.toHexStr(addr);

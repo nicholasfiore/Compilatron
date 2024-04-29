@@ -87,3 +87,59 @@ a = 1 + a
 }
 print("done")
 }
+
+//ahead are some arnell test cases
+
+/*  basic output of all data type literals: output: true false 0 7 hello   world   end    */
+{
+print(true)
+print(false)
+print(0)
+print(7)
+print("hello")
+print(" ")
+print("world")
+print("")
+print("end")
+}$
+
+/* Arnell's "code gen hair puller" program */
+{
+int a
+a = 9
+int b
+b = 4
+if (a ==2+3+b){
+print("yes")
+}
+print(b)
+print(2+3)
+print(2+3+b)
+print(a)
+}$
+
+
+/*   Testing complex expressions with literals pt.1 */
+{
+    /* output: true 3 6*/
+print((2 == 2))
+print(1+2)
+print(0+1+2+3)
+}$
+
+
+/*CG complex expressions pt. 2*/
+{
+    /* output: false true false*/
+    print((2 == 1))
+    print((3 != 2))
+    print ((0 != 0))
+}$
+
+
+/*Complex expressions pt.3*/
+{
+    /*output true false)*/
+    print ((true == true))
+    print ((false != false))
+}$
