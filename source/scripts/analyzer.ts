@@ -243,14 +243,7 @@ class SemanticAnalyzer extends Component {
             }
             return this.evaluateBoolean(child1, child2)
         } else if (val.getName() === "ID") {
-            let retVal = this.findID(val);
-            if (!retVal.getInit()) {
-                this.err("Uninitialized value: ID \"" + val.getValue() + "\" at line " + val.getLine() + " was used before being initialized")
-                this.errors++;
-            } else {
-                retVal.flipBeenUsed();
-                return retVal.getTybe();
-            }
+            return this.findID(val).getType();
         } else {
             if (this.validInt.test(val.getValue())) {
                 return "int";
