@@ -26,6 +26,14 @@ table, td {
 	color:#00ff41;
 }
 
+img {
+	height: 32px;
+}
+
+img:hover {
+	transform: scale(1.5);
+}
+
 .output, .source {
 	width:48%;
 	

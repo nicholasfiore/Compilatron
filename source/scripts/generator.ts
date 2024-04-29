@@ -681,41 +681,46 @@ class Generator extends Component {
             this.currByte++;
         } else {
             //not-equal logic
-            if (child1.getName() == "ID" || child1.getName() == "DIGIT") {
-                //can be stored directly into the X reg
-                if (child1.getName() === "ID") {
-                    let addr = this.findStaticEntry(child1.getValue(), this.symbolTable.findID(child1.getValue(), this.currScope).getScope())
-                    this.memory[this.currByte] = "AE";
-                    this.currByte++;
-                    this.memory[this.currByte] = addr.getLabel();
-                    this.currByte++;
-                    this.memory[this.currByte] = "XX";
-                    this.currByte++;
-                } else {
-                    let constant = this.toHexStr(child1.getValue());
+            //can be stored directly into the X reg
+            if (child1.getName() == "ID") {
+                let addr = this.findStaticEntry(child1.getValue(), this.symbolTable.findID(child1.getValue(), this.currScope).getScope())
+                this.memory[this.currByte] = "AE";
+                this.currByte++;
+                this.memory[this.currByte] = addr.getLabel();
+                this.currByte++;
+                this.memory[this.currByte] = "XX";
+                this.currByte++;
+            } else if (child1.getName() == "DIGIT") {
+                let constant = this.toHexStr(child1.getValue());
+                this.memory[this.currByte] = "A2";
+                this.currByte++;
+                this.memory[this.currByte] = constant;
+                this.currByte++;
+            } else if (child1.getName() === "TRUE" || child1.getName() === "FALSE") {
+                if (child1.getName() == "TRUE") {
                     this.memory[this.currByte] = "A2";
                     this.currByte++;
-                    this.memory[this.currByte] = constant;
+                    this.memory[this.currByte] = "01"; //0x01 represents true
+                    this.currByte++;
+                } else {
+                    this.memory[this.currByte] = "A2";
+                    this.currByte++;
+                    this.memory[this.currByte] = "00"; //0x00 represents false
                     this.currByte++;
                 }
-                
+            } else if (child1.getName() === "CharList") {
+                let addr = this.allocateHeap(child1.getValue());
+                this.memory[this.currByte] = "A2";
+                this.currByte++;
+                this.memory[this.currByte] = this.toHexStr(addr);
+                this.currByte++;
             } else {
                 //anything else must be store in the ACC first and then into a temporary address
                 //before finally into the X reg
-                if (child1.getName() == "SYM_ADD") {
-                    
+                if (child1.getName() === "SYM_ADD") {
+                    this.addWithCarry(child1);
                 } else {
-                    if (child1.getName() == "TRUE") {
-                        this.memory[this.currByte] = "A9";
-                        this.currByte++;
-                        this.memory[this.currByte] = "01"; //0x01 represents true
-                        this.currByte++;
-                    } else {
-                        this.memory[this.currByte] = "A9";
-                        this.currByte++;
-                        this.memory[this.currByte] = "00"; //0x00 represents false
-                        this.currByte++;
-                    }
+                    this.expandBoolExpr(child1);
                 }
                 this.memory[this.currByte] = "8D";
                 this.currByte++;
@@ -741,6 +746,7 @@ class Generator extends Component {
                 this.memory[this.currByte] = "XX";
                 this.currByte++;
             } else {
+                //otherwise, temporary storage is required
                 if (child2.getName() == "DIGIT") {
                     let constant = this.toHexStr(child2.getValue());
                     this.memory[this.currByte] = "A9";
@@ -749,16 +755,24 @@ class Generator extends Component {
                     this.currByte++;
                 }
                 else if (child2.getName() == "SYM_ADD") {
-                
+                    this.addWithCarry(child2);
+                } else if (child2.getName() === "CharList") {
+                    let addr = this.allocateHeap(child2.getValue());
+                    this.memory[this.currByte] = "A9";
+                    this.currByte++;
+                    this.memory[this.currByte] = this.toHexStr(addr);
+                    this.currByte++;
                 } else {
                     this.memory[this.currByte] = "A9";
                     this.currByte++;
                     if (child2.getName() == "TRUE") {
                         this.memory[this.currByte] = "01"; //0x01 represents true
                         this.currByte++;
-                    } else {
+                    } else if (child2.getName() == "FALSE") {
                         this.memory[this.currByte] = "00"; //0x00 represents false
                         this.currByte++;
+                    } else {
+                        this.expandBoolExpr(child1);
                     }
                 }
                 //store in 0xFF
