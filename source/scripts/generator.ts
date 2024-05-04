@@ -13,7 +13,7 @@ class Generator extends Component {
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
 
-    private currHeapLoc: number = 255;
+    private currHeapLoc: number = 250;
 
     private memory: string[];
 
@@ -515,6 +515,9 @@ class Generator extends Component {
         var child1 = node.getChildren()[0];
         var child2 = node.getChildren()[1];
 
+        let atLeftRoot = false;
+        let atRightRoot = false;
+
         if (node.getName() == "SYM_IS_EQUAL") {
             //can be stored directly into the X reg
             if (child1.getName() == "ID") {
@@ -556,6 +559,17 @@ class Generator extends Component {
                     this.addWithCarry(child1);
                 } else {
                     this.expandBoolExpr(child1);
+                    if (node.getParent().getName() !== "SYM_IS_EQUAL" || node.getParent().getName() !== "SYM_IS_NOT_EQUAL") {
+                        //also store it in 0xFD so it's not lost
+                        atLeftRoot = true;
+
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FD";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+                    }
                 }
                 this.memory[this.currByte] = "8D";
                 this.currByte++;
@@ -598,12 +612,14 @@ class Generator extends Component {
                     this.memory[this.currByte] = this.toHexStr(addr);
                     this.currByte++;
                 } else {
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
                     if (child2.getName() == "TRUE") {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
                         this.memory[this.currByte] = "01"; //0x01 represents true
                         this.currByte++;
                     } else if (child2.getName() == "FALSE") {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
                         this.memory[this.currByte] = "00"; //0x00 represents false
                         this.currByte++;
                     } else {
@@ -923,14 +939,6 @@ class Generator extends Component {
         this.currByte++;
         this.memory[this.currByte] = "00";
         this.currByte++;
-    }
-
-    // public findID(id: string, scope: string, currScope: HashNode) {
-    //     let thisScope 
-    // }
-
-    private allocateStack() {
-
     }
 
     //allocates a string into heap memory
