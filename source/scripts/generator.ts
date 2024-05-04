@@ -516,7 +516,6 @@ class Generator extends Component {
         var child2 = node.getChildren()[1];
 
         let atLeftRoot = false;
-        let atRightRoot = false;
 
         if (node.getName() == "SYM_IS_EQUAL") {
             //can be stored directly into the X reg
@@ -565,7 +564,7 @@ class Generator extends Component {
 
                         this.memory[this.currByte] = "8D";
                         this.currByte++;
-                        this.memory[this.currByte] = "FD";
+                        this.memory[this.currByte] = "FE";
                         this.currByte++;
                         this.memory[this.currByte] = "00";
                         this.currByte++;
@@ -624,8 +623,23 @@ class Generator extends Component {
                         this.currByte++;
                     } else {
                         this.expandBoolExpr(child1);
+                        // if (node.getParent().getName() !== "SYM_IS_EQUAL" || node.getParent().getName() !== "SYM_IS_NOT_EQUAL") {
+                        //     //also store in 0xFE for safekeeping
+
+                        // }
+                        
                     }
                 }
+                if (atLeftRoot) {
+                    //value at 0xFE needs to be put into the X reg
+                    this.memory[this.currByte] = "AE";
+                    this.currByte++;
+                    this.memory[this.currByte] = "FE";
+                    this.currByte++;
+                    this.memory[this.currByte] = "00";
+                    this.currByte++;
+                }
+
                 //store in 0xFF
                 this.memory[this.currByte] = "8D";
                 this.currByte++;
