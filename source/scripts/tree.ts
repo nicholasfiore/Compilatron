@@ -379,6 +379,7 @@ class TreeNode {
 
     public addChild(node: TreeNode) {
         this.children.push(node);
+        node.setParent(this);
         return node;
     }
 }
