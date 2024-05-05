@@ -13,7 +13,7 @@ class Generator extends Component {
     private lastCodeByte: number; //the last byte of code (the break)
     private lastStackByte: number; //the last byte used for stack memory
 
-    private currHeapLoc: number = 250;
+    private currHeapLoc: number = 254;
 
     private memory: string[];
 
@@ -751,6 +751,17 @@ class Generator extends Component {
                     this.addWithCarry(child1);
                 } else {
                     this.expandBoolExpr(child1);
+                    if (node.getParent().getName() !== "SYM_IS_EQUAL" || node.getParent().getName() !== "SYM_IS_NOT_EQUAL") {
+                        //also store it in 0xFD so it's not lost
+                        atLeftRoot = true;
+
+                        this.memory[this.currByte] = "8D";
+                        this.currByte++;
+                        this.memory[this.currByte] = "FE";
+                        this.currByte++;
+                        this.memory[this.currByte] = "00";
+                        this.currByte++;
+                    }
                 }
                 this.memory[this.currByte] = "8D";
                 this.currByte++;
@@ -793,17 +804,33 @@ class Generator extends Component {
                     this.memory[this.currByte] = this.toHexStr(addr);
                     this.currByte++;
                 } else {
-                    this.memory[this.currByte] = "A9";
-                    this.currByte++;
                     if (child2.getName() == "TRUE") {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
                         this.memory[this.currByte] = "01"; //0x01 represents true
                         this.currByte++;
                     } else if (child2.getName() == "FALSE") {
+                        this.memory[this.currByte] = "A9";
+                        this.currByte++;
                         this.memory[this.currByte] = "00"; //0x00 represents false
                         this.currByte++;
                     } else {
                         this.expandBoolExpr(child1);
+                        // if (node.getParent().getName() !== "SYM_IS_EQUAL" || node.getParent().getName() !== "SYM_IS_NOT_EQUAL") {
+                        //     //also store in 0xFE for safekeeping
+
+                        // }
+                        
                     }
+                }
+                if (atLeftRoot) {
+                    //value at 0xFE needs to be put into the X reg
+                    this.memory[this.currByte] = "AE";
+                    this.currByte++;
+                    this.memory[this.currByte] = "FE";
+                    this.currByte++;
+                    this.memory[this.currByte] = "00";
+                    this.currByte++;
                 }
                 //store in 0xFF
                 this.memory[this.currByte] = "8D";
