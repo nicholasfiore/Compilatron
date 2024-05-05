@@ -135,7 +135,7 @@ img:hover {
 }
 
 #taOutput {
-	overflow-y: scroll;
+	overflow-y: auto;
 	white-space: pre-wrap;
 }
 

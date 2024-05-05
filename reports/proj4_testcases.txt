@@ -186,3 +186,86 @@ print((2+a == 3+1))
 print((1+a == 2+a))
 }$
 
+
+/*  Variable comparisons (also in complex expressions)  pt 3*/
+{
+boolean b
+b = false
+/*output:  false true*/
+print((true == b))
+print(((b == false) == true))
+}$
+
+
+/*  Boolean hell*/
+{
+if ((true != true) == (false == (false == (true != true)))){
+    print("made it")
+}
+}$
+
+
+/*  Variable declaration/assignment in scope output: 4 3 2 1 */
+{
+int a
+a=1
+int b 
+b=2
+{   
+    int a
+    a = 2
+    b = 4
+    {
+        int a 
+        a = 3
+        print(b)
+        print(a)
+    }
+    print(a)
+}
+print(a)
+
+}$
+
+
+/*  Boolean expression if statements and nesting if statements pt.1. output: success*/
+{
+int a 
+a=5
+if (a == 5) {
+    if (a == 1+4){
+        if (2+a==4+3){
+            print("success")
+        }
+    }
+}
+}$
+
+/*  nested while loops: (should count from 1 to 81) */
+{
+int i
+i = 0
+int c
+c = 0
+while (i != 9) {
+    int j
+    j = 0
+    while (j != 9){
+        c = 1+c 
+        print(c)
+        j=1+j
+    }
+    i=1+i
+}
+print("ended")
+}$
+
+/*  Heap overflow: This should fail code generation */
+{
+    int a 
+    a = 2
+    print("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum")
+    if (a == 2){
+        print("hi")
+    }
+    }$    
