@@ -118,7 +118,11 @@ class Compiler extends Component {
                 this.err("Code generation skipped due to semantic error.")
             }
 
-            this.info("Compilation for program " + this.currProgram + " complete")
+            if (!this.caughtError) {
+                this.info("Compilation for program " + this.currProgram + " complete")
+            } else {
+                this.err("Compilation for program " + this.currProgram + " failed")
+            }
 
             //Reset for next program
             this.reset();
