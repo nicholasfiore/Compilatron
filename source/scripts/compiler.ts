@@ -46,7 +46,7 @@ class Compiler extends Component {
                 //this.break();
                 this.caughtError = true;
             } else {
-                this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
+                this.info("Lexer returned " + tokens.length + " tokens with " + lexOut.warnings + " warnings\n");
                 //this.break();
             }
             if (lexOut.EOF) {
@@ -68,7 +68,7 @@ class Compiler extends Component {
                     //this.break();
                     this.caughtError = true;
                 } else {
-                    this.info("Parsing complete with " + parseOut.errors + " errors and " + parseOut.warnings + " warnings\n");
+                    this.info("Parsing complete with " + parseOut.warnings + " warnings\n");
                     //this.break();
                 }
 
@@ -99,7 +99,7 @@ class Compiler extends Component {
                     this.caughtError = true;
                 } else {
                     this.break();
-                    this.info("Syntactic Analysis finished with " + analyzeOut.warnings + " warnings\n")
+                    this.info("Syntactic Analysis complete with " + analyzeOut.warnings + " warnings\n")
                     //this.break();
                 }
             } else {
@@ -117,6 +117,8 @@ class Compiler extends Component {
             } else {
                 this.err("Code generation skipped due to semantic error.")
             }
+
+            this.info("Compilation for program " + this.currProgram + " complete")
 
             //Reset for next program
             this.reset();
