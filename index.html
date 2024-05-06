@@ -141,6 +141,24 @@
             document.getElementById('codeOut').value = "";
         }
 
+        //https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
+        //modified for my usage
+        document.getElementById('taSourceCode').addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                // set textarea value to: text before caret + tab + text after caret
+                this.value = this.value.substring(0, start) +
+                "   " + this.value.substring(end);
+
+                // put caret at right position again
+                this.selectionStart =
+                this.selectionEnd = start + 3;
+            }
+        });
+
 		document.getElementById("btnCompile").addEventListener("click", function() {
 			clear();
             initializeCompiler();
