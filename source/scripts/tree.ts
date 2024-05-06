@@ -3,8 +3,8 @@ class Tree extends Component {
     private currNode: TreeNode;
     private currDepth: number;
 
-    constructor(name: string) {
-        super(name, false); //debugging has to manually set for tree as it's only useful for actual debugging
+    constructor(name: string, program: number) {
+        super(name, program, false); //debugging has to manually set for tree as it's only useful for actual debugging
         this.root = null;
         this.currNode = null;
         this.currDepth = 0;

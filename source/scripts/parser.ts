@@ -2,7 +2,7 @@
 
 class Parser extends Component {
     private tokens: Array<Token>;
-    private currProgram;
+    //private currProgram;
 
     private CST: Tree;
 
@@ -16,13 +16,13 @@ class Parser extends Component {
     private digits = new RegExp('^[0-9]$');
 
     public constructor(tokenStream: Array<Token>, enableDebug: boolean, program: number) {
-        super("Parser", enableDebug);
+        super("Parser", program, enableDebug);
 
         this.currProgram = program;
 
         this.tokens = tokenStream;
 
-        this.CST = new Tree("CST");
+        this.CST = new Tree("CST", this.currProgram);
 
         this.currPos = 0;
 

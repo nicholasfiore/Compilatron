@@ -1,7 +1,7 @@
 //semantic analyzer
 class SemanticAnalyzer extends Component {
 
-    private currProgram: number;
+    //private currProgram: number;
     
     private CST: Tree;
     //private tokens: Array<Token>;
@@ -24,11 +24,11 @@ class SemanticAnalyzer extends Component {
     private table;
 
     constructor(ConcreteSyntaxTree: Tree, enableDebug: boolean, program: number) {
-        super("Semantic Analyzer", enableDebug);
+        super("Semantic Analyzer", program, enableDebug);
 
         this.currProgram = program;
 
-        this.AST = new Tree("AST");
+        this.AST = new Tree("AST", this.currProgram);
         this.CST = ConcreteSyntaxTree;
     }
 
@@ -347,10 +347,10 @@ class SemanticAnalyzer extends Component {
 class Table extends Component {
 
     private table: Array<HashEntry>;
-    private currProgram:number;
+    //private currProgram:number;
 
     constructor(name: string, program:number) {
-        super(name, false)
+        super(name, program, false)
         this.currProgram = program;
         this.table = new Array<HashEntry>;
     }

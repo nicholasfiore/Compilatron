@@ -3,7 +3,7 @@
 class Compiler extends Component {
     /* Globals
     These variables can be used by any part of the compiler */
-    public currentProgram: number;
+    //public currentProgram: number;
 
     public sourceCode: string;
 
@@ -18,24 +18,22 @@ class Compiler extends Component {
     private _Generator : Generator;
 
     constructor(source: string, enableDebug: boolean) {
-        super("Compiler", enableDebug);
+        super("Compiler", 0, enableDebug);
         this.inDebugMode = enableDebug;
-
-        this.currentProgram = 0;
         
         this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
-        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode, this.currentProgram);
+        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode, this.currProgram);
     }
 
     public compile() {
         while (!this.reachedEOF) {
-            this.currentProgram++;
+            this.currProgram++;
 
-            Tabs.generateTabContent(this.currentProgram);
+            Tabs.generateTabContent(this.currProgram);
 
             /* Lexer */
-            this.info("Lexing program " + this.currentProgram);
+            this.info("Lexing program " + this.currProgram);
             //this.break();
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
@@ -55,9 +53,9 @@ class Compiler extends Component {
             /* Parser */
             if (!this.caughtError) {
                 //console.log("here");
-                this._Parser = new Parser(tokens, this.inDebugMode, this.currentProgram);
+                this._Parser = new Parser(tokens, this.inDebugMode, this.currProgram);
                 
-                this.info("Parsing program " + this.currentProgram);
+                this.info("Parsing program " + this.currProgram);
                 
                 var parseOut = this._Parser.parse();
 
@@ -86,9 +84,9 @@ class Compiler extends Component {
 
             /* Semantic Analysis */
             if (!this.caughtError) {
-                this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode, this.currentProgram);
+                this._Analyzer = new SemanticAnalyzer(CST, this.inDebugMode, this.currProgram);
 
-                this.info("Syntactic Analysis for program " + this.currentProgram);
+                this.info("Syntactic Analysis for program " + this.currProgram);
                 var analyzeOut = this._Analyzer.analyze();
                 
                 if (analyzeOut.errors > 0) {
@@ -109,7 +107,7 @@ class Compiler extends Component {
             /* Code Generation */
             if (!this.caughtError) {
                 //this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTable, this.debugMode)
-                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTree, this.debugMode, this.currentProgram)
+                this._Generator = new Generator(analyzeOut.AST, analyzeOut.symbolTree, this.debugMode, this.currProgram)
 
                 this.info("Generating code...");
                 this._Generator.generate();

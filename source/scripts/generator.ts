@@ -2,7 +2,7 @@ class Generator extends Component {
     private AST: Tree;
     private symbolTable: HashTree;
 
-    private currProgram;
+    //private currProgram;
     
     private static readonly MAX_BYTES_MEMORY: number = 256;
 
@@ -31,7 +31,7 @@ class Generator extends Component {
     private validHex = new RegExp('[0-9A-F]')
 
     constructor(AST: Tree, symbolTable: HashTree, debug: boolean, program: number) {
-        super("Code Generator", debug);
+        super("Code Generator", program, debug);
         this.AST = AST;
         //this.symbolTable = symbolTable;
         this.symbolTable = symbolTable;

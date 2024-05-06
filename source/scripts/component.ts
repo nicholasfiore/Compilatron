@@ -6,10 +6,12 @@ ality*/
 class Component {
     //Components have a name
     name: string;
+    currProgram: number;
     debugMode: boolean;
 
-    constructor(name, isDebug) {
+    constructor(name, program, isDebug) {
         this.name = name;
+        this.currProgram = program;
         this.debugMode = isDebug;
     }
 

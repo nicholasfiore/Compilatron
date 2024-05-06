@@ -3,7 +3,7 @@
 //lexer returns the token stream
 class Lexer extends Component {
 	private sourceCode: string;
-	private currProgram: number;
+	//private currProgram: number;
 
 	private lastValidToken: string;
 	private lastValidKind: string;
@@ -55,9 +55,9 @@ class Lexer extends Component {
 	//char goes here, but it's already accounted for
 
 	public constructor(source: string, enableDebug: boolean, program: number) {
-		super("Lexer", enableDebug);
+		super("Lexer", program, enableDebug);
 
-		this.currProgram = program;
+		//this.currProgram = program;
 
 		this.sourceCode = Utils.trim(source);
 
