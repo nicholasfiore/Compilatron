@@ -115,7 +115,7 @@ class Compiler extends Component {
                 this.info("Generating code...");
                 this._Generator.generate();
             } else {
-                this.err("Code generation skipped due to semantic error.")
+                this.err("Code generation skipped due to semantic error.\n")
             }
 
             if (!this.caughtError) {
