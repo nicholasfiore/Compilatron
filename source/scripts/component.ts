@@ -21,7 +21,10 @@ class Component {
     public log(args: string, color?: string) {
         console.log(args + "\n");
         //(<HTMLInputElement>document.getElementById('taOutput')).value += args;
-        let div = document.getElementById('taOutput');
+
+
+        let currProg = document.getElementById(`program${this.currProgram}`);
+        let div = currProg.querySelector('#console')
         let span = document.createElement('span');
         span.textContent = args + '\n';
         if (color) {

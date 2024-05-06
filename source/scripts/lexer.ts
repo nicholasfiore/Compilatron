@@ -92,7 +92,7 @@ class Lexer extends Component {
 	
 	public lex() {
 		// Grab the "raw" source code.
-		console.log(this.sourceCode);
+		//console.log(this.sourceCode);
 		
 		//main lexing loop
 		var infiniteProtection: number = 0;
@@ -219,7 +219,7 @@ class Lexer extends Component {
 			this.warnings++;
 		}
 
-		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings, EOF: this.reachedEOF};
+		return {tokens: this.tokens, errors: this.errors, warnings: this.warnings, EOF: this.reachedEOF, remainingCode: this.sourceCode.substring(this.currStreamPos)};
 	}
 
 	//checks the current string to see if a valid token can be matched with it

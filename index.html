@@ -198,13 +198,17 @@
             let currConsole = document.getElementById('taOutput');
             let currTable = document.getElementById('symbolTable');
             let currCode = document.getElementById('codeOut');
+
+
             
             let newProg = document.getElementById(`program${program}`);
+            let newConsole = newProg.querySelector('#console');
             let newTable = newProg.querySelector('#table');
             let newCode = newProg.querySelector('#code')
             let newText = newCode.querySelector('textarea');
 
 
+            currConsole.innerHTML = newConsole.innerHTML;
             currTable.innerHTML = newTable.innerHTML;
             currCode.value = newText.value;
         }

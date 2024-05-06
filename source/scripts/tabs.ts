@@ -20,6 +20,9 @@ class Tabs {
         var currTabContent = document.createElement('div');
         currTabContent.setAttribute('id', `program${program}`);
 
+        var consoleOut = document.createElement('div');
+        consoleOut.setAttribute('id', 'console')
+
         var tableDiv = document.createElement('div');
         tableDiv.setAttribute('id', 'table');
         var table = document.createElement('div');
@@ -31,6 +34,7 @@ class Tabs {
         var textarea = document.createElement('textarea');
         codeDiv.appendChild(textarea);
 
+        currTabContent.appendChild(consoleOut);
         currTabContent.appendChild(tableDiv);
         currTabContent.appendChild(codeDiv);
 

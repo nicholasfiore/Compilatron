@@ -23,7 +23,7 @@ class Compiler extends Component {
         
         this.sourceCode = source;
         //passing the compiler into its own components allows the components to access "global" variables
-        this._Lexer = new Lexer(this.sourceCode, this.inDebugMode, this.currProgram);
+        
     }
 
     public compile() {
@@ -35,8 +35,11 @@ class Compiler extends Component {
             /* Lexer */
             this.info("Lexing program " + this.currProgram);
             //this.break();
+            this._Lexer = new Lexer(this.sourceCode, this.inDebugMode, this.currProgram);
             var lexOut = this._Lexer.lex();
             var tokens = lexOut.tokens;
+            this.sourceCode = lexOut.remainingCode;
+
             
             if (lexOut.errors > 0) {
                 this.info("Lexer failed with " + lexOut.errors + " errors and " + lexOut.warnings + " warnings\n");
