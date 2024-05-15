@@ -625,7 +625,7 @@ class Generator extends Component {
                         this.memory[this.currByte] = "00"; //0x00 represents false
                         this.currByte++;
                     } else {
-                        this.expandBoolExpr(child1);
+                        this.expandBoolExpr(child2);
                         // if (node.getParent().getName() !== "SYM_IS_EQUAL" || node.getParent().getName() !== "SYM_IS_NOT_EQUAL") {
                         //     //also store in 0xFE for safekeeping
 
