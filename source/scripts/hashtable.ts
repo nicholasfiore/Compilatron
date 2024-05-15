@@ -61,6 +61,9 @@ class HashEntry {
     private line;
     private position;
 
+    //extra hidden boolean for code gen
+    private hasDeclGenerated
+
     constructor(id: string) {
         this.id = id;
         this.type = "";
@@ -68,6 +71,7 @@ class HashEntry {
         this.line = -1;
         this.isInit = false;
         this.hasBeenUsed = false;
+        this.hasDeclGenerated = false;
     }
 
     public getID() {
@@ -84,6 +88,10 @@ class HashEntry {
 
     public getBeenUsed() {
         return this.hasBeenUsed;
+    }
+
+    public getDeclGen() {
+        return this.hasDeclGenerated;
     }
 
     public getLine() {
@@ -117,6 +125,10 @@ class HashEntry {
     public flipBeenUsed() {
         this.hasBeenUsed = true;
     }
+
+    public flipDeclGenerated() {
+        this.hasDeclGenerated = true;
+    }
 }
 
 class HashTree {
@@ -143,7 +155,7 @@ class HashTree {
         var retVal;
 
         var entry = scope.getTable().get(id);
-        if (entry) {
+        if (entry && entry.getDeclGen()) {
             retVal = entry;
         } else {
             scope = scope.getParent();

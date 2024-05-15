@@ -89,6 +89,9 @@ class Generator extends Component {
                         let scope = currEntry.getScope();
                         let type = currEntry.getType();
 
+                        //lets the compiler know that the code has been generated for this scope + variable declaration
+                        currEntry.flipDeclGenerated();
+
                         this.staticData.push(new StaticEntry(label, id, scope, type))
 
                         // this.memory[this.currByte] = "A9";
