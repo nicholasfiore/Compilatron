@@ -278,7 +278,7 @@ class SemanticAnalyzer extends Component {
             } else {
                 this.err("Undeclared variable: The ID \"" + id.getValue() + "\" on line " + id.getLine() + " was used but not declared")
                 this.errors++;
-                retVal = null;
+                retVal = new HashEntry("error");
             }
         }
         this.currScope = scope;
