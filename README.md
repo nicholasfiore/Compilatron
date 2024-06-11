@@ -1,13 +1,12 @@
-TS-Compiler
-=====================
-
-This is the Compielrs class initial project written in TypeScript.
-See http://www.labouseur.com/courses/compilers/ for details.
+Compilatron
+================
+Compilatron is a compiler written in Typescript for compiling a simple, LL(1) grammar designed by Dr. Alan Labouseur. Compiled code generates opcodes for a reduced 6502 instruction set, which is the instruction set used for the projects in the [Operating Systems](https://www.labouseur.com/courses/os) course taught by Dr. Labouseur. The Baur-Nackus form of the grammar can be found [here](https://www.labouseur.com/courses/compilers/grammar.pdf).
 
 
-For Alan:
-Finished, to-be-graded work is on the main branch. Concurrent dev work in between grading is kept isolated on the development branch.
+More information regarding the project and his Compiler Design and Implementation course can be found on Dr. Labouseur's [website](https://www.labouseur.com/courses/compilers/).
 
+
+Note, the initial commit for this repo was based on https://github.com/AlanClasses/TS-Compiler
 
 Setup TypeScript
 ================
